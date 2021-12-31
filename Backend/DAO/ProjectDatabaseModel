@@ -1,0 +1,54 @@
+const { MongoClient } = require("mongodb");
+let creds = require("./MongoDBCredentials.json");
+const uri = `mongodb+srv://roeynehemiapeleg:${creds.password}@cluster0.nuinj.mongodb.net/TestDatabase?retryWrites=true&w=majority`;
+const IDatabaseModel = require("./IDatabaseModel").IDatabaseModel;
+
+class ProjectDatabaseModel extends IDatabaseModel {
+  constructor() {
+    super();
+    this.uri = uri;
+    this.collection = null;
+  }
+
+  // Connects to a collection in database and initialises collection property
+  async connect(db_name, collection_name) {
+    new MongoClient(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+      .catch((err) => {
+        // MongoClient failed to connect
+        console.error(err.stack);
+        process.exit(1);
+      })
+      .then(async (client) => {
+        this.collection = getCollection(client, db_name, collection_name);
+      });
+  }
+
+  static async getCollection(client, db_name, collection_name) {
+    try {
+      return await client.db(db_name).collection(collection_name);
+    } catch (e) {
+      console.error(`unable to connect: ${e}`);
+    }
+  }
+
+  async addData(field1, field2, field3, field4) {
+    try {
+      const mydata = {
+        FirstField: field1,
+        SecondField: field2,
+        ThirdField: field3,
+        FourthField: field4,
+      };
+
+      return await this.collection.insertOne(mydata);
+    } catch (e) {
+      console.error(`Unable to post review: ${e}`);
+      return { error: e };
+    }
+  }
+}
+
+module.exports = { ProjectDatabaseModel };
