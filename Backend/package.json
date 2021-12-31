@@ -1,0 +1,25 @@
+{
+  "name": "project-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "console": "integratedTerminal",
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Yaireleg",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yair2121/Final_Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yair2121/Final_Project/issues"
+  },
+  "homepage": "https://github.com/yair2121/Final_Project#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
