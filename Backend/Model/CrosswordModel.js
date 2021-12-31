@@ -15,3 +15,4 @@ class CrosswordModel extends IGameModel {
   get_state() {}
   get_game_report() {}
 }
+module.exports = { CrosswordModel };

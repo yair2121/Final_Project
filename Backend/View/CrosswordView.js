@@ -7,3 +7,4 @@ class CrosswordView extends BaseSessionView {
     console.log("Proccess the game state");
   }
 }
+module.exports = { CrosswordView };
