@@ -6,7 +6,6 @@ class CrosswordModel extends IGameModel {
   init() {}
   play() {}
   make_move() {}
-  close() {}
   get_state() {}
   get_game_report() {}
 }

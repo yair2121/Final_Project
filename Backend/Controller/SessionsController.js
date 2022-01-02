@@ -1,6 +1,3 @@
-const { CrosswordModel } = require("../Model/CrosswordModel");
-const { TestGameModel } = require("../Model/TestGameModel");
-const { CrosswordView } = require("../View/TestGameView");
 const { games } = require("../Model/Games");
 
 class SessionsController {

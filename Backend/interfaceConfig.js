@@ -1,6 +1,6 @@
 function resolvePrecept(interfaceName) {
   return function curry() {
-    console.warn("requires an implementation for", interfaceName);
+    throw "Not implemented exception";
   };
 }
 module.exports = { resolvePrecept };

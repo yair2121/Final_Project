@@ -3,15 +3,18 @@ const WINNING_NUMBER = 100;
 
 class TestGameModel extends IGameModel {
   constructor() {
-    super("Test Game");
+    super("Test Game", 2, 5);
   }
-  init(number_of_players) {
+  init() {
     this.sum = 0;
     this.moves = [];
-    this.number_of_players = number_of_players;
     this.current_player = 0;
-    this.isRunning = true;
+    this.isRunning = false;
     this.winning_player = 0;
+  }
+  play(number_of_players) {
+    this.number_of_players = number_of_players;
+    this.isRunning = true;
   }
   is_valid_move(move) {
     const { number, player } = move;

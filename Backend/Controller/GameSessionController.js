@@ -4,11 +4,12 @@ class GameSessionController {
     this.player_ids = {};
     this.connected_players = 0;
     this.game_Model = game_model;
+    this.game_Model.init();
     this.database_controller = database_controller;
     this.session_view = session_view;
   }
   start_session() {
-    this.game_Model.init(this.player_ids.length);
+    this.game_Model.play(this.connected_players); // TODO: number of players is predefined
   }
   add_player(id) {
     if (!(id in this.player_ids)) {
@@ -25,7 +26,7 @@ class GameSessionController {
   close() {
     //TODO: implement this
   }
-  show_state() {
+  send_state() {
     //TODO: implement this
     return this.session_view.show_state(this.game_Model.get_state()); //TODO: Not sure yet how this will be implemented.
   }
