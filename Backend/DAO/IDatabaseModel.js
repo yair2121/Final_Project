@@ -12,6 +12,38 @@ class IDatabaseModel {
   connect() {
     interface_default();
   }
+
+  insertOne() {
+    interface_default();
+  }
+
+  insertMany() {
+    interface_default();
+  }
+
+  findOne() {
+    interface_default();
+  }
+
+  findMany() {
+    interface_default();
+  }
+
+  updateOne() {
+    interface_default();
+  }
+
+  updateMany() {
+    interface_default();
+  }
+
+  deleteOne() {
+    interface_default();
+  }
+
+  deleteMany() {
+    interface_default();
+  }
 }
 
 module.exports = { IDatabaseModel };

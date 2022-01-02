@@ -42,11 +42,74 @@ class ProjectDatabaseModel extends IDatabaseModel {
       });
   }
 
-  async addData(data) {
+  insertOne(data) {
     try {
       return this.collection.insertOne(data);
     } catch (e) {
       console.error(`Unable to post: ${e}`);
+      return { error: e };
+    }
+  }
+
+  insertMany(arrayOfData) {
+    try {
+      return this.collection.insertMany(arrayOfData);
+    } catch (e) {
+      console.error(`Unable to post: ${e}`);
+      return { error: e };
+    }
+  }
+
+  findOne(query) {
+    try {
+      return this.collection.findOne(query);
+    } catch (e) {
+      console.error(`Unable to find: ${e}`);
+      return { error: e };
+    }
+  }
+
+  findMany(query) {
+    try {
+      return this.collection.find(query);
+    } catch (e) {
+      console.error(`Unable to find: ${e}`);
+      return { error: e };
+    }
+  }
+
+  updateOne(filter, update, options = {}) {
+    try {
+      return this.collection.updateOne(filter, update, options);
+    } catch (e) {
+      console.error(`Unable to update: ${e}`);
+      return { error: e };
+    }
+  }
+
+  updateMany(filter, update, options = {}) {
+    try {
+      return this.collection.updateMany(filter, update, options);
+    } catch (e) {
+      console.error(`Unable to update: ${e}`);
+      return { error: e };
+    }
+  }
+
+  deleteOne(filter, options = {}) {
+    try {
+      return this.collection.deleteOne(filter, options);
+    } catch (e) {
+      console.error(`Unable to delete: ${e}`);
+      return { error: e };
+    }
+  }
+
+  deleteMany(filter, options = {}) {
+    try {
+      return this.collection.deleteMany(filter, options);
+    } catch (e) {
+      console.error(`Unable to delete: ${e}`);
       return { error: e };
     }
   }
