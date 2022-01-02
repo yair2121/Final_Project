@@ -10,22 +10,6 @@ class ProjectDatabaseModel extends IDatabaseModel {
     this.collection = null;
   }
 
-  // Connects to a collection in database and initialises collection property
-  async connect(db_name, collection_name) {
-    new MongoClient(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-      .catch((err) => {
-        // MongoClient failed to connect
-        console.error(err.stack);
-        process.exit(1);
-      })
-      .then(async (client) => {
-        this.collection = getCollection(client, db_name, collection_name);
-      });
-  }
-
   static async getCollection(client, db_name, collection_name) {
     try {
       return await client.db(db_name).collection(collection_name);
@@ -34,18 +18,35 @@ class ProjectDatabaseModel extends IDatabaseModel {
     }
   }
 
-  async addData(field1, field2, field3, field4) {
-    try {
-      const mydata = {
-        FirstField: field1,
-        SecondField: field2,
-        ThirdField: field3,
-        FourthField: field4,
-      };
+  // Connects to a collection in database and initialises collection property
+  async connect(db_name, collection_name) {
+    console.log("PDM connect called");
+    await new MongoClient(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+      .connect()
+      .catch((err) => {
+        // MongoClient failed to connect
+        console.error(err.stack);
+        process.exit(1);
+      })
+      .then(async (client) => {
+        console.log("PDM connected");
+        this.collection = await ProjectDatabaseModel.getCollection(
+          client,
+          db_name,
+          collection_name
+        );
+        console.log("done");
+      });
+  }
 
-      return await this.collection.insertOne(mydata);
+  async addData(data) {
+    try {
+      return this.collection.insertOne(data);
     } catch (e) {
-      console.error(`Unable to post review: ${e}`);
+      console.error(`Unable to post: ${e}`);
       return { error: e };
     }
   }
