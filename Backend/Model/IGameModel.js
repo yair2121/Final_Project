@@ -1,8 +1,8 @@
 var interface_default =
   require("../interfaceConfig").resolvePrecept("IGameModel");
 class IGameModel {
-  constructor() {
-    this.game_name = "";
+  constructor(game_name = "") {
+    this.game_name = game_name;
   }
   init() {
     interface_default();

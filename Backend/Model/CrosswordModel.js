@@ -4,8 +4,7 @@ const IGameModel = require("./IGameModel").IGameModel;
 // var test = new IGameModel.IGameModel();
 class CrosswordModel extends IGameModel {
   constructor() {
-    super();
-    this.game_name = "Crossword";
+    super("Crossword");
   }
   init() {}
   play() {}

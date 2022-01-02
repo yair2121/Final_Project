@@ -8,8 +8,7 @@ const readline = require("readline").createInterface({
 
 class TestGame extends IGameModel {
   constructor() {
-    super();
-    this.game_name = "Test Game";
+    super("Test Game");
   }
   init(number_of_players) {
     this.sum = 0;
@@ -19,23 +18,33 @@ class TestGame extends IGameModel {
     this.isRunning = true;
     this.winning_player = 0;
   }
+  is_valid_move(move) {
+    const { number, player } = move;
+    return (
+      this.isRunning &&
+      player === this.current_player &&
+      number > 0 &&
+      number < 10
+    );
+  }
+  apply_move(move) {
+    const number = move.number;
+    this.sum += number;
+    this.moves.push({
+      player: this.current_player,
+      move: number,
+      current_sum: this.sum,
+    });
+  }
   make_move(move) {
-    const { player, number } = move;
-    if (this.isRunning && player === this.current_player) {
-      if (number > 0 && number < 10) {
-        this.sum += number;
-        this.moves.push({
-          player: this.current_player,
-          move: number,
-          current_sum: this.sum,
-        });
-        if (this.sum >= WINNING_NUMBER) {
-          this.winning_player = this.current_player;
-          this.isRunning = false;
-        } else {
-          this.current_player =
-            (this.current_player + 1) % this.number_of_players;
-        }
+    if (this.is_valid_move(move)) {
+      this.apply_move(move);
+      if (this.sum >= WINNING_NUMBER) {
+        this.winning_player = move.player;
+        this.isRunning = false;
+      } else {
+        this.current_player =
+          (this.current_player + 1) % this.number_of_players;
       }
     }
   }
@@ -43,7 +52,7 @@ class TestGame extends IGameModel {
     return {
       sum: this.sum,
       player_turn: this.current_player,
-      is_done: this.isRunning,
+      is_running: this.isRunning,
       winning_player: this.winning_player,
     };
   }
@@ -52,16 +61,17 @@ class TestGame extends IGameModel {
   }
 }
 
-var test = new TestGame();
-test.init();
-player = 0;
-number = 0;
-while (test.isRunning) {
-  number += 9;
-  move = { player: player, move: number };
-  test.make_move(move);
-  player = (player + 1) % test.number_of_players;
-  console.log(test.get_state());
+function run_Test() {
+  var test = new TestGame();
+  test.init(3);
+  player = 0;
+  number = 0;
+  while (test.isRunning) {
+    number = (number + 9) % 10;
+    move = { player: player, number: number };
+    test.make_move(move);
+    player = test.current_player;
+    console.log(test.get_state());
+  }
 }
-console.log(test.get_game_report());
 module.exports = { TestGame };
