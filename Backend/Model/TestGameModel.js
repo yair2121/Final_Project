@@ -1,12 +1,7 @@
 const { IGameModel } = require("./IGameModel");
 const WINNING_NUMBER = 100;
 
-const readline = require("readline").createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-class TestGame extends IGameModel {
+class TestGameModel extends IGameModel {
   constructor() {
     super("Test Game");
   }
@@ -74,4 +69,4 @@ function run_Test() {
     console.log(test.get_state());
   }
 }
-module.exports = { TestGame };
+module.exports = { TestGameModel };

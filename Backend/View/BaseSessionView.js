@@ -6,7 +6,8 @@ class BaseSessionView {
     // TODO: need to implement this
   }
   proccess_state(game_state) {
-    interface_default();
+    return JSON.stringify(game_state); // TODO: Not sure if it will be this simple
+    // interface_default();
   }
 }
 

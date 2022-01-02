@@ -1,7 +1,4 @@
 const IGameModel = require("./IGameModel").IGameModel;
-
-// import IGameModel from "./IGameModel";
-// var test = new IGameModel.IGameModel();
 class CrosswordModel extends IGameModel {
   constructor() {
     super("Crossword");
