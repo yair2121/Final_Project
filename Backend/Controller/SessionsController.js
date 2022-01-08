@@ -1,5 +1,9 @@
 const { games } = require("../Model/Games");
+const {
+  GameSessionController,
+} = require("../Controller/GameSessionController");
 
+//TODO: Change to service insted of controller
 class SessionsController {
   constructor() {
     this.game_sessions = {};
@@ -21,18 +25,19 @@ class SessionsController {
     //TODO: implement this
   }
   create_session(game_name) {
-    this.session_id = undefined;
+    //TODO: Crush
+    let session_id = null;
     if (game_name in games) {
-      database = undefined; //TODO: implement this
-      session_id = this.session_id = Math.floor(Math.random() * 1000);
-      const { model, view } = this.games[game_name];
-      this.game_sessions[this.session_id] = new GameSessionController(
+      const database = null; //TODO: implement this
+      session_id = session_id = Math.floor(Math.random() * 10000); //TODO: Replace with uuid.
+      const { model, view } = games[game_name];
+      this.game_sessions[session_id] = new GameSessionController(
         new model(game_name),
         database,
         new view()
       );
     }
-    return this.session_id;
+    return session_id;
   }
 }
 

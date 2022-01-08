@@ -1,9 +1,11 @@
-const { HundredSumModel } = require("../../Tests/Backend/Model/100SumGame");
+const {
+  HundredSumModel,
+} = require("../../Tests/Backend/Model/tests_games/100SumGame");
 const { HundredSumView } = require("../../Tests/Backend/View/100SumView");
 const { CrosswordModel } = require("./CrosswordModel");
 const { CrosswordView } = require("../View/CrosswordView");
 
-games = {};
+const games = {};
 games["Crossword"] = { model: CrosswordModel, view: CrosswordView };
-games["Test Game"] = { model: TestGameModel, view: TestGameView };
+games["Hundred Sum"] = { model: HundredSumModel, view: HundredSumView };
 module.exports = { games };

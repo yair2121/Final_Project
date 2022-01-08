@@ -1,20 +1,19 @@
 var interface_default =
   require("../interfaceConfig").resolvePrecept("IGameModel");
-class IGameModel {
-  //TODO: Reconsider to change it to not be interface
+class BaseGameModel {
   constructor(game_name, min_player_count, max_player_count) {
     this.game_name = game_name;
     this.max_player_count = max_player_count;
     this.min_player_count = min_player_count;
   }
 
-  init() {
-    //TODO: Reconsider to move this to constructor
-    interface_default();
-  }
-
   play(number_of_players) {
-    interface_default();
+    if (
+      number_of_players > this.max_player_count ||
+      number_of_players < this.min_player_count
+    ) {
+      throw "Incorrect number of players";
+    }
   }
 
   make_move(move_description) {
@@ -29,4 +28,5 @@ class IGameModel {
     interface_default();
   }
 }
-module.exports = { IGameModel };
+
+module.exports = { BaseGameModel };

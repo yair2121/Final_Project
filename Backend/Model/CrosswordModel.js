@@ -1,10 +1,9 @@
-const IGameModel = require("./IGameModel").IGameModel;
-class CrosswordModel extends IGameModel {
+const BaseGameModel = require("./BaseGameModel").BaseGameModel;
+class CrosswordModel extends BaseGameModel {
   constructor() {
     super("Crossword");
   }
-  init() {}
-  play() {}
+  play(number_of_players) {}
   make_move() {}
   get_state() {}
   get_game_report() {}

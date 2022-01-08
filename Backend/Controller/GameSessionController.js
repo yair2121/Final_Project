@@ -4,7 +4,6 @@ class GameSessionController {
     this.player_ids = {};
     this.connected_players = 0;
     this.game_Model = game_model;
-    this.game_Model.init();
     this.database_controller = database_controller;
     this.session_view = session_view;
   }
