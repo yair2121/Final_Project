@@ -1,5 +1,5 @@
-const { TestGameModel } = require("./TestGameModel");
-const { TestGameView } = require("../View/TestGameView");
+const { HundredSumModel } = require("../../Tests/Backend/Model/100SumGame");
+const { HundredSumView } = require("../../Tests/Backend/View/100SumView");
 const { CrosswordModel } = require("./CrosswordModel");
 const { CrosswordView } = require("../View/CrosswordView");
 

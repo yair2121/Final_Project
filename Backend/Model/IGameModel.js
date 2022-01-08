@@ -29,5 +29,4 @@ class IGameModel {
     interface_default();
   }
 }
-
 module.exports = { IGameModel };

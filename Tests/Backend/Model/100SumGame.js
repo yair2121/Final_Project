@@ -1,9 +1,9 @@
-const { IGameModel } = require("./IGameModel");
+const { IGameModel } = require("../../../Backend/Model/IGameModel").IGameModel;
 const WINNING_NUMBER = 100;
 
-class TestGameModel extends IGameModel {
+class HundredSumModel extends IGameModel {
   constructor() {
-    super("Test Game", 2, 5);
+    super("Hundred game", 2, 5);
   }
   init() {
     this.sum = 0;
@@ -61,7 +61,7 @@ class TestGameModel extends IGameModel {
 
 function run_Test() {
   var test = new TestGame();
-  test.init(3);
+  test.init();
   player = 0;
   number = 0;
   while (test.isRunning) {
@@ -72,4 +72,5 @@ function run_Test() {
     console.log(test.get_state());
   }
 }
-module.exports = { TestGameModel };
+
+module.exports = { HundredSumModel };
