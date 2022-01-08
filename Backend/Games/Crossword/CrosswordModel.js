@@ -1,4 +1,4 @@
-const BaseGameModel = require("./BaseGameModel").BaseGameModel;
+const BaseGameModel = require("../BaseGameModel").BaseGameModel;
 class CrosswordModel extends BaseGameModel {
   constructor() {
     super("Crossword");

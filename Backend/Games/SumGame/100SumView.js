@@ -1,4 +1,4 @@
-const { BaseSessionView } = require("../../../Backend/View/BaseSessionView");
+const { BaseSessionView } = require("../BaseSessionView");
 class HundredSumView extends BaseSessionView {
   constructor() {
     super();

@@ -1,5 +1,4 @@
-const BaseGameModel =
-  require("../../../../Backend/Model/BaseGameModel").BaseGameModel;
+const BaseGameModel = require("../BaseGameModel").BaseGameModel;
 const WINNING_NUMBER = 100;
 
 class HundredSumModel extends BaseGameModel {

@@ -1,4 +1,4 @@
-const { BaseSessionView } = require("./BaseSessionView");
+const { BaseSessionView } = require("../BaseSessionView");
 class CrosswordView extends BaseSessionView {
   constructor() {
     super();
