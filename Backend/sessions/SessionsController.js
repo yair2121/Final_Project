@@ -1,7 +1,6 @@
 const { games_dict } = require("../Games/Games_Dictionary");
-const {
-  GameSessionController,
-} = require("../Controller/GameSessionController");
+const { GameSession } = require("../sessions/game_session/GameSession");
+const { v1: uuidv1 } = require("uuid");
 
 //TODO: Change to service instead of controller
 class SessionsController {
@@ -29,12 +28,11 @@ class SessionsController {
     let session_id = null;
     if (game_name in games_dict) {
       const database = null; //TODO: implement this
-      session_id = session_id = Math.floor(Math.random() * 10000); //TODO: Replace with uuid.
-      const { model, view } = games_dict[game_name];
-      this.game_sessions[session_id] = new GameSessionController(
+      session_id = uuidv1(); //TODO: Replace with uuid.
+      const { model } = games_dict[game_name];
+      this.game_sessions[session_id] = new GameSession(
         new model(game_name),
-        database,
-        new view()
+        database
       );
     }
     return session_id;
