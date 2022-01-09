@@ -6,6 +6,7 @@ class CrosswordModel extends BaseGameModel {
   play(number_of_players) {}
   make_move() {}
   get_state() {}
+  get_move(move_description) {}
   get_game_report() {}
 }
 module.exports = { CrosswordModel };
