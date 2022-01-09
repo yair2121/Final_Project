@@ -1,4 +1,4 @@
 const { CrosswordModel } = require("./CrosswordModel");
-const { BaseSessionView } = require("./CrosswordView");
+const { CrosswordView } = require("./CrosswordView");
 
-module.exports = { CrosswordModel, BaseSessionView };
+module.exports = { CrosswordModel, CrosswordView };

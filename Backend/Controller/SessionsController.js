@@ -1,4 +1,4 @@
-const { games: games_dict } = require("../Games/Games_Dictionary");
+const { games_dict } = require("../Games/Games_Dictionary");
 const {
   GameSessionController,
 } = require("../Controller/GameSessionController");

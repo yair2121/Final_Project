@@ -3,6 +3,7 @@ var interface_default =
 class BaseSessionView {
   constructor() {}
   show_state(game_state) {
+    return this.proccess_state(game_state);
     // TODO: need to implement this
   }
   proccess_state(game_state) {

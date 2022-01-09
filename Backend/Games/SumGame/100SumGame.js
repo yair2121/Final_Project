@@ -8,7 +8,7 @@ class HundredSumModel extends BaseGameModel {
     this.moves = [];
     this.current_player = 0;
     this.isRunning = false;
-    this.winning_player = 0;
+    this.winning_player = null;
   }
   play(number_of_players) {
     super.play(number_of_players);
@@ -71,5 +71,5 @@ function run_Test() {
     console.log(test.get_state());
   }
 }
-run_Test();
+
 module.exports = { HundredSumModel };

@@ -8,7 +8,7 @@ var interface_default =
 class IDatabaseModel {
   constructor() {}
 
-  // Connects to a collection in database and initialises collection property
+  // Connects to a collection in database and initializes collection property
   connect() {
     interface_default();
   }

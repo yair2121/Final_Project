@@ -16,6 +16,7 @@ class GameSessionController {
       this.connected_players++;
     }
   }
+  make_move(move_description) {}
   remove_player(id) {
     //TODO: implement this
     if (this.player_ids.includes(id)) {
