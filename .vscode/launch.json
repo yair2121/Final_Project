@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\Model\\TestGameModel.js"
+      "program": "${workspaceFolder}\\Tests\\Backend\\Model\\100SumGame.js"
     }
   ]
 }

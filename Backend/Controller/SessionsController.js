@@ -1,8 +1,9 @@
-const { CrosswordModel } = require("../Model/CrosswordModel");
-const { TestGameModel } = require("../Model/TestGameModel");
-const { CrosswordView } = require("../View/TestGameView");
-const { games } = require("../Model/Games");
+const { games: games_dict } = require("../Games/Games_Dictionary");
+const {
+  GameSessionController,
+} = require("../Controller/GameSessionController");
 
+//TODO: Change to service instead of controller
 class SessionsController {
   constructor() {
     this.game_sessions = {};
@@ -16,7 +17,7 @@ class SessionsController {
   close_session(session_id) {
     //TODO: implement this
     if (session_id in this.game_sessions) {
-      this.game_sessions[session_id].close(); //TODO: This may be unneccessery.
+      this.game_sessions[session_id].close();
       delete this.game_sessions[session_id];
     }
   }
@@ -24,18 +25,19 @@ class SessionsController {
     //TODO: implement this
   }
   create_session(game_name) {
-    this.session_id = undefined;
-    if (game_name in games) {
-      database = undefined; //TODO: implement this
-      session_id = this.session_id = Math.floor(Math.random() * 1000);
-      const { model, view } = this.games[game_name];
-      this.game_sessions[this.session_id] = new GameSessionController(
+    //TODO: Crush
+    let session_id = null;
+    if (game_name in games_dict) {
+      const database = null; //TODO: implement this
+      session_id = session_id = Math.floor(Math.random() * 10000); //TODO: Replace with uuid.
+      const { model, view } = games_dict[game_name];
+      this.game_sessions[session_id] = new GameSessionController(
         new model(game_name),
         database,
         new view()
       );
     }
-    return this.session_id;
+    return session_id;
   }
 }
 

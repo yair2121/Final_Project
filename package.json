@@ -1,28 +1,22 @@
 {
-  "name": "project-backend",
+  "name": "final_project",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "console": "integratedTerminal",
   "scripts": {
     "test": "jest"
   },
-  "keywords": [],
-  "author": "Yaireleg",
-  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yair2121/Final_Project.git"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/yair2121/Final_Project/issues"
   },
   "homepage": "https://github.com/yair2121/Final_Project#readme",
-  "description": "",
-  "dependencies": {
-    "express": "^4.17.2",
-    "prompt-sync": "^4.2.0",
-    "uuid": "^8.3.2"
-  },
   "devDependencies": {
     "jest": "^27.4.7"
   }
