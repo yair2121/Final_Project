@@ -2,8 +2,8 @@ class BaseDatabaseController {
   constructor(dbmodel) {
     this.model = dbmodel;
   }
-  ini(db_name, collection_name) {
-    return this.model.connect(db_name, collection_name);
+  async ini(db_name, collection_name) {
+    return await this.model.connect(db_name, collection_name);
   }
   insertOne(data) {
     return this.model.insertOne(data);
