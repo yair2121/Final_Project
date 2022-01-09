@@ -15,8 +15,8 @@ class HundredSumModel extends BaseGameModel {
     this.number_of_players = number_of_players;
     this.isRunning = true;
   }
-  is_valid_move(move) {
-    const { number, player } = move;
+  is_valid_move(move_description) {
+    const { number, player } = move_description;
     return (
       this.isRunning &&
       player === this.current_player &&
@@ -24,8 +24,8 @@ class HundredSumModel extends BaseGameModel {
       number < 10
     );
   }
-  apply_move(move) {
-    const number = move.number;
+  apply_move(move_description) {
+    const number = move_description.number;
     this.sum += number;
     this.moves.push({
       player: this.current_player,
@@ -33,11 +33,11 @@ class HundredSumModel extends BaseGameModel {
       current_sum: this.sum,
     });
   }
-  make_move(move) {
-    if (this.is_valid_move(move)) {
-      this.apply_move(move);
+  make_move(move_description) {
+    if (this.is_valid_move(move_description)) {
+      this.apply_move(move_description);
       if (this.sum >= WINNING_NUMBER) {
-        this.winning_player = move.player;
+        this.winning_player = move_description.player;
         this.isRunning = false;
       } else {
         this.current_player =
@@ -52,6 +52,9 @@ class HundredSumModel extends BaseGameModel {
       is_running: this.isRunning,
       winning_player: this.winning_player,
     };
+  }
+  get_move() {
+    return this.moves[this.moves.slice(-1)];
   }
   get_game_report() {
     return { moves: this.moves, ...this.get_state() };
