@@ -43,75 +43,49 @@ class ProjectDatabaseModel extends IDatabaseModel {
   }
 
   insertOne(data) {
-    try {
-      return this.collection.insertOne(data);
-    } catch (e) {
-      console.error(`Unable to post: ${e}`);
-      return { error: e };
-    }
+    return this.collection.insertOne(data).catch((e) => {
+      console.error(`unable to post: ${e}`);
+    });
   }
 
   insertMany(arrayOfData) {
-    try {
-      return this.collection.insertMany(arrayOfData);
-    } catch (e) {
-      console.error(`Unable to post: ${e}`);
-      return { error: e };
-    }
+    return this.collection.insertMany(arrayOfData).catch((e) => {
+      console.error(`unable to post: ${e}`);
+    });
   }
 
   findOne(query) {
-    try {
-      return this.collection.findOne(query);
-    } catch (e) {
-      console.error(`Unable to find: ${e}`);
-      return { error: e };
-    }
+    return this.collection.findOne(query).catch((e) => {
+      console.error(`unable to find: ${e}`);
+    });
   }
 
   findMany(query) {
-    try {
-      return this.collection.find(query);
-    } catch (e) {
-      console.error(`Unable to find: ${e}`);
-      return { error: e };
-    }
+    return this.collection.find(query);
   }
 
   updateOne(filter, update, options = {}) {
-    try {
-      return this.collection.updateOne(filter, update, options);
-    } catch (e) {
-      console.error(`Unable to update: ${e}`);
-      return { error: e };
-    }
+    return this.collection.updateOne(filter, update, options).catch((e) => {
+      console.error(`unable to update: ${e}`);
+    });
   }
 
   updateMany(filter, update, options = {}) {
-    try {
-      return this.collection.updateMany(filter, update, options);
-    } catch (e) {
-      console.error(`Unable to update: ${e}`);
-      return { error: e };
-    }
+    return this.collection.updateMany(filter, update, options).catch((e) => {
+      console.error(`unable to update: ${e}`);
+    });
   }
 
   deleteOne(filter, options = {}) {
-    try {
-      return this.collection.deleteOne(filter, options);
-    } catch (e) {
-      console.error(`Unable to delete: ${e}`);
-      return { error: e };
-    }
+    return this.collection.deleteOne(filter, options).catch((e) => {
+      console.error(`unable to delete: ${e}`);
+    });
   }
 
   deleteMany(filter, options = {}) {
-    try {
-      return this.collection.deleteMany(filter, options);
-    } catch (e) {
-      console.error(`Unable to delete: ${e}`);
-      return { error: e };
-    }
+    return this.collection.deleteMany(filter, options).catch((e) => {
+      console.error(`unable to delete: ${e}`);
+    });
   }
 }
 
