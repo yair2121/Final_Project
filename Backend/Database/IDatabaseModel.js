@@ -6,42 +6,42 @@ var interface_default =
   require("../interfaceConfig").resolvePrecept("IDatabaseModel");
 
 class IDatabaseModel {
-  constructor() {}
+  constructor(db_name, collection_name) {}
 
   // Connects to a collection in database and initializes collection property
   connect() {
     interface_default();
   }
 
-  insertOne() {
+  insertOne(data) {
     interface_default();
   }
 
-  insertMany() {
+  insertMany(data) {
     interface_default();
   }
 
-  findOne() {
+  findOne(query) {
     interface_default();
   }
 
-  findMany() {
+  findMany(query) {
     interface_default();
   }
 
-  updateOne() {
+  updateOne(filter, update) {
     interface_default();
   }
 
-  updateMany() {
+  updateMany(filter, update) {
     interface_default();
   }
 
-  deleteOne() {
+  deleteOne(filter) {
     interface_default();
   }
 
-  deleteMany() {
+  deleteMany(filter) {
     interface_default();
   }
 }

@@ -19,5 +19,8 @@
   "homepage": "https://github.com/yair2121/Final_Project#readme",
   "devDependencies": {
     "jest": "^27.4.7"
+  },
+  "dependencies": {
+    "mongodb": "^4.3.0"
   }
 }
