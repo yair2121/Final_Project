@@ -99,7 +99,7 @@ describe("Test CRUD operations with ProjectDatabaseModel", () => {
     await dao.updateMany(filter, update);
   });
   test("Should clear collection", async () => {
-    dao.deleteMany({});
+    await dao.deleteMany({});
     count = await dao.findMany({}).count();
     expect(count).toBeFalsy();
   });
