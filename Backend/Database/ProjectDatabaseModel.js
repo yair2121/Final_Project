@@ -18,13 +18,16 @@ class ProjectDatabaseModel extends IDatabaseModel {
     }
   }
 
+  close() {
+    this.client.close();
+  }
   // Connects to a collection in database and initialises collection property
   async connect(db_name, collection_name) {
-    console.log("PDM connect called");
-    await new MongoClient(uri, {
+    this.client = new MongoClient(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    })
+    });
+    await this.client
       .connect()
       .catch((err) => {
         // MongoClient failed to connect
@@ -32,13 +35,11 @@ class ProjectDatabaseModel extends IDatabaseModel {
         process.exit(1);
       })
       .then(async (client) => {
-        console.log("PDM connected");
         this.collection = await ProjectDatabaseModel.getCollection(
           client,
           db_name,
           collection_name
         );
-        console.log("done");
       });
   }
 
