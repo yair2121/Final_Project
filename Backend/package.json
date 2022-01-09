@@ -20,6 +20,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.17.2",
+    "mongodb": "^4.3.0",
     "prompt-sync": "^4.2.0",
     "uuid": "^8.3.2"
   },
