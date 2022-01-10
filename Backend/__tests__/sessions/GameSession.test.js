@@ -1,13 +1,14 @@
-jest.mock("../../Games/BaseGameModel");
+// jest.mock("../../Games/BaseGameModel");
 const { BaseGameModel } = require("../../Games/BaseGameModel");
+const { HundredSumModel } = require("../../Games/SumGame/100SumGame");
 const { GameSession } = require("../../sessions/game_session/GameSession");
 let mock_move = { moving: "move", doing: "nothing" };
 
-const mock_game = new BaseGameModel();
+const mock_game = new HundredSumModel();
 let game_session = null;
 describe("Test GameSession class", () => {
   beforeEach(() => {
-    game_session = new GameSession(mock_game, null);
+    game_session = new GameSession("0", mock_game, null);
     game_session.add_player(0);
     game_session.add_player(1);
     game_session.add_player(2);
@@ -22,6 +23,12 @@ describe("Test GameSession class", () => {
   test("add_player will add a new player to player_ids when called with a new id", () => {
     game_session.add_player(4);
     expect(4 in game_session.player_ids).toBeTruthy();
+  });
+  test("add_player will throw exception when game_model reached max players", () => {
+    game_session.add_player(4);
+    expect(() => {
+      game_session.add_player(5);
+    }).toThrow();
   });
   test("add_player will throw exception when called with a existing id", () => {
     expect(() => {
