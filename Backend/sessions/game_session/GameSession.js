@@ -1,10 +1,9 @@
-const { v1: uuidv1 } = require("uuid");
 /**
  * A game session.
  */
 class GameSession {
-  constructor(game_model, database_controller) {
-    this.session_id = uuidv1();
+  constructor(session_id, game_model, database_controller) {
+    this.session_id = session_id;
     this.player_ids = {};
     this.connected_players = 0;
     this.game_model = game_model;
@@ -18,20 +17,32 @@ class GameSession {
   start_session() {
     this.game_model.play(this.connected_players); // TODO: may throw exception- not sure if this class will take care of it or the wrapper server.
   }
-
   /**
-   * Add player to the game.
-   *
-   * @param {number} id- id for the new player.
+   * Validate that given new player can be added to the session.
+   * @param {string} id- id for the new player.
    * @throws When id is already exists.
+   * @throws When game_model past it's max player_count.
    */
-  add_player(id) {
-    if (!(id in this.player_ids)) {
-      this.player_ids[id] = this.connected_players;
-      this.connected_players++;
-    } else {
+  #validate_add_player(id) {
+    if (id in this.player_ids) {
       throw "Id already in the game";
     }
+    if (this.game_model.max_player_count === this.connected_players) {
+      throw "Session is already full";
+    }
+  }
+
+  /**
+   * Will add player to the game.
+   *
+   * @param {string} id- id for the new player.
+   * @throws When id is already exists.
+   * @throws When game_model past it's max player_count.
+   */
+  add_player(id) {
+    this.#validate_add_player(id);
+    this.player_ids[id] = this.connected_players;
+    this.connected_players++;
   }
 
   /**
