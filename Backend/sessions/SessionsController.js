@@ -8,6 +8,7 @@ const { v1: uuidv1 } = require("uuid");
 class SessionsController {
   constructor() {
     this.game_sessions = {};
+    //TODO: active and inactive sessions, need to use observer.
   }
 
   /**
@@ -25,7 +26,7 @@ class SessionsController {
   }
   /**
    * Close session of given session id.
-   * @param {string} session_id
+   * @param {string} session_id.
    * @throws When session_id does not exist.
    */
   close_session(session_id) {
@@ -62,11 +63,12 @@ class SessionsController {
    * Add given player id to available game, will create a new session if necessary.
    * @param {string} player_id- id of player.
    * @param {string} game_name- name of the game to connect the player.
-   * @returns Socket io for the player to connect to.
+   * @returns Socket io for the player to connect to. //TODO: return socket io
    * @throws When game_name does not exist.
    * @throws When player id exists in active session.
    */
   connect_player(player_id, game_name) {
+    //TODO: think if we should prevent from a player to join multiple games.
     this.#validate_connect_player(player_id, game_name);
     let relevant_sessions = this.#get_sessions_of_game(game_name);
     for (const [session_id, session] of Object.entries(this.game_sessions)) {
@@ -74,7 +76,6 @@ class SessionsController {
       try {
         session.add_player(player_id); // Will throw "Session already full" if session is full.
         return session_id;
-        break;
       } catch (error) {}
     }
     let session_id = this.#create_session(game_name); // Create new session because relevant session does not exist

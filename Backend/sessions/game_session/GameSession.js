@@ -12,7 +12,7 @@ class GameSession {
   /**
    * Start the game.
    *
-   * @throws When not enough player join the game.
+   * @throws When not enough player join the game. //TODO: implement this
    */
   start_session() {
     this.game_model.play(this.connected_players); // TODO: may throw exception- not sure if this class will take care of it or the wrapper server.
