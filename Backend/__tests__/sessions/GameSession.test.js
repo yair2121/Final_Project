@@ -13,7 +13,6 @@ describe("Test GameSession class", () => {
     game_session.add_player(1);
     game_session.add_player(2);
     game_session.add_player(3);
-    // mock_game.mockClear();
   });
 
   test("add_player will increase player count when a new player is added", () => {
