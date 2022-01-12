@@ -57,6 +57,4 @@ function run_Test() {
   }
 }
 
-run_Test();
-
 module.exports = { HundredSumModel };
