@@ -5,17 +5,14 @@ class HundredSumModel extends BaseGameModel {
   constructor() {
     super("Hundred game", 2, 5);
     this.sum = 0;
-    this.moves = [];
     this.current_player = 0;
-    this.isRunning = false;
     this.winning_player = null;
   }
   play(number_of_players) {
     super.play(number_of_players);
     this.number_of_players = number_of_players;
-    this.isRunning = true;
   }
-  is_valid_move(move_description) {
+  validate_move(move_description) {
     const { number, player } = move_description;
     return (
       this.isRunning &&
@@ -27,37 +24,22 @@ class HundredSumModel extends BaseGameModel {
   apply_move(move_description) {
     const number = move_description.number;
     this.sum += number;
-    this.moves.push({
-      player: this.current_player,
-      move: number,
-      current_sum: this.sum,
-    });
-  }
-  make_move(move_description) {
-    if (this.is_valid_move(move_description)) {
-      this.apply_move(move_description);
-      if (this.sum >= WINNING_NUMBER) {
-        this.winning_player = move_description.player;
-        this.isRunning = false;
-      } else {
-        this.current_player =
-          (this.current_player + 1) % this.number_of_players;
-      }
+    if (this.sum >= WINNING_NUMBER) {
+      this.winning_player = move_description.player;
+      this.isRunning = false;
+    } else {
+      this.current_player = (this.current_player + 1) % this.number_of_players;
     }
   }
+
+  process_move(move_description) {}
+
   get_state() {
-    return {
+    return Object.assign({}, super.get_state(), {
       sum: this.sum,
       player_turn: this.current_player,
-      is_running: this.isRunning,
       winning_player: this.winning_player,
-    };
-  }
-  get_move() {
-    return this.moves[this.moves.slice(-1)];
-  }
-  get_game_report() {
-    return { moves: this.moves, ...this.get_state() };
+    });
   }
 }
 
@@ -74,5 +56,7 @@ function run_Test() {
     console.log(test.get_state());
   }
 }
+
+run_Test();
 
 module.exports = { HundredSumModel };
