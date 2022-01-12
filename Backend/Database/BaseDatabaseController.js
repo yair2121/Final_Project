@@ -1,11 +1,16 @@
 class BaseDatabaseController {
-  constructor(dbmodel, db_name, collection_name) {
+  constructor(dbmodel) {
     this.model = dbmodel;
-    dbmodel.connect(db_name, collection_name);
+  }
+  async ini(db_name, collection_name) {
+    return await this.model.connect(db_name, collection_name);
+  }
+  insertOne(data) {
+    return this.model.insertOne(data);
   }
 
-  upload(data) {
-    return this.model.insertOne(data);
+  insertMany(data) {
+    return this.model.insertMany(data);
   }
 
   findOne(query) {
@@ -21,7 +26,7 @@ class BaseDatabaseController {
   }
 
   updateMany(query, update, options = {}) {
-    return this.model.updateMany(query, update, otpions);
+    return this.model.updateMany(query, update, options);
   }
 
   deleteOne(query) {
@@ -30,6 +35,10 @@ class BaseDatabaseController {
 
   deleteMany(query) {
     return this.model.deleteMany(query);
+  }
+
+  close() {
+    return this.model.close();
   }
 }
 
