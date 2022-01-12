@@ -7,8 +7,16 @@ const { v1: uuidv1 } = require("uuid");
  */
 class SessionsController {
   constructor() {
-    this.game_sessions = {};
-    //TODO: active and inactive sessions, need to use observer.
+    this.sessions = {
+      unready_sessions: {},
+      full_sessions: {},
+      active_sessions: {},
+    };
+    for (let game_name in games_dict) {
+      this.sessions.unready_sessions[game_name] = {};
+      this.sessions.full_sessions[game_name] = {};
+      this.sessions.active_sessions[game_name] = {};
+    }
   }
 
   /**
@@ -16,49 +24,56 @@ class SessionsController {
    * @param {string} session_id.
    * @returns TODO: return socket io for the client.
    * @throws When session_id does not exist.
+   * @throws When game_name does not exist.
    */
-  #get_session(session_id) {
-    if (session_id in this.game_sessions) {
-      return this.game_sessions[session_id];
-    } else {
+  #get_session(game_name, session_id) {
+    if (!(game_name in games_dict)) {
+      throw "game does not exist";
+    }
+    let container = null;
+    let session = null;
+    if (session_id in this.sessions.unready_sessions[game_name]) {
+      container = this.sessions.unready_sessions;
+      session = this.sessions.unready_sessions[game_name][session_id];
+    } else if (session_id in this.sessions.full_sessions[game_name]) {
+      container = this.sessions.full_sessions;
+      session = this.sessions.full_sessions[game_name][session_id];
+    } else if (session_id in this.sessions.active_sessions[game_name]) {
+      container = this.sessions.active_sessions;
+      session = this.sessions.active_sessions[game_name][session_id];
+    }
+    if (container === null) {
       throw "session_id does not exist";
     }
+    return {
+      container: container,
+      session: session,
+    };
   }
+
   /**
    * Close session of given session id.
    * @param {string} session_id.
    * @throws When session_id does not exist.
+   * @throws When game_name does not exist.
    */
-  close_session(session_id) {
-    this.#get_session(session_id).close();
-    delete this.game_sessions[session_id];
+  close_session(game_name, session_id) {
+    const { container, session } = this.#get_session(game_name, session_id);
+    session.close();
+    delete container[game_name][session_id];
   }
   /**
    * Validate that given player request can be given.
    * @param {string} player_id- id of player.
    * @param {string} game_name- name of the game to connect the player.
    * @throws When game_name does not exist.
-   * @throws When player_id in existing session.
    */
   #validate_connect_player(player_id, game_name) {
     if (!(game_name in games_dict)) {
       throw "game does not exist";
     }
-    for (const [session_id, session] of Object.entries(this.game_sessions)) {
-      if (player_id in session.player_ids) {
-        throw "Player already in session" + session.session_id;
-      }
-    }
   }
 
-  #get_sessions_of_game(game_name) {
-    if (Object.keys(this.game_sessions).length === 0) {
-      return this.game_sessions;
-    }
-    return Object.keys(this.game_sessions).reduce(
-      (session) => session.game_model.game_name === game_name
-    );
-  }
   /**
    * Add given player id to available game, will create a new session if necessary.
    * @param {string} player_id- id of player.
@@ -68,18 +83,17 @@ class SessionsController {
    * @throws When player id exists in active session.
    */
   connect_player(player_id, game_name) {
-    //TODO: think if we should prevent from a player to join multiple games.
     this.#validate_connect_player(player_id, game_name);
-    let relevant_sessions = this.#get_sessions_of_game(game_name);
-    for (const [session_id, session] of Object.entries(this.game_sessions)) {
-      // Try to find a relevant session
+    const relevant_sessions = this.sessions.unready_sessions[game_name];
+    for (const session_id in relevant_sessions) {
+      // Try to add player to session
       try {
-        session.add_player(player_id); // Will throw "Session already full" if session is full.
+        session.add_player(player_id);
         return session_id;
       } catch (error) {}
     }
-    let session_id = this.#create_session(game_name); // Create new session because relevant session does not exist
-    this.game_sessions[session_id].add_player(player_id);
+    const session_id = this.#create_session(game_name); // Create new session because relevant session does not exist
+    this.sessions.unready_sessions[game_name][session_id].add_player(player_id);
     return session_id;
   }
 
@@ -92,7 +106,7 @@ class SessionsController {
     const database = null; //TODO: implement this
     const session_id = uuidv1();
     const { model } = games_dict[game_name];
-    this.game_sessions[session_id] = new GameSession(
+    this.sessions.unready_sessions[game_name][session_id] = new GameSession(
       session_id,
       new model(game_name),
       database
