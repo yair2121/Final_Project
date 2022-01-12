@@ -1,24 +1,35 @@
+const EventEmitter = require("events");
+
 /**
  * A game session.
  */
-class GameSession {
+class GameSession extends EventEmitter {
   #game_model;
   #database_controller;
   constructor(session_id, game_model, database_controller) {
+    super();
     this.session_id = session_id;
     this.player_ids = {};
     this.connected_players = 0;
     this.#game_model = game_model;
     this.#database_controller = database_controller;
+    this.#game_model.on("Game ended", () => {
+      this.close(); // TODO: Not sure if we should call it here or let the server be responsible for that.
+      this.emit("Game ended");
+    });
   }
+
   /**
    * Start the game.
    *
-   * @throws When not enough player join the game. //TODO: implement this
+   * @throws When too many players joined the game.
+   * @throws When not enough players joined the game.
    */
   start_session() {
-    this.#game_model.play(this.connected_players); // TODO: may throw exception- not sure if this class will take care of it or the wrapper server.
+    this.#game_model.play(this.connected_players);
+    this.emit("Session started", this.game_model.game_name, this.session_id);
   }
+
   /**
    * Validate that given new player can be added to the session.
    * @param {string} id- id for the new player.

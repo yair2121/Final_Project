@@ -1,11 +1,13 @@
-var interface_default =
+const interface_default =
   require("../interfaceConfig").resolvePrecept("BaseGameModel");
+const EventEmitter = require("events");
 
 /**
  * Base class for games models.
  */
-class BaseGameModel {
+class BaseGameModel extends EventEmitter {
   constructor(game_name, min_player_count, max_player_count) {
+    super();
     this.game_name = game_name;
     this.max_player_count = max_player_count;
     this.min_player_count = min_player_count;
@@ -17,14 +19,15 @@ class BaseGameModel {
   /**
    *
    * @param {number} number_of_players- Fixed number of players in game.
-   * @throws When number_of_players not in range of game accepted range
+   * @throws When number_of_players larger then max_player_count.
+   * @throws When number_of_players smaller then min_player_count.
    */
   play(number_of_players) {
-    if (
-      number_of_players > this.max_player_count ||
-      number_of_players < this.min_player_count
-    ) {
-      throw "Incorrect number of players";
+    if (number_of_players > this.max_player_count) {
+      throw "Too many players";
+    }
+    if (number_of_players < this.min_player_count) {
+      throw "Not enough players";
     }
     this.isRunning = true;
     this.start_date = new Date();
@@ -63,6 +66,9 @@ class BaseGameModel {
     this.moves.push(Object.assign({}, { Time: new Date() }, move_description));
   }
 
+  finish_game(move_description) {
+    this.emit("Game ended");
+  }
   /**
    * Will apply given move to the game.
    * @param {dictionary} move_description- Dictionary that hold description of current move,

@@ -21,12 +21,16 @@ class HundredSumModel extends BaseGameModel {
       number < 10
     );
   }
+  finish_game(move_description) {
+    this.winning_player = move_description.player;
+    this.isRunning = false;
+    super.finish_game(move_description);
+  }
   apply_move(move_description) {
     const number = move_description.number;
     this.sum += number;
     if (this.sum >= WINNING_NUMBER) {
-      this.winning_player = move_description.player;
-      this.isRunning = false;
+      this.finish_game(move_description);
     } else {
       this.current_player = (this.current_player + 1) % this.number_of_players;
     }
