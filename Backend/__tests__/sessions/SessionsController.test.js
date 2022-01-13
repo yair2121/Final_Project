@@ -2,13 +2,16 @@ const { GameSession } = require("../../sessions/game_session/GameSession");
 const { SessionsController } = require("../../sessions/SessionsController");
 
 let sessions_controller = null;
-let sessions_id1 = null;
-let sessions_id2 = null;
+let session_id1 = null;
+let session_id2 = null;
 let game_name = "Hundred Sum";
 describe("Test SessionController class", () => {
   beforeEach(() => {
     sessions_controller = new SessionsController();
-    session_id1 = sessions_controller.connect_player(0, game_name);
+    session_id1 = sessions_controller.connect_player(1, game_name);
+    sessions_controller.sessions.unready_sessions[game_name][
+      session_id1
+    ].add_player(2);
   });
 
   test("close_session will delete session id when given session_id that exists", () => {
@@ -45,9 +48,84 @@ describe("Test SessionController class", () => {
     expect(2 in game_session.player_ids).toBeTruthy();
   });
 
-  test("connect_player will throw when given game_name does not exists", () => {
+  test("connect_player will throw when given game_name that does not exists", () => {
     expect(() => {
       sessions_controller.connect_player(3, "bad name");
     }).toThrow();
   });
+
+  test("Will move unready session to active_session when receive on 'Session started'", () => {
+    sessions_controller.sessions.unready_sessions[game_name][
+      session_id1
+    ].start_session();
+    let start_condition = did_session_moved(
+      session_id1,
+      sessions_controller.sessions.unready_sessions[game_name],
+      sessions_controller.sessions.active_sessions[game_name]
+    );
+    let end_condition = did_session_moved(
+      session_id1,
+      sessions_controller.sessions.active_sessions[game_name],
+      sessions_controller.sessions.unready_sessions[game_name]
+    );
+    expect(!start_condition && end_condition).toBeTruthy();
+  });
+
+  test("Will move full session to active_session when receive on 'Session started'", () => {
+    for (let player_id = 0; player_id < 3; player_id++) {
+      sessions_controller.sessions.unready_sessions[game_name][
+        session_id1
+      ].add_player(player_id + 3);
+    }
+    sessions_controller.sessions.full_sessions[game_name][
+      session_id1
+    ].start_session();
+    let start_condition = did_session_moved(
+      session_id1,
+      sessions_controller.sessions.full_sessions[game_name],
+      sessions_controller.sessions.active_sessions[game_name]
+    );
+    let end_condition = did_session_moved(
+      session_id1,
+      sessions_controller.sessions.active_sessions[game_name],
+      sessions_controller.sessions.full_sessions[game_name]
+    );
+    expect(!start_condition && end_condition).toBeTruthy();
+  });
+
+  test("Will move unready session to full_session when receive on 'Session full'", () => {
+    for (let player_id = 0; player_id < 3; player_id++) {
+      sessions_controller.sessions.unready_sessions[game_name][
+        session_id1
+      ].add_player(player_id + 3);
+    }
+    const start_condition = did_session_moved(
+      session_id1,
+      sessions_controller.sessions.unready_sessions[game_name],
+      sessions_controller.sessions.full_sessions[game_name]
+    );
+    const end_condition = did_session_moved(
+      session_id1,
+      sessions_controller.sessions.full_sessions[game_name],
+      sessions_controller.sessions.unready_sessions[game_name]
+    );
+    expect(!start_condition && end_condition).toBeTruthy();
+  });
+
+  test("Will delete a session when receive 'Session ended'", () => {
+    sessions_controller.sessions.unready_sessions[game_name][
+      session_id1
+    ].start_session();
+    const session = sessions_controller.sessions.active_sessions[game_name];
+    const start_condition = session_id1 in session;
+    session[session_id1].close();
+    const end_condition = !(session_id1 in session);
+    expect(start_condition && end_condition).toBeTruthy();
+  });
 });
+
+function did_session_moved(session_id, sessions_source, sessions_target) {
+  const result =
+    session_id in sessions_source && !(session_id in sessions_target);
+  return result;
+}
