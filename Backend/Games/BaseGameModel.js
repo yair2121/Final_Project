@@ -66,9 +66,15 @@ class BaseGameModel extends EventEmitter {
     this.moves.push(Object.assign({}, { Time: new Date() }, move_description));
   }
 
+  /**
+   * Update the game state to represent that the game ended.
+   * @emits "Game ended"
+   * @param {dictionary} move_description
+   */
   finish_game(move_description) {
     this.emit("Game ended");
   }
+
   /**
    * Will apply given move to the game.
    * @param {dictionary} move_description- Dictionary that hold description of current move,

@@ -13,8 +13,16 @@ class GameSession extends EventEmitter {
     this.connected_players = 0;
     this.#game_model = game_model;
     this.#database_controller = database_controller;
+    this.#subscribe_game_model();
+  }
+
+  /**
+   * Subscribe to emits of #game_model.
+   * @emits "Game ended" on #game_model: "Game ended"
+   */
+  #subscribe_game_model() {
     this.#game_model.on("Game ended", () => {
-      this.close(); // TODO: Not sure if we should call it here or let the server be responsible for that.
+      // TODO: maybe update here the Database with game report.
       this.emit("Game ended");
     });
   }
@@ -24,10 +32,11 @@ class GameSession extends EventEmitter {
    *
    * @throws When too many players joined the game.
    * @throws When not enough players joined the game.
+   * @emits "Session started"
    */
   start_session() {
     this.#game_model.play(this.connected_players);
-    this.emit("Session started", this.game_model.game_name, this.session_id);
+    this.emit("Session started", this.#game_model.game_name, this.session_id);
   }
 
   /**
@@ -51,11 +60,15 @@ class GameSession extends EventEmitter {
    * @param {string} id- id for the new player.
    * @throws When id is already exists.
    * @throws When game_model past it's max player_count.
+   * @emits 'Session full' when session reached it's max_player_counts
    */
   add_player(id) {
     this.#validate_add_player(id);
     this.player_ids[id] = this.connected_players;
     this.connected_players++;
+    if (this.connected_players === this.#game_model.max_player_count) {
+      this.emit("Session full", this.#game_model.game_name, this.session_id);
+    }
   }
 
   /**
@@ -63,6 +76,7 @@ class GameSession extends EventEmitter {
    * @param {JSON} move_description- Describe the current move.
    */
   make_move(move_description) {
+    //TODO: checks if this throw
     this.#game_model.make_move(JSON.parse(move_description));
   }
 
@@ -83,9 +97,11 @@ class GameSession extends EventEmitter {
 
   /**
    * Upload to the game report to the database.
+   * @emits "Session ended"
    */
   close() {
     //TODO: implement this and database implementation
+    this.emit("Session ended", this.#game_model.game_name, this.session_id);
   }
 
   /**

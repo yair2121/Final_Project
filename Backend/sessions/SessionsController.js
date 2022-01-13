@@ -58,8 +58,7 @@ class SessionsController {
    * @throws When game_name does not exist.
    */
   close_session(game_name, session_id) {
-    const { container, session } = this.#get_session(game_name, session_id);
-    session.close();
+    const { container } = this.#get_session(game_name, session_id);
     delete container[game_name][session_id];
   }
   /**
@@ -80,7 +79,6 @@ class SessionsController {
    * @param {string} game_name- name of the game to connect the player.
    * @returns Socket io for the player to connect to. //TODO: return socket io
    * @throws When game_name does not exist.
-   * @throws When player id exists in active session.
    */
   connect_player(player_id, game_name) {
     this.#validate_connect_player(player_id, game_name);
@@ -96,7 +94,23 @@ class SessionsController {
     this.sessions.unready_sessions[game_name][session_id].add_player(player_id);
     return session_id;
   }
+  #subscribe_game_session(game_session) {
+    game_session.on("Session started", (game_name, session_id) => {
+      const { container, session } = this.#get_session(game_name, session_id);
+      this.sessions.active_sessions[game_name][session_id] = session;
+      delete container[game_name][session_id];
+    });
 
+    game_session.on("Session full", (game_name, session_id) => {
+      this.sessions.full_sessions[game_name][session_id] =
+        this.sessions.unready_sessions[game_name][session_id];
+      delete this.sessions.unready_sessions[game_name][session_id];
+    });
+
+    game_session.on("Session ended", (game_name, session_id) => {
+      this.close_session(game_name, session_id);
+    });
+  }
   /**
    * Create a new game session of game_name.
    * @param {string} game_name-  Create new session of game_name.
@@ -106,11 +120,13 @@ class SessionsController {
     const database = null; //TODO: implement this
     const session_id = uuidv1();
     const { model } = games_dict[game_name];
-    this.sessions.unready_sessions[game_name][session_id] = new GameSession(
+    const game_session = new GameSession(
       session_id,
       new model(game_name),
       database
     );
+    this.#subscribe_game_session(game_session);
+    this.sessions.unready_sessions[game_name][session_id] = game_session;
     return session_id;
   }
 }

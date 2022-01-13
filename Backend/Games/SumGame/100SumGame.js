@@ -3,7 +3,7 @@ const WINNING_NUMBER = 100;
 
 class HundredSumModel extends BaseGameModel {
   constructor() {
-    super("Hundred game", 2, 5);
+    super("Hundred Sum", 2, 5);
     this.sum = 0;
     this.current_player = 0;
     this.winning_player = null;

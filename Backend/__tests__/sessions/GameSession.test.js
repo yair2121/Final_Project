@@ -67,4 +67,28 @@ describe("Test GameSession class", () => {
     mock_game.finish_game();
     expect(emitted).toBeTruthy();
   });
+  test("Will emit 'Game ended' when game_model finish the game", () => {
+    let emitted = false;
+    game_session.on("Game ended", () => {
+      emitted = true;
+    });
+    mock_game.finish_game();
+    expect(emitted).toBeTruthy();
+  });
+  test("Will emit 'Session full' when final player added to session", () => {
+    let emitted = false;
+    game_session.on("Session full", () => {
+      emitted = true;
+    });
+    game_session.add_player(3);
+    expect(emitted).toBeTruthy();
+  });
+  test("Will emit 'Session started' when start_session is called", () => {
+    let emitted = false;
+    game_session.on("Session started", () => {
+      emitted = true;
+    });
+    game_session.start_session();
+    expect(emitted).toBeTruthy();
+  });
 });
