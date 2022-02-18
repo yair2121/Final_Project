@@ -1,41 +1,28 @@
 import React, { useState } from "react";
 
-import { StyleSheet, Button, TextInput, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
-
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Image,
+  TouchableOpacity,
+  Text,
+} from "react-native";
+import logo from "../../../assets/logo/controllerLogo.png";
 import uuid from "react-native-uuid";
+import { COLORS } from "../../constants/colors";
 
 export const UserContext = React.createContext();
-
-const test = () => {
-  setPlayerId(uuid.v1());
-};
 
 export default function LoginScreen({ navigation }) {
   const [playerId, setPlayerId] = useState(null);
   const [playerName, setPlayerName] = useState(null);
   const playerInfo = { id: playerId, name: playerName };
 
-  const NameTextBox = () => {
-    return (
-      <View style={styles.inputView}>
-        <TextInput
-          id="hey"
-          style={styles.TextInput}
-          placeholder=""
-          placeholderTextColor="#003f5c"
-          onChangeText={(name) => setPlayerName(name)}
-          defaultValue={playerName}
-        />
-      </View>
-    );
-  };
-
   const LoginButton = () => {
     return (
-      <Button
+      <TouchableOpacity
         style={styles.loginBtn}
-        title="Login"
         onPress={() => {
           if (playerName) {
             setPlayerId(uuid.v1());
@@ -44,17 +31,20 @@ export default function LoginScreen({ navigation }) {
             navigation.navigate("MainMenu", {});
           }
         }}
-      />
+      >
+        <Text style={styles.TextInput}>LOGIN</Text>
+      </TouchableOpacity>
     );
   };
   return (
     <UserContext.Provider value={playerInfo}>
-      <View>
+      <View style={styles.container}>
+        <Image style={styles.logo} source={logo} />
         <View style={styles.inputView}>
           <TextInput
             id="hey"
             style={styles.TextInput}
-            placeholder=""
+            placeholder="Enter your name."
             placeholderTextColor="#003f5c"
             onChangeText={(name) => setPlayerName(name)}
             defaultValue={playerName}
@@ -70,12 +60,13 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.backgroundBlue,
     alignItems: "center",
     justifyContent: "center",
   },
-
-  image: {
+  logo: {
+    width: 66,
+    height: 58,
     marginBottom: 40,
   },
   inputView: {
@@ -94,11 +85,31 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     width: "80%",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
     backgroundColor: "#FF1493",
+    borderWidth: 0,
+    color: "#FFFFFF",
+    borderColor: "#7DE24E",
+    height: 40,
+    alignItems: "center",
+    borderRadius: 30,
+    marginLeft: 35,
+    marginRight: 35,
+    marginTop: 20,
+    marginBottom: 25,
   },
 });
+
+// const NameTextBox = () => {
+//   return (
+//     <View style={styles.inputView}>
+//       <TextInput
+//         id="hey"
+//         style={styles.TextInput}
+//         placeholder="Enter your name."
+//         placeholderTextColor="#003f5c"
+//         onChangeText={(name) => setPlayerName(name)}
+//         defaultValue={playerName}
+//       />
+//     </View>
+//   );
+// };
