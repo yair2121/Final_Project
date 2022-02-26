@@ -7,38 +7,33 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-const DATA = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    title: "First Item",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    title: "Second Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-];
 
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-    <Text style={[styles.title, textColor]}>{item.title}</Text>
-  </TouchableOpacity>
+import { Button } from "react-native-elements/dist/buttons/Button";
+
+import GAMES from "./gamesArray";
+
+const GameButton = ({ game, onPress, backgroundColor, textColor }) => (
+  <Button
+    onPress={onPress}
+    buttonStyle={[styles.item, backgroundColor]}
+    titleStyle={(styles.title, textColor)}
+    title={game.title}
+  ></Button>
 );
 
-const App = () => {
+const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);
-
-  const renderItem = ({ item }) => {
-    const backgroundColor = item.id === selectedId ? "#6e3b6e" : "#f9c2ff";
-    const color = item.id === selectedId ? "white" : "black";
+  const renderGame = ({ game }) => {
+    const backgroundColor = game.id === selectedId ? "#6e3b6e" : "#f9c2ff";
+    const color = game.id === selectedId ? "white" : "black";
 
     return (
-      <Item
-        item={item}
-        onPress={() => item.id}
+      <GameButton
+        game={game}
+        onPress={() => {
+          setSelectedId(game.id);
+          // navigation.navigate(game.id, {});
+        }}
         backgroundColor={{ backgroundColor }}
         textColor={{ color }}
       />
@@ -46,30 +41,56 @@ const App = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        extraData={selectedId}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={GAMES}
+      keyExtractor={(item) => {
+        return item.title;
+        // return index.toString();
+      }}
+      renderItem={({ item }) => (
+        <Button
+          title={item.title}
+          onPress={() => {
+            navigation.navigate("GameScreen", { title: item.title });
+          }}
+          buttonStyle={styles.button}
+          titleStyle={styles.gameTitle}
+          containerStyle={styles.container}
+        ></Button>
+      )}
+      keyExtractor={(game) => game.id}
+      extraData={selectedId}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+    marginHorizontal: 50,
+    height: 50,
+    width: 200,
+    marginVertical: 10,
   },
-  item: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+  button: {
+    backgroundColor: "rgba(111, 202, 186, 1)",
+    borderRadius: 30,
   },
-  title: {
-    fontSize: 32,
+  gameTitle: {
+    fontWeight: "bold",
+    fontSize: 23,
   },
 });
 
-export default App;
+// buttonStyle={{
+//   backgroundColor: "rgba(111, 202, 186, 1)",
+//   borderRadius: 30,
+// }}
+// titleStyle={{ fontWeight: "bold", fontSize: 23 }}
+// containerStyle={{
+//   marginHorizontal: 50,
+//   height: 50,
+//   width: 200,
+//   marginVertical: 10,
+// }}
+
+export default GameSelection;
