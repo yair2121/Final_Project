@@ -1,33 +1,40 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  Image,
-  TouchableOpacity,
-  Text,
-} from "react-native";
+import { Input } from "react-native-elements";
+
+import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 import logo from "../../../assets/logo/controllerLogo.png";
 import uuid from "react-native-uuid";
 import { COLORS } from "../../constants/colors";
-
-export const UserContext = React.createContext();
+// import { UserContext } from "../../contexts/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { USER_KEY } from "../../constants/keys";
+// export const UserContext = React.createContext();
 
 export default function LoginScreen({ navigation }) {
   const [playerId, setPlayerId] = useState(null);
   const [playerName, setPlayerName] = useState(null);
-  const playerInfo = { id: playerId, name: playerName };
 
   const LoginButton = () => {
+    const [name, setName] = useState("");
+    // useEffect(() => {
+    //   (async () => {
+    //     setName(JSON.parse(await AsyncStorage.getItem(USER_KEY)).name);
+    //   })();
+    // }, []);
+
     return (
       <TouchableOpacity
         style={styles.loginBtn}
-        onPress={() => {
+        onPress={async () => {
           if (playerName) {
-            setPlayerId(uuid.v1());
-            console.log(playerInfo.id);
-            console.log(playerInfo.name);
+            await AsyncStorage.setItem(
+              USER_KEY,
+              JSON.stringify({
+                id: uuid.v1(),
+                name: playerName,
+              })
+            );
             navigation.navigate("MainMenu", {});
           }
         }}
@@ -36,24 +43,21 @@ export default function LoginScreen({ navigation }) {
       </TouchableOpacity>
     );
   };
+
   return (
-    <UserContext.Provider value={playerInfo}>
-      <View style={styles.container}>
-        <Image style={styles.logo} source={logo} />
-        <View style={styles.inputView}>
-          <TextInput
-            id="hey"
-            style={styles.TextInput}
-            placeholder="Enter your name."
-            placeholderTextColor="#003f5c"
-            onChangeText={(name) => setPlayerName(name)}
-            defaultValue={playerName}
-          />
-        </View>
-        <LoginButton />
-        {/* <Button style={styles.loginBtn} title="Login" onPress={log_player} /> */}
+    // <UserContext.Provider value={playerInfo}>
+    <View style={styles.container}>
+      <Image style={styles.logo} source={logo} />
+      <View style={styles.inputView}>
+        <Input
+          inputStyle={styles.inputView}
+          placeholder="Enter your name."
+          placeholderTextColor="#003f5c"
+          onChangeText={(name) => setPlayerName(name)}
+        ></Input>
       </View>
-    </UserContext.Provider>
+      <LoginButton />
+    </View>
   );
 }
 
@@ -98,18 +102,3 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
 });
-
-// const NameTextBox = () => {
-//   return (
-//     <View style={styles.inputView}>
-//       <TextInput
-//         id="hey"
-//         style={styles.TextInput}
-//         placeholder="Enter your name."
-//         placeholderTextColor="#003f5c"
-//         onChangeText={(name) => setPlayerName(name)}
-//         defaultValue={playerName}
-//       />
-//     </View>
-//   );
-// };
