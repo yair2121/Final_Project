@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
-import { Button } from "react-native-elements/dist/buttons/Button";
+import { Button } from "react-native-elements";
+import { COLORS } from "../constants/colors";
 
 import GAMES from "./gamesArray";
 
@@ -43,6 +44,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 200,
     marginVertical: 10,
+    backgroundColor: COLORS.backgroundBlue,
   },
   button: {
     backgroundColor: "rgba(111, 202, 186, 1)",

@@ -6,13 +6,10 @@ import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 import logo from "../../../assets/logo/controllerLogo.png";
 import uuid from "react-native-uuid";
 import { COLORS } from "../../constants/colors";
-// import { UserContext } from "../../contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
-// export const UserContext = React.createContext();
 
 export default function LoginScreen({ navigation }) {
-  const [playerId, setPlayerId] = useState(null);
   const [playerName, setPlayerName] = useState(null);
 
   const LoginButton = () => {
@@ -34,7 +31,9 @@ export default function LoginScreen({ navigation }) {
                 id: uuid.v1(),
                 name: playerName,
               })
-            );
+            ).then(() => {
+              setPlayerName("");
+            });
             navigation.navigate("MainMenu", {});
           }
         }}
@@ -45,11 +44,11 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    // <UserContext.Provider value={playerInfo}>
     <View style={styles.container}>
       <Image style={styles.logo} source={logo} />
       <View style={styles.inputView}>
         <Input
+          value={playerName}
           inputStyle={styles.inputView}
           placeholder="Enter your name."
           placeholderTextColor="#003f5c"

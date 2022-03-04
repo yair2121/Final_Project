@@ -9,11 +9,10 @@ import { USER_KEY } from "../../constants/keys";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import GameSelection from "../../games/GamesSelection";
-
+// AsyncStorage.getItem(USER_KEY).then((item) => {
+//   console.log(JSON.parse(item));
+// });
 export default function MainMenu({ navigation }) {
-  // AsyncStorage.getItem(USER_KEY).then((item) => {
-  //   console.log(JSON.parse(item));
-  // });
   return (
     <View style={styles.container}>
       <GameSelection navigation={navigation} />
