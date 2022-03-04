@@ -1,6 +1,5 @@
 import { View } from "react-native";
 
-import { Text } from "react-native-elements";
 import { StyleSheet } from "react-native";
 import React from "react";
 

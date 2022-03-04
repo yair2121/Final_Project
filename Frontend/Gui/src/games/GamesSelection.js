@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  FlatList,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 
 import { Button } from "react-native-elements/dist/buttons/Button";
 
@@ -23,22 +16,6 @@ const GameButton = ({ game, onPress, backgroundColor, textColor }) => (
 
 const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);
-  const renderGame = ({ game }) => {
-    const backgroundColor = game.id === selectedId ? "#6e3b6e" : "#f9c2ff";
-    const color = game.id === selectedId ? "white" : "black";
-
-    return (
-      <GameButton
-        game={game}
-        onPress={() => {
-          setSelectedId(game.id);
-          // navigation.navigate(game.id, {});
-        }}
-        backgroundColor={{ backgroundColor }}
-        textColor={{ color }}
-      />
-    );
-  };
 
   return (
     <FlatList
