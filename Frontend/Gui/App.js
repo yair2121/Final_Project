@@ -46,9 +46,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <StatusBar hidden={true} />
-        {/* <UserContext.Provider value={null}> */}
         <StackScreen />
-        {/* </UserContext.Provider> */}
       </NavigationContainer>
     </UserProvider>
   );

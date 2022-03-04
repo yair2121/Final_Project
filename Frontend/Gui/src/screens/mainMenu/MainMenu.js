@@ -11,14 +11,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import GameSelection from "../../games/GamesSelection";
 
 export default function MainMenu({ navigation }) {
-  const getData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(USER_KEY);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // error reading value
-    }
-  };
+  // const getData = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem(USER_KEY);
+  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
   // console.log(getData());
   return (
     <View style={styles.container}>

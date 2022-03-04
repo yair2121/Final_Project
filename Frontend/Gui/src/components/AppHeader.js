@@ -1,11 +1,12 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Header, Icon } from "react-native-elements";
-
+import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS } from "../constants/colors";
 import settingIMG from "../../assets/icons/setting.png";
 import { Button, Image } from "react-native-elements";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function AppHeader() {
   const navigation = useNavigation();
@@ -27,14 +28,15 @@ export default function AppHeader() {
       leftContainerStyle={{}}
       placement="center"
       rightComponent={
-        <TouchableOpacity
+        <FontAwesome
+          rendered="#{false}"
+          name="sign-out"
+          size={24}
+          color="#fff"
           onPress={() => {
-            console.log(navigation);
-            navigation.navigate("Setting", {});
+            navigation.navigate("LoginScreen", {});
           }}
-        >
-          <Icon name="settings" color="#fff" />
-        </TouchableOpacity>
+        />
       }
     />
   );

@@ -43,10 +43,6 @@ const GameSelection = ({ navigation }) => {
   return (
     <FlatList
       data={GAMES}
-      keyExtractor={(item) => {
-        return item.title;
-        // return index.toString();
-      }}
       renderItem={({ item }) => (
         <Button
           title={item.title}
@@ -58,7 +54,7 @@ const GameSelection = ({ navigation }) => {
           containerStyle={styles.container}
         ></Button>
       )}
-      keyExtractor={(game) => game.id}
+      keyExtractor={(game) => game.key}
       extraData={selectedId}
     />
   );
@@ -80,17 +76,5 @@ const styles = StyleSheet.create({
     fontSize: 23,
   },
 });
-
-// buttonStyle={{
-//   backgroundColor: "rgba(111, 202, 186, 1)",
-//   borderRadius: 30,
-// }}
-// titleStyle={{ fontWeight: "bold", fontSize: 23 }}
-// containerStyle={{
-//   marginHorizontal: 50,
-//   height: 50,
-//   width: 200,
-//   marginVertical: 10,
-// }}
 
 export default GameSelection;
