@@ -17,11 +17,11 @@ export default function LoginScreen({ navigation }) {
 
   const LoginButton = () => {
     const [name, setName] = useState("");
-    useEffect(() => {
-      (async () => {
-        setName(JSON.parse(await AsyncStorage.getItem(USER_KEY)).name);
-      })();
-    }, []);
+    // useEffect(() => {
+    //   (async () => {
+    //     setName(JSON.parse(await AsyncStorage.getItem(USER_KEY)).name);
+    //   })();
+    // }, []);
 
     return (
       <TouchableOpacity
@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }) {
           }
         }}
       >
-        <Text style={styles.TextInput}>LOGIN {JSON.stringify(name)}</Text>
+        <Text style={styles.TextInput}>LOGIN</Text>
       </TouchableOpacity>
     );
   };
