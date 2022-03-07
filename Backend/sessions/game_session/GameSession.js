@@ -6,9 +6,8 @@ const EventEmitter = require("events");
 class GameSession extends EventEmitter {
   #game_model;
   #database_controller;
-  constructor(session_id, game_model, database_controller) {
+  constructor(game_model, database_controller) {
     super();
-    this.session_id = session_id;
     this.player_ids = {};
     this.connected_players = 0;
     this.#game_model = game_model;
@@ -36,7 +35,7 @@ class GameSession extends EventEmitter {
    */
   start_session() {
     this.#game_model.play(this.connected_players);
-    this.emit("Session started", this.#game_model.game_name, this.session_id);
+    this.emit("Session started", this.#game_model.game_name);
   }
 
   /**
@@ -67,7 +66,7 @@ class GameSession extends EventEmitter {
     this.player_ids[id] = this.connected_players;
     this.connected_players++;
     if (this.connected_players === this.#game_model.max_player_count) {
-      this.emit("Session full", this.#game_model.game_name, this.session_id);
+      this.emit("Session full", this.#game_model.game_name);
     }
   }
 

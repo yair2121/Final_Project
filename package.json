@@ -21,6 +21,7 @@
     "jest": "^27.4.7"
   },
   "dependencies": {
-    "react-native-login-screen": "^2.1.4"
+    "react-native-login-screen": "^2.1.4",
+    "socket.io": "^4.4.1"
   }
 }

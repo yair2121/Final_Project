@@ -1,7 +1,8 @@
 const { games_dict } = require("../Games/Games_Dictionary");
-const { GameSession } = require("../sessions/game_session/GameSession"); // TODO: replace with GameSessionServer when the class is ready
+const {
+  GameSessionServer,
+} = require("../sessions/game_session/GameSessionServer");
 const { v1: uuidv1 } = require("uuid");
-
 /**
  * Manage games sessions and connection between the client to them.
  */
@@ -120,7 +121,7 @@ class SessionsController {
     const database = null; //TODO: implement this
     const session_id = uuidv1();
     const { model } = games_dict[game_name];
-    const game_session = new GameSession(
+    const game_session = new GameSessionServer(
       session_id,
       new model(game_name),
       database

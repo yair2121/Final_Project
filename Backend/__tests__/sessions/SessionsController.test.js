@@ -1,4 +1,3 @@
-const { GameSession } = require("../../sessions/game_session/GameSession");
 const { SessionsController } = require("../../sessions/SessionsController");
 
 let sessions_controller = null;
@@ -41,12 +40,12 @@ describe("Test SessionController class", () => {
     ).toBeTruthy();
   });
 
-  test("connect_player will add a player to existing session when given non exists player_id and valid game_name", () => {
-    const session_id = sessions_controller.connect_player(2, game_name);
-    const game_session =
-      sessions_controller.sessions.unready_sessions[game_name][session_id];
-    expect(2 in game_session.player_ids).toBeTruthy();
-  });
+  // test("connect_player will add a player to existing session when given non exists player_id and valid game_name", () => {
+  //   const session_id = sessions_controller.connect_player(2, game_name);
+  //   const game_session =
+  //     sessions_controller.sessions.unready_sessions[game_name][session_id];
+  //   expect(2 in game_session.player_ids).toBeTruthy();
+  // });
 
   test("connect_player will throw when given game_name that does not exists", () => {
     expect(() => {

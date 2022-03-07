@@ -4,7 +4,10 @@
     <title>Socket.IO</title>
   </head>
   <body>
-    <button id="btn">secondary</button>
+    <form>
+      <input type="text" id="player_input" name="player_input" /><br />
+      <input type="text" disabled="disabled" id="opp_input" name="opponent" />
+    </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/mock_secondary_index.js"></script>
   </body>

@@ -41,3 +41,5 @@ io.on("connection", (socket) => {
 server.listen(port, () => {
   console.log("listening on *:3000");
 });
+
+exports.getIO = () => io;

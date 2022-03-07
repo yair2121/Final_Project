@@ -9,7 +9,7 @@ jest.spyOn(mock_game, "make_move").mockImplementation(() => {});
 let game_session = null;
 describe("Test GameSession class", () => {
   beforeEach(() => {
-    game_session = new GameSession("0", mock_game, null);
+    game_session = new GameSession(mock_game, null);
     game_session.add_player(0);
     game_session.add_player(1);
     game_session.add_player(2);
