@@ -27,7 +27,9 @@ const StackScreen = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        header: () => <AppHeader />,
+        header: ({ navigation, route }) => {
+          return <AppHeader navigation={navigation} route={route} />;
+        },
       }}
     >
       <Stack.Screen name="LoginScreen" component={LoginScreen} />

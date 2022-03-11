@@ -1,21 +1,27 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
 import { Header, Icon } from "react-native-elements";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { COLORS } from "../constants/colors";
-import settingIMG from "../../assets/icons/setting.png";
-import { Button, Image } from "react-native-elements";
-import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { USER_KEY } from "../constants/keys";
 
-export default function AppHeader() {
-  const navigation = useNavigation();
+export default function AppHeader({ navigation, route }) {
+  // const playerName = navigation.getParam("playerName", false)
+  const [playerName, setPlayerName] = useState();
+  // text: route.params.playerName ? route.params.playerName : "",
   return (
     <Header
       containerStyle={styles.container}
       backgroundColor="black"
       backgroundImageStyle={{ flex: 1 }}
       barStyle="default"
+      centerComponent={{
+        text:
+          playerName in route.params.playerName &&
+          route.params.playerName.toString(),
+        style: styles.heading,
+      }}
       leftComponent={
         <Icon
           name="arrow-back"
@@ -46,6 +52,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.25,
     borderBottomColor: "black",
   },
+  heading: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+
   settingButton: {
     width: 46,
     height: 38,

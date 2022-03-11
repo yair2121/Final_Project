@@ -13,13 +13,6 @@ export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState(null);
 
   const LoginButton = () => {
-    const [name, setName] = useState("");
-    // useEffect(() => {
-    //   (async () => {
-    //     setName(JSON.parse(await AsyncStorage.getItem(USER_KEY)).name);
-    //   })();
-    // }, []);
-
     return (
       <TouchableOpacity
         style={styles.loginBtn}
@@ -34,6 +27,7 @@ export default function LoginScreen({ navigation }) {
             ).then(() => {
               setPlayerName("");
             });
+            navigation.setParams({ playerName: { playerName } });
             navigation.navigate("MainMenu", {});
           }
         }}

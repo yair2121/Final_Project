@@ -6,7 +6,6 @@ import uuid from "react-native-uuid";
 import { USER_KEY } from "../../constants/keys";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { COLORS } from "../../constants/colors";
-import { color } from "react-native-elements/dist/helpers";
 
 const PlayersNames = [
   { key: uuid.v1(), name: "Avital" },
@@ -14,7 +13,7 @@ const PlayersNames = [
   { key: uuid.v1(), name: "Dudi" },
   { key: uuid.v1(), name: "Yair" },
 ];
-// let index = 0;
+
 export default function SumGame({ navigation }) {
   const [player, setPlayer] = useState({});
   const [playerTurn, setPlayerTurn] = useState(PlayersNames[0].key);
@@ -22,7 +21,6 @@ export default function SumGame({ navigation }) {
   const [totalSum, setTotalSum] = useState(0);
 
   useEffect(() => {
-    // const index = 0;
     AsyncStorage.getItem(USER_KEY).then((item) => {
       setPlayer(JSON.parse(item));
     });
@@ -32,9 +30,6 @@ export default function SumGame({ navigation }) {
   }
   function makeMove() {
     playerMove && console.log(playerMove);
-    // index++;
-    // index %= PlayersNames.length;
-    // setPlayerTurn(PlayersNames[index].key);
   }
   return (
     <View>
@@ -45,7 +40,7 @@ export default function SumGame({ navigation }) {
           inputStyle={styles.inputView}
           placeholder="Enter your number."
           placeholderTextColor="#003f5c"
-          onChangeText={(value) => setPlayerMove(value)}
+          onChangeText={(value) => setPlayerMove(value.replace(/[^0-9]/g, ""))}
         ></Input>
         <Button
           disabled={isMyTurn()}
@@ -58,7 +53,7 @@ export default function SumGame({ navigation }) {
         renderItem={({ item }) => (
           <View keyExtractor={(item) => item.key}>
             <Text style={{ color: playerTurn === item.key ? "red" : "black" }}>
-              Name: {item.name}, Score:{item.name === "Avital" ? 1000 : 0}
+              Name: {item.name}, Latest move: {0}
             </Text>
           </View>
         )}
