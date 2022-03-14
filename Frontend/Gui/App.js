@@ -21,6 +21,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { UserContext } from "./src/screens/login/Login";
 import { UserProvider } from "./src/contexts/UserContext";
+import { TITLES } from "./src/constants/titles";
 
 const Stack = createNativeStackNavigator();
 const StackScreen = () => {
@@ -46,7 +47,11 @@ const StackScreen = () => {
 export default function App() {
   return (
     <UserProvider>
-      <NavigationContainer>
+      <NavigationContainer
+        documentTitle={{
+          formatter: (options, route) => TITLES.appName,
+        }}
+      >
         <StatusBar hidden={true} />
         <StackScreen />
       </NavigationContainer>

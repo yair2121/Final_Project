@@ -27,7 +27,7 @@ export default function LoginScreen({ navigation }) {
             ).then(() => {
               setPlayerName("");
             });
-            navigation.setParams({ playerName: { playerName } });
+            // navigation.setParams({ playerName: playerName });
             navigation.navigate("MainMenu", {});
           }
         }}

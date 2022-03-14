@@ -9,6 +9,7 @@ import { USER_KEY } from "../constants/keys";
 export default function AppHeader({ navigation, route }) {
   // const playerName = navigation.getParam("playerName", false)
   const [playerName, setPlayerName] = useState();
+
   // text: route.params.playerName ? route.params.playerName : "",
   return (
     <Header
@@ -16,12 +17,12 @@ export default function AppHeader({ navigation, route }) {
       backgroundColor="black"
       backgroundImageStyle={{ flex: 1 }}
       barStyle="default"
-      centerComponent={{
-        text:
-          playerName in route.params.playerName &&
-          route.params.playerName.toString(),
-        style: styles.heading,
-      }}
+      // centerComponent={{
+      //   text:
+      //     playerName in route.params.playerName &&
+      //     route.params.playerName.toString(),
+      //   style: styles.heading,
+      // }}
       leftComponent={
         <Icon
           name="arrow-back"
