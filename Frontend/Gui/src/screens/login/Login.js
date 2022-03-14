@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-
+import { SocketContext } from "../../contexts/SocketContext";
 import { Input } from "react-native-elements";
 
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
@@ -13,11 +13,13 @@ export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState(null);
 
   const LoginButton = () => {
+    const socket = useContext(SocketContext);
     return (
       <TouchableOpacity
         style={styles.loginBtn}
         onPress={async () => {
           if (playerName) {
+            socket.emit("LOGIN", playerName);
             await AsyncStorage.setItem(
               USER_KEY,
               JSON.stringify({
