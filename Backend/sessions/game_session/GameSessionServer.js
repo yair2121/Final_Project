@@ -1,6 +1,5 @@
 const { GameSession } = require("./GameSession");
 const EventEmitter = require("events");
-//const getIO = require("../Server").getIO;
 class GameSessionServer extends EventEmitter {
   #game_session;
   constructor(session_id, game_model, database_controller) {
