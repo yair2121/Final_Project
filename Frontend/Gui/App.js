@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-
+import { SocketContext, socket } from "./src/contexts/SocketContext";
 import {
   StyleSheet,
   Button,
@@ -65,7 +65,7 @@ const StackScreen = () => {
 };
 export default function App() {
   return (
-    <UserProvider>
+    <SocketContext.Provider value={socket}>
       <NavigationContainer
         documentTitle={{
           formatter: (options, route) => TITLES.appName,
@@ -74,6 +74,6 @@ export default function App() {
         <StatusBar hidden={false} />
         <StackScreen />
       </NavigationContainer>
-    </UserProvider>
+    </SocketContext.Provider>
   );
 }
