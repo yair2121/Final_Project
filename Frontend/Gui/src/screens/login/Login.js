@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
         style={styles.loginBtn}
         onPress={async () => {
           if (playerName) {
-            socket.emit("LOGIN", playerName);
+            socket.emit("login", playerName);
             await AsyncStorage.setItem(
               USER_KEY,
               JSON.stringify({

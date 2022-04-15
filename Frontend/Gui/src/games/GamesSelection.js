@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 import { Button } from "react-native-elements";
@@ -17,7 +17,6 @@ const GameButton = ({ game, onPress, backgroundColor, textColor }) => (
 
 const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);
-
   return (
     <FlatList
       data={GAMES}
