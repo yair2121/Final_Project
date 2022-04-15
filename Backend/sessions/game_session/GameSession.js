@@ -24,6 +24,13 @@ class GameSession extends EventEmitter {
       // TODO: maybe update here the Database with game report.
       this.emit("Game ended");
     });
+    this.#game_model.on("Game state updated", () => {
+      console.log("gamesession emitted");
+      this.emit("Update state");
+    });
+    this.#game_model.on("Move made", (move_description) => {
+      this.emit("Update move", move_description);
+    });
   }
 
   /**
@@ -36,6 +43,7 @@ class GameSession extends EventEmitter {
   start_session() {
     this.#game_model.play(this.connected_players);
     this.emit("Session started", this.#game_model.game_name);
+    //this.emit("Update state");
   }
 
   /**

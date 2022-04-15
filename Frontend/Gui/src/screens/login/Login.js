@@ -19,18 +19,19 @@ export default function LoginScreen({ navigation }) {
         style={styles.loginBtn}
         onPress={async () => {
           if (playerName) {
-            socket.emit("LOGIN", playerName);
-            await AsyncStorage.setItem(
-              USER_KEY,
-              JSON.stringify({
-                id: uuid.v1(),
-                name: playerName,
-              })
-            ).then(() => {
-              setPlayerName("");
+            socket.emit("login", playerName, (response) => {
+              AsyncStorage.setItem(
+                USER_KEY,
+                JSON.stringify({
+                  id: response,
+                  name: playerName,
+                })
+              ).then(() => {
+                setPlayerName("");
+                // navigation.setParams({ playerName: playerName });
+                navigation.navigate("MainMenu", {});
+              });
             });
-            // navigation.setParams({ playerName: playerName });
-            navigation.navigate("MainMenu", {});
           }
         }}
       >

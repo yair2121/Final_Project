@@ -3,7 +3,8 @@ const WINNING_NUMBER = 100;
 
 class HundredSumModel extends BaseGameModel {
   constructor() {
-    super("Hundred Sum", 2, 5);
+    super("Sum Game", 2, 5);
+    //super("Sum Game", 2, 2);
     this.sum = 0;
     this.current_player = 0;
     this.winning_player = null;
@@ -34,9 +35,8 @@ class HundredSumModel extends BaseGameModel {
     } else {
       this.current_player = (this.current_player + 1) % this.number_of_players;
     }
+    this.emit("Move made", move_description);
   }
-
-  process_move(move_description) {}
 
   get_state() {
     return Object.assign({}, super.get_state(), {
@@ -47,18 +47,18 @@ class HundredSumModel extends BaseGameModel {
   }
 }
 
-function run_Test() {
-  var test = new HundredSumModel();
-  test.play(4);
-  player = 0;
-  number = 0;
-  while (test.isRunning) {
-    number = (number + 9) % 10;
-    move = { player: player, number: number };
-    test.make_move(move);
-    player = test.current_player;
-    console.log(test.get_state());
-  }
-}
+// function run_Test() {
+//   var test = new HundredSumModel();
+//   test.play(4);
+//   player = 0;
+//   number = 0;
+//   while (test.isRunning) {
+//     number = (number + 9) % 10;
+//     move = { player: player, number: number };
+//     test.make_move(move);
+//     player = test.current_player;
+//     console.log(test.get_state());
+//   }
+// }
 
 module.exports = { HundredSumModel };

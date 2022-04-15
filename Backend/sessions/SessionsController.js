@@ -1,3 +1,4 @@
+const EventEmitter = require("events");
 const { games_dict } = require("../Games/Games_Dictionary");
 const {
   GameSessionServer,
@@ -6,8 +7,9 @@ const { v1: uuidv1 } = require("uuid");
 /**
  * Manage games sessions and connection between the client to them.
  */
-class SessionsController {
+class SessionsController extends EventEmitter {
   constructor() {
+    super();
     this.sessions = {
       unready_sessions: {},
       full_sessions: {},
@@ -29,7 +31,7 @@ class SessionsController {
    */
   #get_session(game_name, session_id) {
     if (!(game_name in games_dict)) {
-      throw "game does not exist";
+      throw game_name + " game does not exist";
     }
     let container = null;
     let session = null;
@@ -44,12 +46,24 @@ class SessionsController {
       session = this.sessions.active_sessions[game_name][session_id];
     }
     if (container === null) {
+      // throw (session_id, this.sessions);
       throw "session_id does not exist";
     }
     return {
       container: container,
       session: session,
     };
+  }
+
+  /**
+   * Make move in specific session.
+   * @param {string} game_name
+   * @param {string} session_id
+   * @throws When session_id does not exist.
+   * @throws When game_name does not exist.
+   */
+  make_move(game_name, session_id, move_description) {
+    this.#get_session(game_name, session_id).make_move(move_description);
   }
 
   /**
@@ -70,7 +84,7 @@ class SessionsController {
    */
   #validate_connect_player(player_id, game_name) {
     if (!(game_name in games_dict)) {
-      throw "game does not exist";
+      throw game_name + " game does not exist";
     }
   }
 
@@ -81,25 +95,31 @@ class SessionsController {
    * @returns Socket io for the player to connect to. //TODO: return socket io
    * @throws When game_name does not exist.
    */
-  connect_player(player_id, game_name) {
+  connect_player(player_id, player_name, game_name) {
     this.#validate_connect_player(player_id, game_name);
     const relevant_sessions = this.sessions.unready_sessions[game_name];
     for (const session_id in relevant_sessions) {
       // Try to add player to session
       try {
-        session.add_player(player_id);
+        relevant_sessions[session_id].add_player(player_id, player_name);
         return session_id;
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     }
     const session_id = this.#create_session(game_name); // Create new session because relevant session does not exist
-    this.sessions.unready_sessions[game_name][session_id].add_player(player_id);
+    this.sessions.unready_sessions[game_name][session_id].add_player(
+      player_id,
+      player_name
+    );
     return session_id;
   }
   #subscribe_game_session(game_session) {
-    game_session.on("Session started", (game_name, session_id) => {
+    game_session.on("Session started", (game_state, game_name, session_id) => {
       const { container, session } = this.#get_session(game_name, session_id);
       this.sessions.active_sessions[game_name][session_id] = session;
       delete container[game_name][session_id];
+      this.emit("Session started", game_state, session_id);
     });
 
     game_session.on("Session full", (game_name, session_id) => {
@@ -110,6 +130,16 @@ class SessionsController {
 
     game_session.on("Session ended", (game_name, session_id) => {
       this.close_session(game_name, session_id);
+      this.emit("Session ended", session_id);
+    });
+
+    game_session.on("Update session state", (game_state, session_id) => {
+      console.log("sessionscontroller emitted");
+      this.emit("Update session state", game_state, session_id);
+    });
+
+    game_session.on("Update session move", (move_description, session_id) => {
+      this.emit("Update session move", move_description, session_id);
     });
   }
   /**

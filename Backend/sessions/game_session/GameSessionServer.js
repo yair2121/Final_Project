@@ -5,7 +5,7 @@ class GameSessionServer extends EventEmitter {
   constructor(session_id, game_model, database_controller) {
     super();
     this.session_id = session_id;
-    this.player_ids = {};
+    this.player_ids = [];
     this.connected_players = 0;
     this.#game_session = new GameSession(game_model, database_controller);
     this.#subscribe_game_session();
@@ -23,13 +23,26 @@ class GameSessionServer extends EventEmitter {
       this.emit("Game ended");
     });
     this.#game_session.on("Session started", (game_name) => {
-      this.emit("Session started", game_name, this.session_id);
+      this.emit(
+        "Session started",
+        this.get_state(),
+        game_name,
+        this.session_id
+      );
     });
     this.#game_session.on("Session ended", (game_name) => {
       this.emit("Session ended", game_name, this.session_id);
     });
     this.#game_session.on("Session full", (game_name) => {
       this.emit("Session full", game_name, this.session_id);
+      this.start_session();
+    });
+    this.#game_session.on("Update state", () => {
+      console.log("gamesessionserver emitted");
+      this.emit("Update session state", this.get_state(), this.session_id);
+    });
+    this.#game_session.on("Update move", (move_description) => {
+      this.emit("Update session move", move_description, this.session_id);
     });
   }
 
@@ -51,10 +64,13 @@ class GameSessionServer extends EventEmitter {
    * @throws When id is already exists.
    * @throws When game_model past it's max player_count.
    */
-  add_player(id) {
+  add_player(player_id, player_name) {
     try {
-      this.#game_session.add_player(id);
+      this.player_ids.push({ id: player_id, name: player_name });
+      this.#game_session.add_player(player_id);
+      this.connected_players++;
     } catch (error) {
+      this.player_ids.pop();
       throw error;
     }
   }
@@ -75,13 +91,14 @@ class GameSessionServer extends EventEmitter {
    */
   remove_player(id) {
     this.#game_session.remove_player(id);
-    if (id in this.player_ids) {
-      delete this.player_ids[id];
-      this.connected_players--;
-      //TODO: remove player from room (need to handle data structure with all currently connected sockets)
-    } else {
+    tmp = this.player_ids.length;
+    this.player_ids = this.player_ids.filter((player) => {
+      return player["id"] != id;
+    });
+    if (this.player_ids.length == tmp) {
       throw "Id not found in the game";
     }
+    this.connected_players--;
   }
 
   /**
@@ -96,7 +113,15 @@ class GameSessionServer extends EventEmitter {
    * @returns The current state of the game.
    */
   get_state() {
-    return this.#game_session.get_state();
+    //console.log(this.player_ids);
+    // console.log(
+    //   Object.assign({}, this.#game_session.get_state(), {
+    //     player_ids: this.player_ids,
+    //   })
+    // );
+    return Object.assign({}, this.#game_session.get_state(), {
+      player_ids: this.player_ids,
+    });
   }
 
   /**
