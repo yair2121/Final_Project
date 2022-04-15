@@ -26,11 +26,14 @@ export default function LoginScreen({ navigation }) {
                 id: uuid.v1(),
                 name: playerName,
               })
-            ).then(() => {
-              setPlayerName("");
-            });
-            // navigation.setParams({ playerName: playerName });
-            navigation.navigate("MainMenu", {});
+            )
+              .then(() => {
+                navigation.setParams({ playerName: playerName });
+              })
+              .then(() => {
+                setPlayerName("");
+                navigation.navigate("MainMenu", {});
+              });
           }
         }}
       >

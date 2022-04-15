@@ -23,23 +23,42 @@ import { UserContext } from "./src/screens/login/Login";
 import { UserProvider } from "./src/contexts/UserContext";
 import { TITLES } from "./src/constants/titles";
 
+const headerOption = {
+  showBack: false,
+  showSignOut: false,
+  showExitGame: false,
+};
 const Stack = createNativeStackNavigator();
 const StackScreen = () => {
   return (
     <Stack.Navigator
       screenOptions={{
+        animation: "fade",
+        testProp: false,
         header: ({ navigation, route }) => {
           return <AppHeader navigation={navigation} route={route} />;
         },
       }}
     >
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="MainMenu" component={MainMenu} title="menu" />
-      <Stack.Screen name="Setting" component={Setting} title="setting" />
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        initialParams={Object.assign(headerOption)}
+      />
+      <Stack.Screen
+        name="MainMenu"
+        component={MainMenu}
+        initialParams={headerOption}
+      />
+      <Stack.Screen
+        name="Setting"
+        component={Setting}
+        initialParams={headerOption}
+      />
       <Stack.Screen
         name="GameScreen"
         component={GameScreen}
-        title="Game view"
+        initialParams={headerOption}
       />
     </Stack.Navigator>
   );
@@ -52,7 +71,7 @@ export default function App() {
           formatter: (options, route) => TITLES.appName,
         }}
       >
-        <StatusBar hidden={true} />
+        <StatusBar hidden={false} />
         <StackScreen />
       </NavigationContainer>
     </SocketContext.Provider>
