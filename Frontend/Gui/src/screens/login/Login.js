@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
 import { Input } from "react-native-elements";
 

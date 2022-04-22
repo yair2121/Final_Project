@@ -3,6 +3,8 @@ import { Text, View } from "react-native";
 import GAMES from "../../games/gamesArray";
 import LoadingScreen from "../loadingScreen/LoadingScreen";
 import { Button } from "react-native-elements";
+// import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
 
 export default function GameScreen({ route, navigation }) {
   const { GameView, title } = GAMES.find(
@@ -10,7 +12,7 @@ export default function GameScreen({ route, navigation }) {
   );
   const [isLoading, setIsLoading] = useState(true);
   return (
-    <View>
+    <SafeAreaView>
       {isLoading && <LoadingScreen gameName={title} />}
       {!isLoading && <GameView />}
       <Button
@@ -19,7 +21,7 @@ export default function GameScreen({ route, navigation }) {
           setIsLoading(!isLoading);
         }}
       />
-    </View>
+    </SafeAreaView>
   );
   // return <View>{props.gameview}</View>;
 }

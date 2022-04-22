@@ -6,14 +6,17 @@ import { COLORS } from "../constants/colors";
 
 import GAMES from "./gamesArray";
 
-const GameButton = ({ game, onPress, backgroundColor, textColor }) => (
-  <Button
-    onPress={onPress}
-    buttonStyle={[styles.item, backgroundColor]}
-    titleStyle={(styles.title, textColor)}
-    title={game.title}
-  ></Button>
-);
+// const GameButton = (title) => (
+//   <Button
+//     title={title}
+//     onPress={() => {
+//       navigation.navigate("GameScreen", { title: title });
+//     }}
+//     buttonStyle={styles.button}
+//     titleStyle={styles.gameTitle}
+//     containerStyle={styles.container}
+//   ></Button>
+// );
 
 const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);

@@ -23,6 +23,8 @@ import { UserContext } from "./src/screens/login/Login";
 import { UserProvider } from "./src/contexts/UserContext";
 import { TITLES } from "./src/constants/titles";
 
+import { Crossword } from "./src/games"; // Here only for development.
+
 const headerOption = {
   showBack: false,
   showSignOut: false,
@@ -41,10 +43,15 @@ const StackScreen = () => {
       }}
     >
       <Stack.Screen
+        name="Crossword"
+        component={Crossword}
+        initialParams={Object.assign(headerOption)}
+      />
+      {/* <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
         initialParams={Object.assign(headerOption)}
-      />
+      /> */}
       <Stack.Screen
         name="MainMenu"
         component={MainMenu}
