@@ -36,8 +36,8 @@ export default function AppHeader({ navigation, route }) {
         size={24}
         color="#fff"
         onPress={() => {
-          // navigation.navigate("LoginScreen", {}); //TODO: change this back before merging crossword
-          navigation.navigate("MainMenu", {});
+          navigation.navigate("LoginScreen", {}); //TODO: change this back before merging crossword
+          // navigation.navigate("MainMenu", {});
         }}
       />
     );
