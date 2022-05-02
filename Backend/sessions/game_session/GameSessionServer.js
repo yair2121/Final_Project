@@ -5,7 +5,7 @@ class GameSessionServer extends EventEmitter {
   constructor(session_id, game_model, database_controller) {
     super();
     this.session_id = session_id;
-    this.player_ids = [];
+    this.players = [];
     this.connected_players = 0;
     this.#game_session = new GameSession(game_model, database_controller);
     this.#subscribe_game_session();
@@ -38,10 +38,10 @@ class GameSessionServer extends EventEmitter {
       this.start_session();
     });
     this.#game_session.on("Update state", () => {
-      console.log("gamesessionserver emitted");
       this.emit("Update session state", this.get_state(), this.session_id);
     });
     this.#game_session.on("Update move", (move_description) => {
+      console.log("gamesesssionserver move");
       this.emit("Update session move", move_description, this.session_id);
     });
   }
@@ -66,11 +66,11 @@ class GameSessionServer extends EventEmitter {
    */
   add_player(player_id, player_name) {
     try {
-      this.player_ids.push({ id: player_id, name: player_name });
+      this.players.push({ id: player_id, name: player_name });
       this.#game_session.add_player(player_id);
       this.connected_players++;
     } catch (error) {
-      this.player_ids.pop();
+      this.players.pop();
       throw error;
     }
   }
@@ -91,11 +91,11 @@ class GameSessionServer extends EventEmitter {
    */
   remove_player(id) {
     this.#game_session.remove_player(id);
-    tmp = this.player_ids.length;
-    this.player_ids = this.player_ids.filter((player) => {
+    tmp = this.players.length;
+    this.players = this.players.filter((player) => {
       return player["id"] != id;
     });
-    if (this.player_ids.length == tmp) {
+    if (this.players.length == tmp) {
       throw "Id not found in the game";
     }
     this.connected_players--;
@@ -113,14 +113,14 @@ class GameSessionServer extends EventEmitter {
    * @returns The current state of the game.
    */
   get_state() {
-    //console.log(this.player_ids);
+    //console.log(this.players);
     // console.log(
     //   Object.assign({}, this.#game_session.get_state(), {
-    //     player_ids: this.player_ids,
+    //     players: this.players,
     //   })
     // );
     return Object.assign({}, this.#game_session.get_state(), {
-      player_ids: this.player_ids,
+      players: this.players,
     });
   }
 

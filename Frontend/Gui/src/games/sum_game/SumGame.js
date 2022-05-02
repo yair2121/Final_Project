@@ -6,51 +6,98 @@ import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
 import { COLORS } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//// TODO split gamestate into many state variables ):
 //const PlayersNames = [];
-
-export default function SumGame({ navigation, initial_state }) {
+export default function SumGame({ initial_state }) {
   const socket = useContext(SocketContext);
-  const [gamestate, setGameState] = useState(
-    AsyncStorage.getItem(SESSION_STATE)
-  );
-  console.log(gamestate);
+  const [stateplayers, setPlayers] = useState(initial_state.players);
+  const [statesum, setSum] = useState(initial_state.sum);
+  const [stateplayerturn, setPlayerTurn] = useState(initial_state.player_turn);
   const [player, setPlayer] = useState({});
   const [playerMove, setPlayerMove] = useState(0);
   const [sessionId, setSessionId] = useState("");
+  var clientplayerindex = -1;
+  for (var index = 0; index < stateplayers.length; index++) {
+    if (stateplayers[index].id == player.id) {
+      clientplayerindex = index;
+      break;
+    }
+  }
+  function setGameState(state) {
+    players_changed = false;
+    if (state.players.length == stateplayers.length) {
+      for (var i = 0; i < stateplayers.length; i++) {
+        if (stateplayers[i].id != state.players[i].id) {
+          players_changed = true;
+          break;
+        }
+      }
+    } else {
+      players_changed = true;
+    }
+    if (players_changed) {
+      setPlayers(state.players);
+    }
+    if (state.sum != statesum) {
+      setSum(state.sum);
+    }
+    if (stateplayerturn != state.player_turn) {
+      setPlayerTurn(state.player_turn);
+    }
+  }
+
+  function getGameState() {
+    return Object.assign(
+      {},
+      { players: stateplayers, sum: statesum, player_turn: stateplayerturn }
+    );
+  }
   // const [playerTurn, setPlayerTurn] = useState(PlayersNames[0].key);
   // const [totalSum, setTotalSum] = useState(0);
-  socket.on("Update state", (game_state, s_id) => {
-    console.log("got state");
-    setGameState(game_state);
-    console.log(game_state);
-  });
 
   useEffect(() => {
     AsyncStorage.getItem(USER_KEY).then((item) => {
       setPlayer(JSON.parse(item));
+      console.log(item);
     });
     AsyncStorage.getItem(SESSION_ID).then((item) => {
       setSessionId(item);
     });
-    AsyncStorage.getItem(SESSION_STATE).then((item) => {
-      setGameState(JSON.parse(item));
-      console.log(item);
+    socket.on("Update state", (game_state, s_id) => {
+      console.log("got state");
+      setGameState(game_state);
     });
+
+    socket.on("Update move", (move_desc, s_id) => {
+      console.log("update move");
+      console.log(statesum);
+      setSum(statesum + move_desc.number);
+      console.log(statesum);
+      setPlayerTurn((stateplayerturn + 1) % stateplayers.length);
+    });
+    for (var index = 0; index < stateplayers.length; index++) {
+      if (stateplayers[index].id == player.id) {
+        clientplayerindex = index;
+        break;
+      }
+    }
   }, []);
 
   function isMyTurn() {
     try {
-      return (
-        JSON.stringify(gamestate.players[gamestate.player_turn]) ==
-        JSON.stringify(player)
-      );
+      var currplayer = stateplayers[stateplayerturn];
+      return currplayer.id == player.id && currplayer.name == player.name;
     } catch {
       return false;
     }
   }
   function makeMove() {
-    socket.emit("update_move", "Sum Game", sessionId, playerMove);
+    socket.emit("update_move", "Sum Game", sessionId, {
+      number: playerMove,
+      player: clientplayerindex,
+    });
   }
+
   return (
     <View>
       <View>
@@ -63,29 +110,30 @@ export default function SumGame({ navigation, initial_state }) {
           onChangeText={(value) => setPlayerMove(value.replace(/[^0-9]/g, ""))}
         ></Input>
         <Button
-          disabled={!isMyTurn()}
+          disabled={stateplayerturn != clientplayerindex}
           title="Add your number"
           onPress={() => makeMove()}
         />
       </View>
       <FlatList
-        data={gamestate.players}
-        renderItem={({ item }) => (
-          <View keyExtractor={(item) => item.key}>
+        data={stateplayers}
+        renderItem={({ item, index }) => (
+          <View keyExtractor={(item) => item.id}>
             <Text
               style={{
-                color: gamestate.player_turn === item.key ? "red" : "black",
+                color: stateplayerturn === index ? "red" : "black",
               }}
             >
-              Name: {item.name}, Latest move: {0}
+              Name: {item.name}
             </Text>
           </View>
         )}
       />
-      <Text>Total Sum: {gamestate.sum}</Text>
+      <Text>Total Sum: {statesum}</Text>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
