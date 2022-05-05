@@ -45,11 +45,9 @@ const styles = StyleSheet.create({
   },
   contentBox: {
     // alignItems: "center",
-
     // backgroundColor: "white",
     // width: SCREENSIZE.width * 0.8,
     flex: 1,
-
     // aspectRatio: 1,
     // justifyContent: "center",
     // alignItems: "center",

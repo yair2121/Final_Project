@@ -52,28 +52,36 @@ export default class Board extends Component {
         columnIndex += direction[1];
       }, range(0, wordLength));
     });
-
     return board;
   }
   render() {
     return (
       <View className="Board" style={boardStyle.board}>
-        {this.state.board.map((cellRowDescription) => {
-          const rowId = "" + cellRowDescription[0].cellRow;
+        {this.state.board.map((cellRowDescription, row) => {
+          const rowId = "" + row;
           return (
-            <View key={rowId} className={`Row-${rowId}`} style={boardStyle.row}>
-              {cellRowDescription.map((cellDescription) => {
-                return (
-                  <Cell
-                    key={`${cellDescription.cellRow}-${cellDescription.cellColumn}`}
-                    position={{
-                      row: cellDescription.cellRow,
-                      column: cellDescription.cellColumn,
-                    }}
-                    cellState={cellDescription.cellState}
-                  />
-                );
-              })}
+            <View key={rowId} style={boardStyle.row}>
+              <FlatList
+                scrollEnabled={false}
+                className={`Row-${rowId}`}
+                data={cellRowDescription}
+                keyExtractor={(item) => {
+                  return `${item.cellRow}-${item.cellColumn}`;
+                }}
+                numColumns={this.state.columnCount}
+                renderItem={({ item }) => {
+                  return (
+                    <Cell
+                      key={`${item.cellRow}-${item.cellColumn}`}
+                      position={{
+                        row: item.cellRow,
+                        column: item.cellColumn,
+                      }}
+                      cellState={item.cellState}
+                    />
+                  );
+                }}
+              />
             </View>
           );
         })}

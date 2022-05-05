@@ -27,7 +27,7 @@ const boardStyle = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    // width: "100%",
+    width: "100%",
     borderColor: "black",
     // borderWidth: 1,
     backgroundColor: "white",
@@ -44,7 +44,6 @@ const cellStyle = function (cellState) {
     cellState === CellState.ACTIVE ? COLORS.white : COLORS.black;
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
-  const aspectRatio = Platform.OS === "web" ? 0 : 1;
 
   const style = StyleSheet.create({
     cell: {
@@ -53,10 +52,8 @@ const cellStyle = function (cellState) {
       // TODO: make dynamic based on cell status(occupied or not and if occupied then color should be the same as the player color)
       flex: 1,
       borderWidth: 0.5,
-      aspectRatio: aspectRatio,
     },
     cellContent: {
-      flex: 1,
       justifyContent: "center",
       alignItems: "center",
       fontWeight: "bold",

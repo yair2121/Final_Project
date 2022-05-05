@@ -34,7 +34,7 @@ export default class Crossword extends Component {
           <Board boardDescription={this.state.boardDescription} />
         </AspectView>
 
-        {isMobilePlatform() && <Keyboard />}
+        {/* {isMobilePlatform() && <Keyboard />} */}
         {/* <Text style={{ flex: 0.5 }}>Crossword</Text> */}
       </View>
     );
