@@ -23,6 +23,7 @@ const GameSelection = ({ navigation }) => {
 
   return (
     <FlatList
+      scrollEnabled={false}
       data={GAMES}
       renderItem={({ item }) => (
         <GameButton item={item} navigation={navigation} />

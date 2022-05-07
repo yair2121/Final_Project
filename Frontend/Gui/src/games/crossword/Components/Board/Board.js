@@ -1,18 +1,27 @@
-import { Text, View, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  FlatList,
+  // Pressable,
+  Keyboard,
+  TouchableOpacity,
+} from "react-native";
 
 import React, { Component } from "react";
-
+// import { useKeyboard } from "@react-native-community/hooks";
 import { map, prop, range } from "ramda";
-import { boardStyle } from "../../Crossword.styles";
+import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
-import { CellState } from "../Cell/cellStates";
+import { createBoard } from "./boardUtils";
+import { TextInput } from "react-native";
+var english = /^[A-Za-z]*$/;
 
 export default class Board extends Component {
   constructor(props) {
     super(props);
     const boardDescription = props.boardDescription;
     const [rowCount, columnCount] = boardDescription.dimensions;
-    const board = Board.createBoard(
+    const board = createBoard(
       rowCount,
       columnCount,
       boardDescription.boardWords
@@ -20,72 +29,139 @@ export default class Board extends Component {
     this.state = {
       columnCount: columnCount,
       rowCount: rowCount,
-      board: board,
+      isCellFocus: true,
+      focusedCell: [-1, -1],
     };
-  }
-  static getBoardJSON() {
-    return '{"dimensions":[9,10],"boardWords":[{"clue":"the collective designation of items for a particular purpose","answer":"equipment","startx":1,"starty":4,"position":1,"orientation":"across"},{"clue":"an opening or entrance to an inclosed place","answer":"port","startx":5,"starty":4,"position":2,"orientation":"down"},{"clue":"that which is established as a rule or model by authority, custom, or general consent","answer":"standard","startx":8,"starty":1,"position":3,"orientation":"down"},{"clue":"a machine that computes","answer":"computer","startx":3,"starty":2,"position":4,"orientation":"across"},{"clue":"a point where two things can connect and interact","answer":"interface","startx":1,"starty":1,"position":5,"orientation":"down"}]}';
-  }
-  static createBoard(rowCount, columnCount, boardWords) {
-    // INIT board values.
-    const board = map((row) => {
-      return map((column) => {
-        return {
-          cellRow: row,
-          cellColumn: column,
-          cellState: CellState.NONACTIVE, //Default state.
-        };
-      }, range(0, rowCount));
-    }, range(0, columnCount));
-    board[0].length;
-
-    // INIT active cells(white).
-    boardWords.forEach((wordDescription) => {
-      let wordLength = wordDescription.answer.length - 1;
-      let direction =
-        wordDescription.orientation === "across" ? [0, 1] : [1, 0];
-      let rowIndex = wordDescription.starty - 1; // Start from 1
-      let columnIndex = wordDescription.startx - 1; // Start from 1
-      map(() => {
-        board[rowIndex][columnIndex].cellState = CellState.ACTIVE;
-        rowIndex += direction[0];
-        columnIndex += direction[1];
-      }, range(0, wordLength));
+    board.forEach((rowDescription) => {
+      rowDescription.forEach((description) => {
+        this.state[`cell(${description.cellRow}-${description.cellColumn})`] =
+          description;
+      });
     });
-    return board;
   }
+  getCell = (row, column) => {
+    return this.state[`cell(${row}-${column})`];
+  };
+  setCellValue = (row, column, value) => {
+    let stateObj = this.state[`cell(${row}-${column})`];
+    stateObj.value = value;
+    this.setState(stateObj);
+  };
+
+  cellPressed = (row, column) => {
+    this.textInput.focus();
+    this.state.isCellFocus = true;
+    this.state.focusedCell = [row, column];
+  };
+
+  onKeyboardInput = (key) => {
+    if (this.state.isCellFocus && english.test(key)) {
+      let [row, column] = this.state.focusedCell;
+      this.setCellValue(row, column, key);
+    }
+    this.textInput.setNativeProps({ text: "" });
+  };
+
   render() {
     return (
       <View className="Board" style={boardStyle.board}>
-        {this.state.board.map((cellRowDescription, row) => {
+        <TextInput
+          style={{ height: 0, width: 0, borderWidth: 0 }}
+          onChangeText={(text) => {
+            this.onKeyboardInput(text);
+          }}
+          ref={(ref) => {
+            this.textInput = ref;
+          }}
+          autoCapitalize="none"
+          autoCorrect={false}
+          autoFocus={false}
+          maxLength={1}
+        />
+        {map((row) => {
           const rowId = "" + row;
           return (
             <View key={rowId} style={boardStyle.row}>
               <FlatList
                 scrollEnabled={false}
                 className={`Row-${rowId}`}
-                data={cellRowDescription}
-                keyExtractor={(item) => {
-                  return `${item.cellRow}-${item.cellColumn}`;
+                data={range(0, this.state.rowCount)}
+                keyExtractor={({ index }) => {
+                  return `${rowId}-${index}`;
                 }}
                 numColumns={this.state.columnCount}
                 renderItem={({ item }) => {
+                  let column = item;
+                  let cell = this.getCell(row, column);
                   return (
-                    <Cell
-                      key={`${item.cellRow}-${item.cellColumn}`}
-                      position={{
-                        row: item.cellRow,
-                        column: item.cellColumn,
+                    <TouchableOpacity
+                      style={{ flex: 1 }}
+                      disabled={!cell.cellState}
+                      onPress={() => {
+                        this.cellPressed(row, item);
                       }}
-                      cellState={item.cellState}
-                    />
+                    >
+                      <Cell
+                        key={`${row}-${column}`}
+                        cellInfo={this.getCell(row, column)}
+                        position={{
+                          row: row,
+                          column: column,
+                        }}
+                        cellState={cell.cellState}
+                        value={cell.value}
+                      />
+                    </TouchableOpacity>
                   );
                 }}
               />
             </View>
           );
-        })}
+        }, range(0, this.state.rowCount))}
       </View>
     );
   }
 }
+
+// {
+//   map((row) => {
+//     const rowId = "" + row;
+// return (
+//   <View key={rowId} style={boardStyle.row}>
+//     <FlatList
+//       scrollEnabled={false}
+//       className={`Row-${rowId}`}
+//       data={cellRowDescription}
+//       keyExtractor={(item) => {
+//         return `${item.cellRow}-${item.cellColumn}`;
+//       }}
+//       numColumns={this.state.columnCount}
+//       renderItem={({ item }) => {
+//         return (
+//           <TouchableOpacity
+//             style={{ flex: 1 }}
+//             disabled={!item.cellState}
+//             onPress={() => {
+//               this.cellPressed(item.cellRow, item.cellColumn);
+//             }}
+//           >
+//             <Cell
+//               key={`${item.cellRow}-${item.cellColumn}`}
+//               position={{
+//                 row: item.cellRow,
+//                 column: item.cellColumn,
+//               }}
+//               cellState={item.cellState}
+//               value={
+//                 this.state.board[item.cellRow][item.cellColumn]
+//                   .value
+//               }
+//             />
+//           </TouchableOpacity>
+//         );
+//       }}
+//     />
+//   </View>
+// );
+//   });
+// }

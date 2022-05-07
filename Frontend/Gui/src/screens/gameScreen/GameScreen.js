@@ -4,7 +4,12 @@ import LoadingScreen from "../loadingScreen/LoadingScreen";
 import { Button } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../../constants/colors";
-import { Dimensions, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  KeyboardAvoidingView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Crossword } from "../../games"; // TODO: remove it after finishing working on crossword
 const SCREENSIZE = Dimensions.get("screen");
 

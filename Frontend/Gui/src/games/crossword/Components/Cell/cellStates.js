@@ -9,6 +9,6 @@
 // }
 
 export const CellState = {
-  ACTIVE: 0,
-  NONACTIVE: 1,
+  NONACTIVE: 0,
+  ACTIVE: 1,
 };

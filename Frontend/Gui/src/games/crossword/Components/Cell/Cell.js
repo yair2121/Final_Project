@@ -1,36 +1,32 @@
-// import { Text, View } from "react-native";
 import React, { Component } from "react";
 import { Text, Input } from "react-native-elements";
-import { LogBox, TextInput, View } from "react-native";
-import { cellStyle } from "../../Crossword.styles";
+import { cellStyle } from "../../CrosswordStyles";
 import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
+
 export default class Cell extends Component {
   constructor(props) {
     super(props);
-    this.listRef = React.createRef();
-    const { position } = this.props;
+    this.textInput = React.createRef();
     this.state = {
-      position: position,
-      cellState: props.cellState,
+      cellInfo: props.cellInfo,
     };
   }
+
   render() {
     return (
       <AspectView
-        key={`$this.state.position.row}-{$this.state.position.column}`}
-        className={`Cell-{$this.state.position.row}-{$this.state.position.column}`}
-        style={cellStyle(this.state.cellState).cell}
+        key={`$this.state.cellInfo.cellRow}-{$this.state.cellInfo.cellColumn}`}
+        className={`Cell-{$this.state.cellInfo.cellRow}-{$this.state.cellInfo.cellColumn}`}
+        style={cellStyle(this.state.cellInfo.cellState).cell}
       >
-        {this.state.cellState === CellState.ACTIVE && (
-          <TextInput
-            style={cellStyle.cellContent}
-            textAlign="center"
+        {this.state.cellInfo.cellState === CellState.ACTIVE && (
+          <Text
+            style={cellStyle(this.state.cellInfo.cellState).cellContent}
             maxLength={1}
-            autoCapitalize="characters"
-            // showSoftInputOnFocus={false}
-            defaultValue="A"
-          ></TextInput>
+          >
+            {this.state.cellInfo.value}
+          </Text>
         )}
       </AspectView>
     );
