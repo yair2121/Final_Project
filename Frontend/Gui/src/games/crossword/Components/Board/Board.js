@@ -42,26 +42,21 @@ export default class Board extends Component {
     this.setState(stateObj);
   };
 
+  handleActiveCellPress = (cell) => {
+    this.state.focusedCell = [cell.cellRow, cell.cellColumn];
+    this.textInput.focus(); // Make sure that focus is maintained.
+    this.state.isCellFocus = true;
+  };
+  handleInactiveCellPress = (cell) => {
+    Keyboard.dismiss();
+    this.state.isCellFocus = false;
+    this.state.focusedCell = [-1, -1];
+  };
   cellPressed = (row, column) => {
     let cell = this.getCell(row, column);
-    if (cell.cellState === CellState.ACTIVE) {
-      this.state.focusedCell = [row, column];
-    }
-    if (!this.state.isCellFocus && cell.cellState === CellState.ACTIVE) {
-      // Should open keyboard
-      this.textInput.focus();
-      this.state.isCellFocus = true;
-      return;
-    }
-    if (this.state.isCellFocus && cell.cellState === CellState.NONACTIVE) {
-      // Should dismiss keyboard.
-      Keyboard.dismiss();
-      this.state.isCellFocus = false;
-      this.state.focusedCell = [-1, -1];
-      return;
-    } else {
-      this.textInput.focus();
-    }
+    cell.cellState
+      ? this.handleActiveCellPress(cell)
+      : this.handleInactiveCellPress(cell);
   };
 
   onKeyboardInput = (key) => {
@@ -108,6 +103,7 @@ export default class Board extends Component {
                   let cell = this.getCell(row, column);
                   return (
                     <TouchableOpacity
+                      activeOpacity={cell.cellState ? 0.2 : 1} // Black cell should not respond to touches.
                       keyboardShouldPersistTaps={"always"}
                       style={{ flex: 1 }}
                       // disabled={!cell.cellState}
