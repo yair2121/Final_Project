@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  FlatList,
-  // Pressable,
-  Keyboard,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, FlatList, Keyboard, TouchableOpacity } from "react-native";
 
 import React, { Component } from "react";
 // import { useKeyboard } from "@react-native-community/hooks";
@@ -14,6 +7,7 @@ import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
 import { createBoard } from "./boardUtils";
 import { TextInput } from "react-native";
+import { CellState } from "../Cell/cellStates";
 var english = /^[A-Za-z]*$/;
 
 export default class Board extends Component {
@@ -29,7 +23,7 @@ export default class Board extends Component {
     this.state = {
       columnCount: columnCount,
       rowCount: rowCount,
-      isCellFocus: true,
+      isCellFocus: false,
       focusedCell: [-1, -1],
     };
     board.forEach((rowDescription) => {
@@ -49,9 +43,25 @@ export default class Board extends Component {
   };
 
   cellPressed = (row, column) => {
-    this.textInput.focus();
-    this.state.isCellFocus = true;
-    this.state.focusedCell = [row, column];
+    let cell = this.getCell(row, column);
+    if (cell.cellState === CellState.ACTIVE) {
+      this.state.focusedCell = [row, column];
+    }
+    if (!this.state.isCellFocus && cell.cellState === CellState.ACTIVE) {
+      // Should open keyboard
+      this.textInput.focus();
+      this.state.isCellFocus = true;
+      return;
+    }
+    if (this.state.isCellFocus && cell.cellState === CellState.NONACTIVE) {
+      // Should dismiss keyboard.
+      Keyboard.dismiss();
+      this.state.isCellFocus = false;
+      this.state.focusedCell = [-1, -1];
+      return;
+    } else {
+      this.textInput.focus();
+    }
   };
 
   onKeyboardInput = (key) => {
@@ -66,7 +76,9 @@ export default class Board extends Component {
     return (
       <View className="Board" style={boardStyle.board}>
         <TextInput
-          style={{ height: 0, width: 0, borderWidth: 0 }}
+          blurOnSubmit={false}
+          returnKeyType={"next"}
+          style={{ height: 0, width: 0 }}
           onChangeText={(text) => {
             this.onKeyboardInput(text);
           }}
@@ -75,7 +87,6 @@ export default class Board extends Component {
           }}
           autoCapitalize="none"
           autoCorrect={false}
-          autoFocus={false}
           maxLength={1}
         />
         {map((row) => {
@@ -83,6 +94,8 @@ export default class Board extends Component {
           return (
             <View key={rowId} style={boardStyle.row}>
               <FlatList
+                keyboardShouldPersistTaps="always"
+                keyboardDismissMode="on-drag"
                 scrollEnabled={false}
                 className={`Row-${rowId}`}
                 data={range(0, this.state.rowCount)}
@@ -95,8 +108,9 @@ export default class Board extends Component {
                   let cell = this.getCell(row, column);
                   return (
                     <TouchableOpacity
+                      keyboardShouldPersistTaps={"always"}
                       style={{ flex: 1 }}
-                      disabled={!cell.cellState}
+                      // disabled={!cell.cellState}
                       onPress={() => {
                         this.cellPressed(row, item);
                       }}
@@ -122,46 +136,3 @@ export default class Board extends Component {
     );
   }
 }
-
-// {
-//   map((row) => {
-//     const rowId = "" + row;
-// return (
-//   <View key={rowId} style={boardStyle.row}>
-//     <FlatList
-//       scrollEnabled={false}
-//       className={`Row-${rowId}`}
-//       data={cellRowDescription}
-//       keyExtractor={(item) => {
-//         return `${item.cellRow}-${item.cellColumn}`;
-//       }}
-//       numColumns={this.state.columnCount}
-//       renderItem={({ item }) => {
-//         return (
-//           <TouchableOpacity
-//             style={{ flex: 1 }}
-//             disabled={!item.cellState}
-//             onPress={() => {
-//               this.cellPressed(item.cellRow, item.cellColumn);
-//             }}
-//           >
-//             <Cell
-//               key={`${item.cellRow}-${item.cellColumn}`}
-//               position={{
-//                 row: item.cellRow,
-//                 column: item.cellColumn,
-//               }}
-//               cellState={item.cellState}
-//               value={
-//                 this.state.board[item.cellRow][item.cellColumn]
-//                   .value
-//               }
-//             />
-//           </TouchableOpacity>
-//         );
-//       }}
-//     />
-//   </View>
-// );
-//   });
-// }
