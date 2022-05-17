@@ -58,9 +58,7 @@ const boardStyle = StyleSheet.create({
   },
 });
 
-const cellStyle = function (cellState) {
-  const cellColor =
-    cellState === CellState.ACTIVE ? COLORS.white : COLORS.black;
+const cellStyle = function (cellState, cellColor) {
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
 

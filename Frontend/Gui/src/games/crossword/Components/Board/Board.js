@@ -8,6 +8,7 @@ import Cell from "../Cell";
 import { createBoard } from "./boardUtils";
 import { TextInput } from "react-native";
 import { CellState } from "../Cell/cellStates";
+import { COLORS } from "../../../../constants/colors";
 var english = /^[A-Za-z]*$/;
 
 export default class Board extends Component {
@@ -30,6 +31,9 @@ export default class Board extends Component {
       rowDescription.forEach((description) => {
         this.state[`cell(${description.cellRow}-${description.cellColumn})`] =
           description;
+        // this.state[`cell(${description.cellRow}-${description.cellColumn})`][
+        //   "ref"
+        // ] = undefined;
       });
     });
   }
@@ -46,8 +50,9 @@ export default class Board extends Component {
     this.state.focusedCell = [cell.cellRow, cell.cellColumn];
     this.textInput.focus(); // Make sure that focus is maintained.
     this.state.isCellFocus = true;
+    cell.ref.setCellColor("blue");
   };
-  handleInactiveCellPress = (cell) => {
+  handleInactiveCellPress = () => {
     Keyboard.dismiss();
     this.state.isCellFocus = false;
     this.state.focusedCell = [-1, -1];
@@ -56,13 +61,13 @@ export default class Board extends Component {
     let cell = this.getCell(row, column);
     cell.cellState
       ? this.handleActiveCellPress(cell)
-      : this.handleInactiveCellPress(cell);
+      : this.handleInactiveCellPress();
   };
 
-  onKeyboardInput = (key) => {
-    if (this.state.isCellFocus && english.test(key)) {
+  onKeyboardInput = (input) => {
+    if (this.state.isCellFocus && english.test(input)) {
       let [row, column] = this.state.focusedCell;
-      this.setCellValue(row, column, key);
+      this.setCellValue(row, column, input);
     }
     this.textInput.setNativeProps({ text: "" });
   };
@@ -104,9 +109,7 @@ export default class Board extends Component {
                   return (
                     <TouchableOpacity
                       activeOpacity={cell.cellState ? 0.2 : 1} // Black cell should not respond to touches.
-                      keyboardShouldPersistTaps={"always"}
                       style={{ flex: 1 }}
-                      // disabled={!cell.cellState}
                       onPress={() => {
                         this.cellPressed(row, item);
                       }}
@@ -114,6 +117,9 @@ export default class Board extends Component {
                       <Cell
                         key={`${row}-${column}`}
                         cellInfo={this.getCell(row, column)}
+                        ref={(ref) => {
+                          this.state[`cell(${row}-${column})`]["ref"] = ref;
+                        }}
                         position={{
                           row: row,
                           column: column,
