@@ -9,8 +9,8 @@ export function createBoard(rowCount, columnCount, boardWords) {
   const board = map((row) => {
     return map((column) => {
       return {
-        cellRow: row,
-        cellColumn: column,
+        row: row,
+        column: column,
         cellState: CellState.NONACTIVE, //Default state.
         value: "",
       };

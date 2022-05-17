@@ -26,8 +26,8 @@ export default class Cell extends Component {
   render() {
     return (
       <AspectView
-        key={`$this.state.cellInfo.cellRow}-{$this.state.cellInfo.cellColumn}`}
-        className={`Cell-{$this.state.cellInfo.cellRow}-{$this.state.cellInfo.cellColumn}`}
+        key={`$this.state.cellInfo.row}-{$this.state.cellInfo.column}`}
+        className={`Cell-{$this.state.cellInfo.row}-{$this.state.cellInfo.column}`}
         style={
           cellStyle(this.state.cellInfo.cellState, this.state.cellColor).cell
         }

@@ -29,9 +29,9 @@ export default class Board extends Component {
     };
     board.forEach((rowDescription) => {
       rowDescription.forEach((description) => {
-        this.state[`cell(${description.cellRow}-${description.cellColumn})`] =
+        this.state[`cell(${description.row}-${description.column})`] =
           description;
-        // this.state[`cell(${description.cellRow}-${description.cellColumn})`][
+        // this.state[`cell(${description.row}-${description.column})`][
         //   "ref"
         // ] = undefined;
       });
@@ -47,7 +47,7 @@ export default class Board extends Component {
   };
 
   handleActiveCellPress = (cell) => {
-    this.state.focusedCell = [cell.cellRow, cell.cellColumn];
+    this.state.focusedCell = [cell.row, cell.column];
     this.textInput.focus(); // Make sure that focus is maintained.
     this.state.isCellFocus = true;
     cell.ref.setCellColor("blue");
@@ -70,6 +70,24 @@ export default class Board extends Component {
       this.setCellValue(row, column, input);
     }
     this.textInput.setNativeProps({ text: "" });
+  };
+
+  renderCell = (cell) => {
+    return (
+      <Cell
+        key={`${cell.row}-${cell.column}`}
+        cellInfo={cell}
+        ref={(ref) => {
+          this.state[`cell(${cell.row}-${cell.column})`]["ref"] = ref;
+        }}
+        position={{
+          row: cell.row,
+          column: cell.column,
+        }}
+        cellState={cell.cellState}
+        value={cell.value}
+      />
+    );
   };
 
   render() {
@@ -114,19 +132,7 @@ export default class Board extends Component {
                         this.cellPressed(row, item);
                       }}
                     >
-                      <Cell
-                        key={`${row}-${column}`}
-                        cellInfo={this.getCell(row, column)}
-                        ref={(ref) => {
-                          this.state[`cell(${row}-${column})`]["ref"] = ref;
-                        }}
-                        position={{
-                          row: row,
-                          column: column,
-                        }}
-                        cellState={cell.cellState}
-                        value={cell.value}
-                      />
+                      {this.renderCell(cell)}
                     </TouchableOpacity>
                   );
                 }}
