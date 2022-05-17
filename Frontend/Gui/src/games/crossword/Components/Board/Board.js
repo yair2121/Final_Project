@@ -1,13 +1,11 @@
-import { Text, View, FlatList, Keyboard, TouchableOpacity } from "react-native";
+import { View, FlatList, Keyboard, TouchableOpacity } from "react-native";
 
 import React, { Component } from "react";
-// import { useKeyboard } from "@react-native-community/hooks";
-import { map, prop, range } from "ramda";
+import { map, range } from "ramda";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
-import { createBoard } from "./boardUtils";
+import { BoardHandler, createBoard } from "./boardUtils";
 import { TextInput } from "react-native";
-import { CellState } from "../Cell/cellStates";
 import { COLORS } from "../../../../constants/colors";
 var english = /^[A-Za-z]*$/;
 
@@ -16,24 +14,24 @@ export default class Board extends Component {
     super(props);
     const boardDescription = props.boardDescription;
     const [rowCount, columnCount] = boardDescription.dimensions;
-    const board = createBoard(
+    const boardHandler = new BoardHandler(
       rowCount,
       columnCount,
       boardDescription.boardWords
     );
+    const board = boardHandler.board;
     this.state = {
       columnCount: columnCount,
       rowCount: rowCount,
       isCellFocus: false,
       focusedCell: [-1, -1],
     };
+
+    // Create state for each cell.
     board.forEach((rowDescription) => {
       rowDescription.forEach((description) => {
         this.state[`cell(${description.row}-${description.column})`] =
           description;
-        // this.state[`cell(${description.row}-${description.column})`][
-        //   "ref"
-        // ] = undefined;
       });
     });
   }
@@ -50,7 +48,7 @@ export default class Board extends Component {
     this.state.focusedCell = [cell.row, cell.column];
     this.textInput.focus(); // Make sure that focus is maintained.
     this.state.isCellFocus = true;
-    cell.ref.setCellColor("blue");
+    cell.ref.setCellColor(COLORS.grey);
   };
   handleInactiveCellPress = () => {
     Keyboard.dismiss();
@@ -65,7 +63,7 @@ export default class Board extends Component {
   };
 
   onKeyboardInput = (input) => {
-    if (this.state.isCellFocus && english.test(input)) {
+    if (english.test(input)) {
       let [row, column] = this.state.focusedCell;
       this.setCellValue(row, column, input);
     }
