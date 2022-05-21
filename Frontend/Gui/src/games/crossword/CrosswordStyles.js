@@ -25,7 +25,7 @@ const mainViewStyle = StyleSheet.create({
     alignItems: "center",
   },
   boardFrame: {
-    // flex: 0.5,
+    // flex: 1,
     borderColor: COLORS.black,
     backgroundColor: COLORS.white,
     height: toResponsive(hp, boardFrameHeight), // 70% of height device screen
@@ -45,7 +45,7 @@ const boardStyle = StyleSheet.create({
     // flex: 1,
     // display: "flex",
     // flexDirection: "column",
-    // width: "100%",
+    // height: "100%",
     borderWidth: 0.1,
     // borderColor: "black",
     // borderWidth: 1,
@@ -73,6 +73,7 @@ const cellStyle = function (cellState, cellColor) {
       borderWidth: 0.5,
     },
     cellContent: {
+      // flex: 1,
       // justifyContent: "center",
       fontWeight: "bold",
       textAlign: "center",

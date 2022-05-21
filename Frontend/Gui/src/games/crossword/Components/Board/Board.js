@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { map, range } from "ramda";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
-import { BoardHandler, createBoard } from "./boardUtils";
+import { BoardHandler } from "./boardHandler";
 import { TextInput } from "react-native";
 import { COLORS } from "../../../../constants/colors";
 var english = /^[A-Za-z]*$/;
@@ -14,17 +14,14 @@ export default class Board extends Component {
     super(props);
     const boardDescription = props.boardDescription;
     const [rowCount, columnCount] = boardDescription.dimensions;
-    const boardHandler = new BoardHandler(
-      rowCount,
-      columnCount,
-      boardDescription.boardWords
-    );
+    const boardHandler = new BoardHandler(boardDescription);
     const board = boardHandler.board;
     this.state = {
       columnCount: columnCount,
       rowCount: rowCount,
       isCellFocus: false,
       focusedCell: [-1, -1],
+      boardHandler: boardHandler,
     };
 
     // Create state for each cell.
@@ -35,6 +32,7 @@ export default class Board extends Component {
       });
     });
   }
+
   getCell = (row, column) => {
     return this.state[`cell(${row}-${column})`];
   };
@@ -43,23 +41,25 @@ export default class Board extends Component {
     stateObj.value = value;
     this.setState(stateObj);
   };
-
-  handleActiveCellPress = (cell) => {
-    this.state.focusedCell = [cell.row, cell.column];
-    this.textInput.focus(); // Make sure that focus is maintained.
-    this.state.isCellFocus = true;
-    cell.ref.setCellColor(COLORS.grey);
-  };
-  handleInactiveCellPress = () => {
-    Keyboard.dismiss();
-    this.state.isCellFocus = false;
-    this.state.focusedCell = [-1, -1];
-  };
+  paintCell(cell, color) {
+    cell.ref.setCellColor(color);
+  }
   cellPressed = (row, column) => {
     let cell = this.getCell(row, column);
     cell.cellState
       ? this.handleActiveCellPress(cell)
       : this.handleInactiveCellPress();
+  };
+  handleActiveCellPress = (cell) => {
+    this.state.focusedCell = [cell.row, cell.column];
+    this.textInput.focus(); // Make sure that focus is maintained.
+    this.state.isCellFocus = true;
+    this.colorWord(cell.words.values().next().value - 1, COLORS.backgroundBlue);
+  };
+  handleInactiveCellPress = () => {
+    Keyboard.dismiss();
+    this.state.isCellFocus = false;
+    this.state.focusedCell = [-1, -1];
   };
 
   onKeyboardInput = (input) => {
@@ -69,6 +69,14 @@ export default class Board extends Component {
     }
     this.textInput.setNativeProps({ text: "" });
   };
+
+  colorWord(wordIndex, color) {
+    this.state.boardHandler.words[wordIndex].positions.forEach((position) => {
+      let [row, column] = position;
+      let cell = this.getCell(row, column);
+      this.paintCell(cell, color);
+    });
+  }
 
   renderCell = (cell) => {
     return (
@@ -114,7 +122,7 @@ export default class Board extends Component {
                 keyboardDismissMode="on-drag"
                 scrollEnabled={false}
                 className={`Row-${rowId}`}
-                data={range(0, this.state.rowCount)}
+                data={range(0, this.state.columnCount)}
                 keyExtractor={({ index }) => {
                   return `${rowId}-${index}`;
                 }}

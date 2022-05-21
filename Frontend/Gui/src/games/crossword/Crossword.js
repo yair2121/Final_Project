@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 
-import { Platform, ScrollView, View, TextInput } from "react-native";
-import Keyboard from "../../components/Keyboard";
-// import Board from "./Components/Board/Board";
+import { Platform, View } from "react-native";
 import { mainViewStyle } from "./CrosswordStyles";
 import AspectView from "../../components/AspectView";
 import Board from "./Components/Board";
-// import { Keyboard } from "react-native";
 function isMobilePlatform() {
   return Platform.OS === "android" || Platform.OS == "ios";
 }
@@ -31,7 +28,6 @@ export default class Crossword extends Component {
           <Board boardDescription={this.state.boardDescription} />
         </AspectView>
 
-        {/* {isMobilePlatform() && <Keyboard />} */}
         {/* <Text style={{ flex: 0.5 }}>Crossword</Text> */}
       </View>
     );
