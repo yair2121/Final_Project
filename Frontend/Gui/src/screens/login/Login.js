@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
 import { Input } from "react-native-elements";
 
@@ -8,6 +8,8 @@ import uuid from "react-native-uuid";
 import { COLORS } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState(null);
@@ -43,7 +45,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image style={styles.logo} source={logo} />
       <View style={styles.inputView}>
         <Input
@@ -55,7 +57,7 @@ export default function LoginScreen({ navigation }) {
         ></Input>
       </View>
       <LoginButton />
-    </View>
+    </SafeAreaView>
   );
 }
 

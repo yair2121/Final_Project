@@ -6,12 +6,15 @@ import { COLORS } from "../constants/colors";
 
 import GAMES from "./gamesArray";
 
-const GameButton = ({ game, onPress, backgroundColor, textColor }) => (
+const GameButton = ({ item, navigation }) => (
   <Button
-    onPress={onPress}
-    buttonStyle={[styles.item, backgroundColor]}
-    titleStyle={(styles.title, textColor)}
-    title={game.title}
+    title={item.title}
+    onPress={() => {
+      navigation.navigate("GameScreen", { title: item.title });
+    }}
+    buttonStyle={styles.button}
+    titleStyle={styles.gameTitle}
+    containerStyle={styles.container}
   ></Button>
 );
 
@@ -19,17 +22,10 @@ const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);
   return (
     <FlatList
+      scrollEnabled={false}
       data={GAMES}
       renderItem={({ item }) => (
-        <Button
-          title={item.title}
-          onPress={() => {
-            navigation.navigate("GameScreen", { title: item.title });
-          }}
-          buttonStyle={styles.button}
-          titleStyle={styles.gameTitle}
-          containerStyle={styles.container}
-        ></Button>
+        <GameButton item={item} navigation={navigation} />
       )}
       keyExtractor={(game) => game.key}
       extraData={selectedId}
