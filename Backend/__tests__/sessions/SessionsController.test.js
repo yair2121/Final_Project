@@ -48,7 +48,7 @@ describe("Test SessionController class", () => {
   //   const session_id = sessions_controller.connect_player(2, game_name);
   //   const game_session =
   //     sessions_controller.sessions.unready_sessions[game_name][session_id];
-  //   expect(2 in game_session.player_ids).toBeTruthy();
+  //   expect(2 in game_session.players).toBeTruthy();
   // });
 
   test("connect_player will throw when given game_name that does not exists", () => {

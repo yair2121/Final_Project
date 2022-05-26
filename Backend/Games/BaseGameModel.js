@@ -46,7 +46,7 @@ class BaseGameModel extends EventEmitter {
    * Will apply given move to the current state of the game.
    * @param {dictionary} move_description
    */
-  apply_move(move_description) {
+  make_move(move_description) {
     interface_default();
   }
 

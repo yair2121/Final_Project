@@ -63,7 +63,9 @@ class SessionsController extends EventEmitter {
    * @throws When game_name does not exist.
    */
   make_move(game_name, session_id, move_description) {
-    this.#get_session(game_name, session_id).make_move(move_description);
+    this.#get_session(game_name, session_id).session.make_move(
+      move_description
+    );
   }
 
   /**
@@ -139,6 +141,7 @@ class SessionsController extends EventEmitter {
     });
 
     game_session.on("Update session move", (move_description, session_id) => {
+      console.log("sessionscontroller move");
       this.emit("Update session move", move_description, session_id);
     });
   }
