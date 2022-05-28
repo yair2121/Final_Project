@@ -8,10 +8,13 @@ import {
 } from "react-native-responsive-screen";
 
 function toResponsive(orientation, value) {
+  /**
+   * Create a react-native-responsive-screen string based on the given orientation and value.
+   */
   return orientation(value.toString() + "%");
 }
 
-var boardFrameHeight = 40;
+var boardFrameHeight = 45;
 var boardFrameWidth = 30;
 
 if (Platform.OS === "web") {
@@ -25,7 +28,7 @@ const mainViewStyle = StyleSheet.create({
     alignItems: "center",
   },
   boardFrame: {
-    // flex: 1,
+    flex: 0,
     borderColor: COLORS.black,
     backgroundColor: COLORS.white,
     height: toResponsive(hp, boardFrameHeight), // 70% of height device screen

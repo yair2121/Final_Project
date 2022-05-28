@@ -7,8 +7,17 @@ import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
 import { TextInput } from "react-native";
 import { COLORS } from "../../../../constants/colors";
-var english = /^[A-Za-z]*$/;
+const english = /^[A-Za-z-0-9]*$/;
 
+// const UNOCCUPIED = 0; // TODO: move this to the const directory
+
+const playersColors = [
+  COLORS.white,
+  COLORS.green,
+  COLORS.darkgrey,
+  COLORS.grey,
+  COLORS.secondary,
+];
 export default class Board extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +28,7 @@ export default class Board extends Component {
     this.state = {
       columnCount: columnCount,
       rowCount: rowCount,
-      isCellFocus: false,
+      // isCellFocus: false,
       focusedCell: [-1, -1],
       boardHandler: boardHandler,
     };
@@ -36,8 +45,11 @@ export default class Board extends Component {
   getCell = (row, column) => {
     return this.state[`cell(${row}-${column})`];
   };
+  getNextCell(cell) {
+    return;
+  }
   setCellValue = (row, column, value) => {
-    let stateObj = this.state[`cell(${row}-${column})`];
+    let stateObj = this.getCell(row, column);
     stateObj.value = value;
     this.setState(stateObj);
   };
@@ -53,12 +65,13 @@ export default class Board extends Component {
   handleActiveCellPress = (cell) => {
     this.state.focusedCell = [cell.row, cell.column];
     this.textInput.focus(); // Make sure that focus is maintained.
-    this.state.isCellFocus = true;
-    this.colorWord(cell.words.values().next().value - 1, COLORS.backgroundBlue);
+    this.state.boardHandler.occupyWord(Object.values(cell.words)[0] - 1);
+    // this.state.isCellFocus = true;
+    this.updateWordColoring();
   };
   handleInactiveCellPress = () => {
     Keyboard.dismiss();
-    this.state.isCellFocus = false;
+    // this.state.isCellFocus = false;
     this.state.focusedCell = [-1, -1];
   };
 
@@ -70,11 +83,28 @@ export default class Board extends Component {
     this.textInput.setNativeProps({ text: "" });
   };
 
-  colorWord(wordIndex, color) {
-    this.state.boardHandler.words[wordIndex].positions.forEach((position) => {
+  colorWord(wordDescription, color) {
+    wordDescription.positions.forEach((position) => {
       let [row, column] = position;
       let cell = this.getCell(row, column);
       this.paintCell(cell, color);
+    });
+  }
+  /**
+   * Paint all the words on the board based on there current state
+   */
+  updateWordColoring() {
+    let occupiedWords = [];
+    this.state.boardHandler.words.forEach((wordDescription) => {
+      if (wordDescription.state === -1) {
+        // Paint unoccupied words first.
+        this.colorWord(wordDescription, playersColors[wordDescription.state]);
+      } else {
+        occupiedWords.push(wordDescription);
+      }
+    });
+    occupiedWords.forEach((wordDescription) => {
+      this.colorWord(wordDescription, playersColors[wordDescription.state]);
     });
   }
 
