@@ -13,9 +13,10 @@ const english = /^[A-Za-z-0-9]*$/;
 
 const playersColors = [
   COLORS.white,
-  COLORS.backgroundBlue,
+  COLORS.green,
   COLORS.darkgrey,
   COLORS.grey,
+  COLORS.secondary,
 ];
 export default class Board extends Component {
   constructor(props) {
@@ -44,6 +45,9 @@ export default class Board extends Component {
   getCell = (row, column) => {
     return this.state[`cell(${row}-${column})`];
   };
+  getNextCell(cell) {
+    return;
+  }
   setCellValue = (row, column, value) => {
     let stateObj = this.getCell(row, column);
     stateObj.value = value;
@@ -61,14 +65,8 @@ export default class Board extends Component {
   handleActiveCellPress = (cell) => {
     this.state.focusedCell = [cell.row, cell.column];
     this.textInput.focus(); // Make sure that focus is maintained.
-    // console.log("====================================");
-    // console.log(Object.values(cell.words)[0] - 1);
-    // console.log("====================================");
     this.state.boardHandler.occupyWord(Object.values(cell.words)[0] - 1);
     // this.state.isCellFocus = true;
-    // console.log(cell.words);
-    // this.colorWord(cell.words, COLORS.backgroundBlue);
-    // this.colorWord(cell.words.values().next().value - 1, COLORS.backgroundBlue);
     this.updateWordColoring();
   };
   handleInactiveCellPress = () => {
@@ -92,11 +90,21 @@ export default class Board extends Component {
       this.paintCell(cell, color);
     });
   }
+  /**
+   * Paint all the words on the board based on there current state
+   */
   updateWordColoring() {
-    this.state.boardHandler.words.forEach((wordDescription, index) => {
-      if (wordDescription.state !== -1) {
+    let occupiedWords = [];
+    this.state.boardHandler.words.forEach((wordDescription) => {
+      if (wordDescription.state === -1) {
+        // Paint unoccupied words first.
         this.colorWord(wordDescription, playersColors[wordDescription.state]);
+      } else {
+        occupiedWords.push(wordDescription);
       }
+    });
+    occupiedWords.forEach((wordDescription) => {
+      this.colorWord(wordDescription, playersColors[wordDescription.state]);
     });
   }
 

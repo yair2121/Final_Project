@@ -5,7 +5,7 @@ export const COLORS = {
   darkgrey: "#3A3A3D",
   grey: "#818384",
   lightgrey: "#D7DADC",
-  primary: "#538D4E",
+  green: "#538D4E",
   secondary: "#B59F3B",
 };
 

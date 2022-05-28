@@ -29,9 +29,12 @@ export class BoardHandler {
   getWordIndexByPosition(position) {
     return this.words[position - 1];
   }
+  getOrientationDirection(orientation) {
+    return orientation === "across" ? [0, 1] : [1, 0];
+  }
   getWordPositions(wordDescription) {
     let wordLength = wordDescription.answer.length;
-    let direction = wordDescription.orientation === "across" ? [0, 1] : [1, 0];
+    let direction = this.getOrientationDirection(wordDescription.orientation);
     let row = wordDescription.starty - 1;
     let column = wordDescription.startx - 1;
     let resultPositions = [];
@@ -73,6 +76,10 @@ export class BoardHandler {
       this.words[wordIndex].state = LOCALPLAYER;
     }
   }
+  // getNextWordIndex(row, column, wordDescription) {
+  //   let direction = this.getOrientationDirection(wordDescription.orientation);
+  //   return;
+  // }
   initBoard(dimensions) {
     const [rowCount, columnCount] = dimensions;
     return map((row) => {
