@@ -9,7 +9,8 @@ import { TextInput } from "react-native";
 import { COLORS } from "../../../../constants/colors";
 const english = /^[A-Za-z-0-9]*$/;
 
-// const UNOCCUPIED = 0; // TODO: move this to the const directory
+const UNOCCUPIED = -1; // TODO: move this to the const directory
+const UNDEFINEDPOSITION = [-1, -1]; // TODO: move this to the const directory.
 
 const playersColors = [
   COLORS.white,
@@ -60,25 +61,30 @@ export default class Board extends Component {
     let cell = this.getCell(row, column);
     cell.cellState
       ? this.handleActiveCellPress(cell)
-      : this.handleInactiveCellPress();
+      : this.handleInactiveCellPress(cell);
   };
   handleActiveCellPress = (cell) => {
     this.state.focusedCell = [cell.row, cell.column];
     this.textInput.focus(); // Make sure that focus is maintained.
-    this.state.boardHandler.occupyWord(Object.values(cell.words)[0] - 1);
-    // this.state.isCellFocus = true;
+    let wordIndex = Object.values(cell.words)[0] - 1; // TODO: make this works return different orientation.
+    if (this.state.boardHandler.canOccupyWord(wordIndex)) {
+      this.state.boardHandler.occupyWord(wordIndex);
+    }
     this.updateWordColoring();
   };
-  handleInactiveCellPress = () => {
+  handleInactiveCellPress = (cell) => {
     Keyboard.dismiss();
+    this.state.boardHandler.freeFocusedWord();
     // this.state.isCellFocus = false;
-    this.state.focusedCell = [-1, -1];
+    this.state.focusedCell = UNDEFINEDPOSITION;
+    this.updateWordColoring();
   };
 
   onKeyboardInput = (input) => {
     if (english.test(input)) {
       let [row, column] = this.state.focusedCell;
       this.setCellValue(row, column, input);
+      // this.state.focusedCell = this.boardHandler.getNextWordIndex(row, column);
     }
     this.textInput.setNativeProps({ text: "" });
   };

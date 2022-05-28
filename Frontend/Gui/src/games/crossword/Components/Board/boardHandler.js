@@ -5,6 +5,7 @@ import { CellState } from "../Cell/cellStates";
 // }
 const UNOCCUPIED = -1; // TODO: move this to the const directory.
 const LOCALPLAYER = 1; // TODO: move this to the const directory.
+const UNDEFINEDPOSITION = [-1, -1]; // TODO: move this to the const directory.
 export class BoardHandler {
   /**
    * This class is used for the Board component to maintain the board data and state which includes:
@@ -26,8 +27,11 @@ export class BoardHandler {
     this.activateWordsOnBoard(boardDescription.boardWords);
   }
 
-  getWordIndexByPosition(position) {
-    return this.words[position - 1];
+  // getWordByPosition(position) {
+  //   return this.words[position - 1];
+  // }
+  getWordByIndex(wordIndex) {
+    return this.words[wordIndex];
   }
   getOrientationDirection(orientation) {
     return orientation === "across" ? [0, 1] : [1, 0];
@@ -48,15 +52,23 @@ export class BoardHandler {
   getWordLength(wordIndex) {
     return this.words[wordIndex].answer.length;
   }
+  getWordIndex(wordDescription) {
+    return this.positionToIndex(wordDescription["position"]);
+  }
   isWordFree(wordIndex) {
     return this.words[wordIndex].state === UNOCCUPIED;
   }
+  positionToIndex(position) {
+    return position - 1;
+  }
+
   /**
    * Change the state of given word to unoccupied.
    * @param {Number} wordIndex
    */
   freeWord(wordIndex) {
     this.words[wordIndex].state = UNOCCUPIED;
+    this.currentFocusedWord = UNOCCUPIED;
   }
   // TODO: ask server here.
   serverCanOccupyWord(wordIndex) {
@@ -65,6 +77,12 @@ export class BoardHandler {
   canOccupyWord(wordIndex) {
     return this.isWordFree(wordIndex) && this.serverCanOccupyWord(wordIndex);
   }
+  freeFocusedWord() {
+    if (this.currentFocusedWord !== UNOCCUPIED) {
+      // let wordToFree = this.getWordByIndex(this.currentFocusedWord);
+      this.freeWord(this.currentFocusedWord);
+    }
+  }
 
   /**
    * Occupy given word if it's currently free and the server approve it.
@@ -72,14 +90,22 @@ export class BoardHandler {
    * @param {Number} playerIndex
    */
   occupyWord(wordIndex) {
-    if (this.canOccupyWord(wordIndex)) {
-      this.words[wordIndex].state = LOCALPLAYER;
+    if (this.currentFocusedWord !== UNOCCUPIED) {
+      this.freeWord(this.currentFocusedWord);
     }
+    this.words[wordIndex].state = LOCALPLAYER;
+    this.currentFocusedWord = wordIndex;
   }
-  // getNextWordIndex(row, column, wordDescription) {
-  //   let direction = this.getOrientationDirection(wordDescription.orientation);
-  //   return;
-  // }
+  getNextWordIndex(row, column) {
+    let currentWord = this.getWordByIndex(this.currentFocusedWord);
+    let direction = this.getOrientationDirection(currentWord);
+    let nextRow = row + direction[0];
+    let nextColumn = column + direction[1];
+    if (this.board[nextRow][nextColumn].cellState !== CellState.NONACTIVE) {
+      return nextRow, nextColumn;
+    }
+    return row, column;
+  }
   initBoard(dimensions) {
     const [rowCount, columnCount] = dimensions;
     return map((row) => {
