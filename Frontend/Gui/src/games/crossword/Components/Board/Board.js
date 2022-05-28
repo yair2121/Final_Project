@@ -7,8 +7,16 @@ import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
 import { TextInput } from "react-native";
 import { COLORS } from "../../../../constants/colors";
-var english = /^[A-Za-z]*$/;
+const english = /^[A-Za-z-0-9]*$/;
 
+// const UNOCCUPIED = 0; // TODO: move this to the const directory
+
+const playersColors = [
+  COLORS.white,
+  COLORS.backgroundBlue,
+  COLORS.darkgrey,
+  COLORS.grey,
+];
 export default class Board extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +27,7 @@ export default class Board extends Component {
     this.state = {
       columnCount: columnCount,
       rowCount: rowCount,
-      isCellFocus: false,
+      // isCellFocus: false,
       focusedCell: [-1, -1],
       boardHandler: boardHandler,
     };
@@ -37,7 +45,7 @@ export default class Board extends Component {
     return this.state[`cell(${row}-${column})`];
   };
   setCellValue = (row, column, value) => {
-    let stateObj = this.state[`cell(${row}-${column})`];
+    let stateObj = this.getCell(row, column);
     stateObj.value = value;
     this.setState(stateObj);
   };
@@ -53,12 +61,19 @@ export default class Board extends Component {
   handleActiveCellPress = (cell) => {
     this.state.focusedCell = [cell.row, cell.column];
     this.textInput.focus(); // Make sure that focus is maintained.
-    this.state.isCellFocus = true;
-    this.colorWord(cell.words.values().next().value - 1, COLORS.backgroundBlue);
+    // console.log("====================================");
+    // console.log(Object.values(cell.words)[0] - 1);
+    // console.log("====================================");
+    this.state.boardHandler.occupyWord(Object.values(cell.words)[0] - 1);
+    // this.state.isCellFocus = true;
+    // console.log(cell.words);
+    // this.colorWord(cell.words, COLORS.backgroundBlue);
+    // this.colorWord(cell.words.values().next().value - 1, COLORS.backgroundBlue);
+    this.updateWordColoring();
   };
   handleInactiveCellPress = () => {
     Keyboard.dismiss();
-    this.state.isCellFocus = false;
+    // this.state.isCellFocus = false;
     this.state.focusedCell = [-1, -1];
   };
 
@@ -70,11 +85,18 @@ export default class Board extends Component {
     this.textInput.setNativeProps({ text: "" });
   };
 
-  colorWord(wordIndex, color) {
-    this.state.boardHandler.words[wordIndex].positions.forEach((position) => {
+  colorWord(wordDescription, color) {
+    wordDescription.positions.forEach((position) => {
       let [row, column] = position;
       let cell = this.getCell(row, column);
       this.paintCell(cell, color);
+    });
+  }
+  updateWordColoring() {
+    this.state.boardHandler.words.forEach((wordDescription, index) => {
+      if (wordDescription.state !== -1) {
+        this.colorWord(wordDescription, playersColors[wordDescription.state]);
+      }
     });
   }
 

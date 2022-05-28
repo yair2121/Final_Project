@@ -4,6 +4,7 @@ import LoadingScreen from "../loadingScreen/LoadingScreen";
 import { Button } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../../constants/colors";
+
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -11,9 +12,10 @@ import {
   View,
 } from "react-native";
 import { Crossword } from "../../games"; // TODO: remove it after finishing working on crossword
-const SCREENSIZE = Dimensions.get("screen");
+// const SCREENSIZE = Dimensions.get("screen");
 
 import { Text } from "react-native-elements";
+import { useEffect } from "react";
 
 export default function GameScreen({ route, navigation }) {
   // const { GameView, title } = GAMES.find(
@@ -21,18 +23,19 @@ export default function GameScreen({ route, navigation }) {
   // );
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    socket.on("Session started", (game_state, s_id) => {
-      console.log(game_state);
-      AsyncStorage.setItem(SESSION_STATE, JSON.stringify(game_state)).then(
-        setIsLoading(false)
-      );
-      AsyncStorage.getItem(SESSION_STATE).then((item) => console.log(item));
-    });
-    socket.emit("connect_to_game", title, (response) => {
-      AsyncStorage.setItem(SESSION_ID, response);
-    });
-  }, []);
+  //TODO: change it back before merging
+  // useEffect(() => {
+  //   socket.on("Session started", (game_state, s_id) => {
+  //     console.log(game_state);
+  //     AsyncStorage.setItem(SESSION_STATE, JSON.stringify(game_state)).then(
+  //       setIsLoading(false)
+  //     );
+  //     AsyncStorage.getItem(SESSION_STATE).then((item) => console.log(item));
+  //   });
+  //   socket.emit("connect_to_game", title, (response) => {
+  //     AsyncStorage.setItem(SESSION_ID, response);
+  //   });
+  // }, []);
   return (
     <SafeAreaView style={styles.container}>
       {/* {isLoading && <LoadingScreen gameName={title} />} */}
