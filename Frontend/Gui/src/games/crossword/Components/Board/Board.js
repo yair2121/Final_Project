@@ -46,9 +46,7 @@ export default class Board extends Component {
   getCell = (row, column) => {
     return this.state[`cell(${row}-${column})`];
   };
-  getNextCell(cell) {
-    return;
-  }
+
   setCellValue = (row, column, value) => {
     let stateObj = this.getCell(row, column);
     stateObj.value = value;
@@ -84,7 +82,10 @@ export default class Board extends Component {
     if (english.test(input)) {
       let [row, column] = this.state.focusedCell;
       this.setCellValue(row, column, input);
-      // this.state.focusedCell = this.boardHandler.getNextWordIndex(row, column);
+      this.state.focusedCell = this.state.boardHandler.getNextWordIndex(
+        row,
+        column
+      );
     }
     this.textInput.setNativeProps({ text: "" });
   };
@@ -168,7 +169,7 @@ export default class Board extends Component {
                   let cell = this.getCell(row, column);
                   return (
                     <TouchableOpacity
-                      activeOpacity={cell.cellState ? 0.2 : 1} // Black cell should not respond to touches.
+                      activeOpacity={cell.cellState ? 0.7 : 1} // Black cell should not respond to touches.
                       style={{ flex: 1 }}
                       onPress={() => {
                         this.cellPressed(row, item);

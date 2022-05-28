@@ -55,6 +55,33 @@ export class BoardHandler {
   getWordIndex(wordDescription) {
     return this.positionToIndex(wordDescription["position"]);
   }
+  getRowCount() {
+    return this.board.length;
+  }
+  getColumnCount() {
+    return this.board[0].length;
+  }
+  getNextWordIndex(row, column) {
+    if (!this.isActivePosition(row, column)) {
+      return [row, column];
+    }
+    let currentWord = this.getWordByIndex(this.currentFocusedWord);
+    let direction = this.getOrientationDirection(currentWord.orientation);
+    let nextRow = row + direction[0];
+    let nextColumn = column + direction[1];
+    if (this.isActivePosition(nextRow, nextColumn)) {
+      return [nextRow, nextColumn];
+    }
+    return [row, column];
+  }
+  isActivePosition(row, column) {
+    return (
+      row < this.getRowCount() &&
+      column < this.getColumnCount() &&
+      this.board[row][column].cellState !== CellState.NONACTIVE
+    );
+  }
+
   isWordFree(wordIndex) {
     return this.words[wordIndex].state === UNOCCUPIED;
   }
@@ -96,16 +123,7 @@ export class BoardHandler {
     this.words[wordIndex].state = LOCALPLAYER;
     this.currentFocusedWord = wordIndex;
   }
-  getNextWordIndex(row, column) {
-    let currentWord = this.getWordByIndex(this.currentFocusedWord);
-    let direction = this.getOrientationDirection(currentWord);
-    let nextRow = row + direction[0];
-    let nextColumn = column + direction[1];
-    if (this.board[nextRow][nextColumn].cellState !== CellState.NONACTIVE) {
-      return nextRow, nextColumn;
-    }
-    return row, column;
-  }
+
   initBoard(dimensions) {
     const [rowCount, columnCount] = dimensions;
     return map((row) => {
