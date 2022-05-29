@@ -1,11 +1,15 @@
-import { map, prop, range } from "ramda";
+import { map, range } from "ramda";
+import { ORIENTATION } from "../../../../constants/orientation";
 import { CellState } from "../Cell/cellStates";
+import { CellUtils } from "../Cell/cellUtils";
 // static getBoardJSON() {
 //     return '{"dimensions":[9,10],"boardWords":[{"clue":"the collective designation of items for a particular purpose","answer":"equipment","startx":1,"starty":4,"position":1,"orientation":"across"},{"clue":"an opening or entrance to an inclosed place","answer":"port","startx":5,"starty":4,"position":2,"orientation":"down"},{"clue":"that which is established as a rule or model by authority, custom, or general consent","answer":"standard","startx":8,"starty":1,"position":3,"orientation":"down"},{"clue":"a machine that computes","answer":"computer","startx":3,"starty":2,"position":4,"orientation":"across"},{"clue":"a point where two things can connect and interact","answer":"interface","startx":1,"starty":1,"position":5,"orientation":"down"}]}';
 // }
-const UNOCCUPIED = -1; // TODO: move this to the const directory.
-const LOCALPLAYER = 1; // TODO: move this to the const directory.
-const UNDEFINEDPOSITION = [-1, -1]; // TODO: move this to the const directory.
+
+const UNOCCUPIED = -1;
+const LOCALPLAYER = 1;
+const UNDEFINEDPOSITION = [-1, -1];
+
 export class BoardHandler {
   /**
    * This class is used for the Board component to maintain the board data and state which includes:
@@ -17,7 +21,8 @@ export class BoardHandler {
    * @param {Object} boardWords: description of each word(position, orientation, clue)
    */
   constructor(boardDescription) {
-    this.currentFocusedWord = UNOCCUPIED;
+    this.focusedWordIndex = UNOCCUPIED;
+    this.focusedCell = UNDEFINEDPOSITION;
     this.board = this.initBoard(boardDescription.dimensions);
     this.words = boardDescription.boardWords;
     for (let [index] of this.words.entries()) {
@@ -27,14 +32,12 @@ export class BoardHandler {
     this.activateWordsOnBoard(boardDescription.boardWords);
   }
 
-  // getWordByPosition(position) {
-  //   return this.words[position - 1];
-  // }
-  getWordByIndex(wordIndex) {
+  getWord(wordIndex) {
     return this.words[wordIndex];
   }
+
   getOrientationDirection(orientation) {
-    return orientation === "across" ? [0, 1] : [1, 0];
+    return orientation === ORIENTATION.ACROSS ? [0, 1] : [1, 0];
   }
   getWordPositions(wordDescription) {
     let wordLength = wordDescription.answer.length;
@@ -61,19 +64,44 @@ export class BoardHandler {
   getColumnCount() {
     return this.board[0].length;
   }
-  getNextWordIndex(row, column) {
+  /**
+   * Given a cell and orientation- return the cell word with the opposite orientation.
+   * Assumes the cell have two words.
+   * @param {CellUtils} cell
+   * @param {ORIENTATION} orientation
+   * @returns
+   */
+  getOppositeCellWord(cell, orientation) {
+    return orientation === ORIENTATION.ACROSS
+      ? cell.words[ORIENTATION.DOWN]
+      : cell.words[ORIENTATION.ACROSS];
+  }
+  updateFocusedWordIndex() {
+    let [row, column] = this.focusedCell;
     if (!this.isActivePosition(row, column)) {
       return [row, column];
     }
-    let currentWord = this.getWordByIndex(this.currentFocusedWord);
+    let currentWord = this.getWord(this.focusedWordIndex);
     let direction = this.getOrientationDirection(currentWord.orientation);
     let nextRow = row + direction[0];
     let nextColumn = column + direction[1];
     if (this.isActivePosition(nextRow, nextColumn)) {
-      return [nextRow, nextColumn];
+      this.focusedCell = [nextRow, nextColumn];
     }
-    return [row, column];
   }
+  setFocusedCell(row, column) {
+    this.focusedCell = [row, column];
+  }
+  setFocusedWord(wordIndex) {
+    this.focusedWordIndex = wordIndex;
+  }
+  isSamePosition(position1, position2) {
+    return position1[0] === position2[0] && position1[1] === position2[1];
+  }
+  isCellFocused() {
+    return !this.isSamePosition(this.focusedCell, UNDEFINEDPOSITION);
+  }
+
   isActivePosition(row, column) {
     return (
       row < this.getRowCount() &&
@@ -88,6 +116,22 @@ export class BoardHandler {
   positionToIndex(position) {
     return position - 1;
   }
+  /**
+   * Checks whether changing word is required- ignoring other players focus.
+   * @param {CellUtils} currentCell
+   * @returns
+   */
+  shouldChangeWord(currentCell) {
+    if (currentCell.isWordInCell(this.focusedWordIndex)) {
+      if (!this.isSamePosition(currentCell.getPosition(), this.focusedCell)) {
+        return false; // Same word- different position.
+      }
+      if (currentCell.getWordsCount() === 1) {
+        return false; // Same position- cell only have one word so no need to switch orientation.
+      }
+    }
+    return true;
+  }
 
   /**
    * Change the state of given word to unoccupied.
@@ -95,7 +139,6 @@ export class BoardHandler {
    */
   freeWord(wordIndex) {
     this.words[wordIndex].state = UNOCCUPIED;
-    this.currentFocusedWord = UNOCCUPIED;
   }
   // TODO: ask server here.
   serverCanOccupyWord(wordIndex) {
@@ -104,38 +147,67 @@ export class BoardHandler {
   canOccupyWord(wordIndex) {
     return this.isWordFree(wordIndex) && this.serverCanOccupyWord(wordIndex);
   }
-  freeFocusedWord() {
-    if (this.currentFocusedWord !== UNOCCUPIED) {
-      // let wordToFree = this.getWordByIndex(this.currentFocusedWord);
-      this.freeWord(this.currentFocusedWord);
+
+  /**
+   * Free focused word if necessary, return true if focused word was freed.
+   */
+  handleFocusedWordFreeing() {
+    let didWordFreed = false;
+    if (this.focusedWordIndex !== UNOCCUPIED) {
+      this.freeWord(this.focusedWordIndex);
+      this.focusedCell = UNDEFINEDPOSITION;
+      this.focusedWordIndex = UNOCCUPIED;
+      didWordFreed = true;
     }
+    return didWordFreed;
+  }
+  /**
+   * Change focusedWord if necessary based on given current cell and return true if word was changed, false if not.
+   * @param {Object} currentCell
+   */
+  handleWordChange(currentCell) {
+    let didChangeWord = false;
+    if (this.shouldChangeWord(currentCell)) {
+      var newWord;
+      if (this.isSamePosition(currentCell.getPosition(), this.focusedCell)) {
+        // If positions it equal- then new words is the currentCell word with opposite orientation to focusedWordIndex
+        newWord = this.getOppositeCellWord(
+          currentCell,
+          this.getWord(this.focusedWordIndex).orientation
+        );
+      } else {
+        newWord = currentCell.getDefaultWord();
+      }
+      if (this.canOccupyWord(newWord)) {
+        this.occupyWord(newWord);
+        this.setFocusedCell(currentCell.row, currentCell.column);
+        this.setFocusedWord(newWord);
+        didChangeWord = true;
+      }
+    } else {
+      this.setFocusedCell(currentCell.row, currentCell.column); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
+    }
+    return didChangeWord;
   }
 
   /**
-   * Occupy given word if it's currently free and the server approve it.
+   * Occupy given word.
    * @param {Number} wordIndex
    * @param {Number} playerIndex
    */
   occupyWord(wordIndex) {
-    if (this.currentFocusedWord !== UNOCCUPIED) {
-      this.freeWord(this.currentFocusedWord);
+    if (this.focusedWordIndex !== UNOCCUPIED) {
+      this.freeWord(this.focusedWordIndex);
     }
     this.words[wordIndex].state = LOCALPLAYER;
-    this.currentFocusedWord = wordIndex;
+    this.focusedWordIndex = wordIndex;
   }
 
   initBoard(dimensions) {
     const [rowCount, columnCount] = dimensions;
     return map((row) => {
       return map((column) => {
-        return {
-          // Information that each cell holds:
-          row: row,
-          column: column,
-          cellState: CellState.NONACTIVE, //Default state.
-          value: "",
-          words: {}, // indexes of words which this cell is part of(max is 2).
-        };
+        return new CellUtils(row, column, CellState.NONACTIVE, "", {});
       }, range(0, columnCount));
     }, range(0, rowCount));
   }
@@ -145,7 +217,7 @@ export class BoardHandler {
     positions.forEach((position) => {
       let [row, column] = position;
       this.board[row][column].cellState = CellState.ACTIVE;
-      this.board[row][column].words[orientation] = wordDescription.position;
+      this.board[row][column].words[orientation] = wordDescription.position - 1;
     });
   }
   /**

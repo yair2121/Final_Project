@@ -8,9 +8,3 @@ export const COLORS = {
   green: "#538D4E",
   secondary: "#B59F3B",
 };
-
-// export const colorsToEmoji = {
-//   [colors.darkgrey]: "⬛",
-//   [colors.primary]: "🟩",
-//   [colors.secondary]: "🟧",
-// };

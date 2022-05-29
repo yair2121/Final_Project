@@ -4,6 +4,7 @@ import { cellStyle } from "../../CrosswordStyles";
 import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
 import { COLORS } from "../../../../constants/colors";
+import { CellUtils } from "./cellUtils";
 
 export default class Cell extends Component {
   constructor(props) {

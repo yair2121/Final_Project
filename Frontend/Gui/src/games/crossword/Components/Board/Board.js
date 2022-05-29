@@ -7,9 +7,7 @@ import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
 import { TextInput } from "react-native";
 import { COLORS } from "../../../../constants/colors";
-const english = /^[A-Za-z-0-9]*$/;
-
-const UNOCCUPIED = -1; // TODO: move this to the const directory
+import { LANGUAGE } from "../../../../constants/languageRegex";
 const UNDEFINEDPOSITION = [-1, -1]; // TODO: move this to the const directory.
 
 const playersColors = [
@@ -23,14 +21,9 @@ export default class Board extends Component {
   constructor(props) {
     super(props);
     const boardDescription = props.boardDescription;
-    const [rowCount, columnCount] = boardDescription.dimensions;
     const boardHandler = new BoardHandler(boardDescription);
     const board = boardHandler.board;
     this.state = {
-      columnCount: columnCount,
-      rowCount: rowCount,
-      // isCellFocus: false,
-      focusedCell: [-1, -1],
       boardHandler: boardHandler,
     };
 
@@ -47,8 +40,8 @@ export default class Board extends Component {
     return this.state[`cell(${row}-${column})`];
   };
 
-  setCellValue = (row, column, value) => {
-    let stateObj = this.getCell(row, column);
+  setCellValue = (position, value) => {
+    let stateObj = this.getCell(position[0], position[1]);
     stateObj.value = value;
     this.setState(stateObj);
   };
@@ -61,31 +54,28 @@ export default class Board extends Component {
       ? this.handleActiveCellPress(cell)
       : this.handleInactiveCellPress(cell);
   };
-  handleActiveCellPress = (cell) => {
-    this.state.focusedCell = [cell.row, cell.column];
-    this.textInput.focus(); // Make sure that focus is maintained.
-    let wordIndex = Object.values(cell.words)[0] - 1; // TODO: make this works return different orientation.
-    if (this.state.boardHandler.canOccupyWord(wordIndex)) {
-      this.state.boardHandler.occupyWord(wordIndex);
+  handleActiveCellPress(cell) {
+    // this.textInput.focus(); // Make sure that focus is maintained.
+
+    if (this.state.boardHandler.handleWordChange(cell)) {
+      // Return true if the current word was changed.
+      this.updateWordColoring();
     }
-    this.updateWordColoring();
-  };
+  }
   handleInactiveCellPress = (cell) => {
-    Keyboard.dismiss();
-    this.state.boardHandler.freeFocusedWord();
-    // this.state.isCellFocus = false;
-    this.state.focusedCell = UNDEFINEDPOSITION;
-    this.updateWordColoring();
+    // Keyboard.dismiss();
+    if (this.state.boardHandler.handleFocusedWordFreeing()) {
+      this.updateWordColoring();
+    }
   };
 
   onKeyboardInput = (input) => {
-    if (english.test(input)) {
-      let [row, column] = this.state.focusedCell;
-      this.setCellValue(row, column, input);
-      this.state.focusedCell = this.state.boardHandler.getNextWordIndex(
-        row,
-        column
-      );
+    if (
+      LANGUAGE.ENGLISH.test(input) &&
+      this.state.boardHandler.isCellFocused()
+    ) {
+      this.setCellValue(this.state.boardHandler.focusedCell, input);
+      this.state.boardHandler.updateFocusedWordIndex();
     }
     this.textInput.setNativeProps({ text: "" });
   };
@@ -138,6 +128,7 @@ export default class Board extends Component {
       <View className="Board" style={boardStyle.board}>
         <TextInput
           blurOnSubmit={false}
+          // autoFocus={true}
           returnKeyType={"next"}
           style={{ height: 0, width: 0 }}
           onChangeText={(text) => {
@@ -159,11 +150,11 @@ export default class Board extends Component {
                 keyboardDismissMode="on-drag"
                 scrollEnabled={false}
                 className={`Row-${rowId}`}
-                data={range(0, this.state.columnCount)}
+                data={range(0, this.state.boardHandler.getColumnCount())}
                 keyExtractor={({ index }) => {
                   return `${rowId}-${index}`;
                 }}
-                numColumns={this.state.columnCount}
+                numColumns={this.state.boardHandler.getColumnCount()}
                 renderItem={({ item }) => {
                   let column = item;
                   let cell = this.getCell(row, column);
@@ -182,7 +173,7 @@ export default class Board extends Component {
               />
             </View>
           );
-        }, range(0, this.state.rowCount))}
+        }, range(0, this.state.boardHandler.getRowCount()))}
       </View>
     );
   }
