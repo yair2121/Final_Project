@@ -20,7 +20,8 @@ export class BoardHandler {
    * @param {Number} columnCount: amount of columns in the board.
    * @param {Object} boardWords: description of each word(position, orientation, clue)
    */
-  constructor(boardDescription) {
+  constructor(boardDescription, setClue) {
+    this.setClue = setClue;
     this.focusedWordIndex = UNOCCUPIED;
     this.focusedCell = UNDEFINEDPOSITION;
     this.board = this.initBoard(boardDescription.dimensions);
@@ -179,6 +180,7 @@ export class BoardHandler {
         newWord = currentCell.getDefaultWord();
       }
       if (this.canOccupyWord(newWord)) {
+        this.setClue(this.words[newWord].position, this.words[newWord].clue);
         this.occupyWord(newWord);
         this.setFocusedCell(currentCell.row, currentCell.column);
         this.setFocusedWord(newWord);

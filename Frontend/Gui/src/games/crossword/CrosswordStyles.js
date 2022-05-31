@@ -87,5 +87,14 @@ const cellStyle = function (cellState, cellColor) {
   });
   return style;
 };
-
-export { mainViewStyle, boardStyle, cellStyle };
+const clueStyle = StyleSheet.create({
+  clue: {
+    borderWidth: 0.5,
+    backgroundColor: "#FFF",
+    textTransform: "uppercase",
+    fontWeight: "bold",
+    color: "#000000",
+    fontSize: 15,
+  },
+});
+export { mainViewStyle, boardStyle, cellStyle, clueStyle };

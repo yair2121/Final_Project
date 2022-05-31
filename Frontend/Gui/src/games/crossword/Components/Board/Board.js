@@ -21,7 +21,7 @@ export default class Board extends Component {
   constructor(props) {
     super(props);
     const boardDescription = props.boardDescription;
-    const boardHandler = new BoardHandler(boardDescription);
+    const boardHandler = new BoardHandler(boardDescription, props.setClue);
     const board = boardHandler.board;
     this.state = {
       boardHandler: boardHandler,
@@ -55,7 +55,7 @@ export default class Board extends Component {
       : this.handleInactiveCellPress(cell);
   };
   handleActiveCellPress(cell) {
-    // this.textInput.focus(); // Make sure that focus is maintained.
+    this.textInput.focus(); // Make sure that focus is maintained.
 
     if (this.state.boardHandler.handleWordChange(cell)) {
       // Return true if the current word was changed.
@@ -63,7 +63,7 @@ export default class Board extends Component {
     }
   }
   handleInactiveCellPress = (cell) => {
-    // Keyboard.dismiss();
+    Keyboard.dismiss();
     if (this.state.boardHandler.handleFocusedWordFreeing()) {
       this.updateWordColoring();
     }
