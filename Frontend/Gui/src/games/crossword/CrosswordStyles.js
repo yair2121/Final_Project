@@ -56,15 +56,17 @@ const boardStyle = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    // flex: 1,
-    // justifyContent: "space-around",
   },
 });
-
-const cellStyle = function (cellState, cellColor) {
+var counter = 0;
+const cellStyle = function (cellState, cellColor, isFocused) {
+  // if (cellState === CellState.ACTIVE) {
+  // }
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
-
+  if (isFocused) {
+    cellColor = COLORS.grey;
+  }
   const style = StyleSheet.create({
     cell: {
       backgroundColor: cellColor,

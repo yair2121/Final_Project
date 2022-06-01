@@ -78,20 +78,31 @@ export class BoardHandler {
       : cell.words[ORIENTATION.ACROSS];
   }
   updateFocusedWordIndex() {
-    let [row, column] = this.focusedCell;
-    if (!this.isActivePosition(row, column)) {
-      return [row, column];
+    if (!this.isActivePosition(this.focusedCell)) {
+      return this.focusedCell;
     }
     let currentWord = this.getWord(this.focusedWordIndex);
     let direction = this.getOrientationDirection(currentWord.orientation);
+    let [row, column] = this.focusedCell;
     let nextRow = row + direction[0];
     let nextColumn = column + direction[1];
-    if (this.isActivePosition(nextRow, nextColumn)) {
-      this.focusedCell = [nextRow, nextColumn];
+    if (this.isActivePosition([nextRow, nextColumn])) {
+      this.setFocusedCell(this.board[nextRow][nextColumn]);
     }
   }
-  setFocusedCell(row, column) {
-    this.focusedCell = [row, column];
+
+  freeFocusedCell() {
+    if (this.isCellFocused()) {
+      let row = this.focusedCell[0];
+      let column = this.focusedCell[1];
+      this.board[row][column].isFocused = false;
+      this.focusedCell = UNDEFINEDPOSITION;
+    }
+  }
+  setFocusedCell(cell) {
+    this.freeFocusedCell();
+    this.focusedCell = [cell.row, cell.column];
+    cell.isFocused = true;
   }
   setFocusedWord(wordIndex) {
     this.focusedWordIndex = wordIndex;
@@ -103,12 +114,16 @@ export class BoardHandler {
     return !this.isSamePosition(this.focusedCell, UNDEFINEDPOSITION);
   }
 
-  isActivePosition(row, column) {
-    return (
-      row < this.getRowCount() &&
-      column < this.getColumnCount() &&
-      this.board[row][column].cellState !== CellState.NONACTIVE
-    );
+  isActivePosition(position) {
+    if (
+      position[0] == -1 ||
+      position[0] >= this.getRowCount() ||
+      position[1] >= this.getColumnCount()
+    ) {
+      return false;
+    }
+
+    return this.board[position[0]][position[1]].state === CellState.ACTIVE;
   }
 
   isWordFree(wordIndex) {
@@ -156,7 +171,9 @@ export class BoardHandler {
     let didWordFreed = false;
     if (this.focusedWordIndex !== UNOCCUPIED) {
       this.freeWord(this.focusedWordIndex);
-      this.focusedCell = UNDEFINEDPOSITION;
+      this.freeFocusedCell();
+      // this.setFocusedCell(UNDEFINEDPOSITION);
+      // this.focusedCell = ;
       this.focusedWordIndex = UNOCCUPIED;
       didWordFreed = true;
     }
@@ -182,12 +199,12 @@ export class BoardHandler {
       if (this.canOccupyWord(newWord)) {
         this.setClue(this.words[newWord].position, this.words[newWord].clue);
         this.occupyWord(newWord);
-        this.setFocusedCell(currentCell.row, currentCell.column);
+        this.setFocusedCell(currentCell);
         this.setFocusedWord(newWord);
         didChangeWord = true;
       }
     } else {
-      this.setFocusedCell(currentCell.row, currentCell.column); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
+      this.setFocusedCell(currentCell); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
     }
     return didChangeWord;
   }
@@ -218,7 +235,8 @@ export class BoardHandler {
     let orientation = wordDescription["orientation"];
     positions.forEach((position) => {
       let [row, column] = position;
-      this.board[row][column].cellState = CellState.ACTIVE;
+
+      this.board[row][column].state = CellState.ACTIVE;
       this.board[row][column].words[orientation] = wordDescription.position - 1;
     });
   }

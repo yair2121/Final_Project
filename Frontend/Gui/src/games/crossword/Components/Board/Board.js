@@ -8,6 +8,7 @@ import { BoardHandler } from "./boardHandler";
 import { TextInput } from "react-native";
 import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
+import { CellState } from "../Cell/cellStates";
 const UNDEFINEDPOSITION = [-1, -1]; // TODO: move this to the const directory.
 
 const playersColors = [
@@ -23,6 +24,10 @@ export default class Board extends Component {
     const boardDescription = props.boardDescription;
     const boardHandler = new BoardHandler(boardDescription, props.setClue);
     const board = boardHandler.board;
+
+    boardHandler.words[2].state = 2;
+    boardHandler.words[1].state = 4;
+
     this.state = {
       boardHandler: boardHandler,
     };
@@ -36,31 +41,48 @@ export default class Board extends Component {
     });
   }
 
-  getCell = (row, column) => {
-    return this.state[`cell(${row}-${column})`];
+  // getCell = (row, column) => {
+  //   return this.state[`cell(${row}-${column})`];
+  // };
+  getCell = (position) => {
+    return this.state[`cell(${position[0]}-${position[1]})`];
   };
 
   setCellValue = (position, value) => {
-    let stateObj = this.getCell(position[0], position[1]);
+    let stateObj = this.getCell(position);
     stateObj.value = value;
     this.setState(stateObj);
   };
   paintCell(cell, color) {
     cell.ref.setCellColor(color);
   }
-  cellPressed = (row, column) => {
-    let cell = this.getCell(row, column);
-    cell.cellState
+  cellPressed = (position) => {
+    let prevFocusedCell = this.state.boardHandler.focusedCell;
+    let cell = this.getCell(position);
+    cell.state
       ? this.handleActiveCellPress(cell)
       : this.handleInactiveCellPress(cell);
+    this.updateCellFocus(prevFocusedCell);
   };
+  updateCellFocus(prevFocusedCell) {
+    let focusedCell = this.state.boardHandler.focusedCell;
+    if (this.state.boardHandler.isActivePosition(focusedCell)) {
+      this.getCell(focusedCell).ref.updateFocus();
+    }
+    if (this.state.boardHandler.isActivePosition(prevFocusedCell)) {
+      this.getCell(prevFocusedCell).ref.updateFocus();
+    }
+  }
   handleActiveCellPress(cell) {
     this.textInput.focus(); // Make sure that focus is maintained.
-
     if (this.state.boardHandler.handleWordChange(cell)) {
       // Return true if the current word was changed.
       this.updateWordColoring();
     }
+    // cell.ref.updateFocus();
+    // // let row,
+    // //   column = this.state.boardHandler.focusedCell;
+    // // this.getCell(row, column).ref.updateFocus();
   }
   handleInactiveCellPress = (cell) => {
     Keyboard.dismiss();
@@ -82,8 +104,8 @@ export default class Board extends Component {
 
   colorWord(wordDescription, color) {
     wordDescription.positions.forEach((position) => {
-      let [row, column] = position;
-      let cell = this.getCell(row, column);
+      // let [row, column] = position;
+      let cell = this.getCell(position);
       this.paintCell(cell, color);
     });
   }
@@ -104,7 +126,9 @@ export default class Board extends Component {
       this.colorWord(wordDescription, playersColors[wordDescription.state]);
     });
   }
-
+  componentDidMount() {
+    this.updateWordColoring();
+  }
   renderCell = (cell) => {
     return (
       <Cell
@@ -113,11 +137,12 @@ export default class Board extends Component {
         ref={(ref) => {
           this.state[`cell(${cell.row}-${cell.column})`]["ref"] = ref;
         }}
+        isFocused={cell.isFocused}
         position={{
           row: cell.row,
           column: cell.column,
         }}
-        cellState={cell.cellState}
+        cellState={cell.state}
         value={cell.value}
       />
     );
@@ -157,13 +182,14 @@ export default class Board extends Component {
                 numColumns={this.state.boardHandler.getColumnCount()}
                 renderItem={({ item }) => {
                   let column = item;
-                  let cell = this.getCell(row, column);
+                  let cell = this.getCell([row, column]);
+                  // console.log(cell.isFocused);
                   return (
                     <TouchableOpacity
-                      activeOpacity={cell.cellState ? 0.7 : 1} // Black cell should not respond to touches.
+                      activeOpacity={cell.state ? 0.7 : 1} // Black cell should not respond to touches.
                       style={{ flex: 1 }}
                       onPress={() => {
-                        this.cellPressed(row, item);
+                        this.cellPressed([row, item]);
                       }}
                     >
                       {this.renderCell(cell)}

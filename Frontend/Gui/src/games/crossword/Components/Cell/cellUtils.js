@@ -9,6 +9,7 @@ export class CellUtils {
     this.state = state;
     this.value = value;
     this.words = words;
+    this.isFocused = false;
   }
   getWordsArray() {
     return Object.values(this.words);
