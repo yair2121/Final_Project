@@ -17,13 +17,13 @@ export default class Cell extends Component {
       isFocused: props.isFocused,
     };
   }
+  shouldComponentUpdate() {
+    return this.state.cellInfo.state === CellState.ACTIVE; // Only active cells should be rendered.
+  }
 
   updateFocus() {
-    this.setState({ isFocused: this.state.isFocused });
+    this.setState(this.state);
   }
-  // flipFocus() {
-  //   this.setState({ isFocused: !this.state.isFocused });
-  // }
 
   setCellColor(color) {
     this.setState({ color: color });

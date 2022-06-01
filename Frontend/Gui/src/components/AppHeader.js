@@ -37,7 +37,6 @@ export default function AppHeader({ navigation, route }) {
         color="#fff"
         onPress={() => {
           navigation.navigate("LoginScreen", {}); //TODO: change this back before merging crossword
-          // navigation.navigate("MainMenu", {});
         }}
       />
     );
