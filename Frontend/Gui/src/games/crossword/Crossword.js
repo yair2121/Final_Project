@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 
-import { Platform, View } from "react-native";
+import { Platform, View, Text } from "react-native";
+
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
 import AspectView from "../../components/AspectView";
 import Board from "./Components/Board";
-import { Text } from "react-native";
+
 function isMobilePlatform() {
   return Platform.OS === "android" || Platform.OS == "ios";
 }

@@ -4,7 +4,6 @@ import { cellStyle } from "../../CrosswordStyles";
 import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
 import { COLORS } from "../../../../constants/colors";
-// import { prop } from "ramda";
 
 export default class Cell extends Component {
   constructor(props) {
@@ -14,7 +13,7 @@ export default class Cell extends Component {
     this.state = {
       cellInfo: props.cellInfo,
       color: cellColor,
-      isFocused: props.isFocused,
+      // isFocused: props.cellInfo.isFocused,
     };
   }
   shouldComponentUpdate() {
@@ -26,7 +25,9 @@ export default class Cell extends Component {
   }
 
   setCellColor(color) {
+    // if (this.state.color !== color) {
     this.setState({ color: color });
+    // }
   }
   render() {
     return (

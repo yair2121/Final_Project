@@ -14,6 +14,7 @@ import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
 import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
+import { CellState } from "../Cell/cellStates";
 
 const ITEM_HEIGHT = 65; // fixed height of item component
 
@@ -24,6 +25,9 @@ const playersColors = [
   COLORS.grey,
   COLORS.secondary,
 ];
+/**
+ * This class handle the Board rendering and the board data handling(using BoardUtils) for Crossword game.
+ */
 export default class Board extends Component {
   constructor(props) {
     super(props);
@@ -39,18 +43,25 @@ export default class Board extends Component {
     };
   }
 
+  /**
+   * Disable back button on Android.
+   */
   handleBackButton() {
     return true;
   }
+
   componentDidMount() {
-    this.updateWordColoring();
+    this.updateWordColoring(); // Update board rendering to the current server state.
+
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
+
     this.keyboardDidShowSubscription = Keyboard.addListener(
       "keyboardDidShow",
       () => {
         this.setState({ isKeyboardHidden: false });
       }
     );
+
     this.keyboardDidHideSubscription = Keyboard.addListener(
       "keyboardDidHide",
       () => {
@@ -64,35 +75,41 @@ export default class Board extends Component {
   }
 
   getCell(position) {
-    return this.state.boardHandler.board[position[0]][position[1]];
+    return this.state.boardHandler.getCell(position);
   }
 
-  setCellValue = (position, value) => {
-    let stateObj = this.getCell(position);
-    stateObj.value = value;
-    this.setState(stateObj);
+  setCellValue = (cell, value) => {
+    // let cell = this.getCell(position);
+    cell.value = value;
+    this.setState(cell);
   };
+
+  /**
+   * Update the color of given cell to given color.
+   * @param {Cell} cell
+   * @param {*} color
+   */
   paintCell(cell, color) {
     cell.ref.setCellColor(color);
   }
 
-  updateCellFocus(prevFocusedCell) {
-    let focusedCell = this.state.boardHandler.focusedCell;
-    if (this.state.boardHandler.isActivePosition(focusedCell)) {
-      this.getCell(focusedCell).ref.updateFocus();
-    }
-    if (this.state.boardHandler.isActivePosition(prevFocusedCell)) {
-      this.getCell(prevFocusedCell).ref.updateFocus();
-    }
-  }
+  // updateCellFocus(prevFocusedCell) {
+  //   let focusedCellPosition = this.state.boardHandler.focusedCellPosition;
+  //   if (this.state.boardHandler.isActivePosition(focusedCellPosition)) {
+  //     this.getCell(focusedCellPosition).ref.updateFocus();
+  //   }
+  //   if (this.state.boardHandler.isActivePosition(prevFocusedCell)) {
+  //     this.getCell(prevFocusedCell).ref.updateFocus();
+  //   }
+  // }
 
-  cellPressed = (position) => {
+  cellPressed(position) {
     let cell = this.getCell(position);
-    cell.state
+    cell.state === CellState.ACTIVE
       ? this.handleActiveCellPress(cell)
       : this.handleInactiveCellPress();
     this.updateWordColoring();
-  };
+  }
 
   handleActiveCellPress(cell) {
     if (this.state.isKeyboardHidden) {
@@ -112,26 +129,34 @@ export default class Board extends Component {
       LANGUAGE.ENGLISH.test(input) &&
       this.state.boardHandler.isCellFocused()
     ) {
-      this.setCellValue(this.state.boardHandler.focusedCell, input);
-      this.state.boardHandler.updateFocusedWordIndex();
+      let currentCell = this.getCell(
+        this.state.boardHandler.focusedCellPosition
+      );
+      this.setCellValue(currentCell, input);
+      this.state.boardHandler.advanceFocusedWordIndex();
       this.updateWordColoring();
     }
     this.textInput.setNativeProps({ text: "" });
   }
 
+  /**
+   * Change the color of each cell in given word to given color.
+   */
   colorWord(wordDescription, color) {
     wordDescription.positions.forEach((position) => {
       let cell = this.getCell(position);
       this.paintCell(cell, color);
     });
   }
+
   /**
    * Paint all the words on the board based on there current state
    */
   updateWordColoring() {
     let occupiedWords = [];
     this.state.boardHandler.words.forEach((wordDescription) => {
-      if (wordDescription.state === -1) {
+      let wordIndex = this.state.boardHandler.getWordIndex(wordDescription);
+      if (this.state.boardHandler.isWordFree(wordIndex)) {
         // Paint unoccupied words first.
         this.colorWord(wordDescription, playersColors[wordDescription.state]);
       } else {
@@ -146,6 +171,7 @@ export default class Board extends Component {
   keyExtractor(cell) {
     return `${cell.row}-${cell.column}`;
   }
+
   getItemLayout(data, index) {
     return {
       length: ITEM_HEIGHT,
@@ -168,15 +194,8 @@ export default class Board extends Component {
           key={`${cell.row}-${cell.column}`}
           cellInfo={cell}
           ref={(ref) => {
-            this.getCell([cell.row, cell.column])["ref"] = ref;
+            cell["ref"] = ref;
           }}
-          isFocused={cell.isFocused}
-          position={{
-            row: cell.row,
-            column: cell.column,
-          }}
-          cellState={cell.state}
-          value={cell.value}
         />
       </TouchableOpacity>
     );
@@ -188,7 +207,6 @@ export default class Board extends Component {
         <TextInput
           blurOnSubmit={false}
           autoFocus={true}
-          returnKeyType={"next"}
           style={{ height: 0, width: 0 }}
           onChangeText={(text) => {
             this.onKeyboardInput(text);
@@ -213,7 +231,7 @@ export default class Board extends Component {
                 keyExtractor={this.keyExtractor}
                 numColumns={this.state.boardHandler.getColumnCount()}
                 renderItem={this.renderCell}
-                // getItemLayout={this.getItemLayout}
+                // getItemLayout={this.getItemLayout} // this will optimize Flatlist performance.
               />
             </View>
           );
