@@ -4,6 +4,8 @@ import { cellStyle } from "../../CrosswordStyles";
 import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
 import { COLORS } from "../../../../constants/colors";
+import { ORIENTATION } from "../../../../constants/orientation";
+import { View } from "react-native";
 
 export default class Cell extends Component {
   constructor(props) {
@@ -13,7 +15,6 @@ export default class Cell extends Component {
     this.state = {
       cellInfo: props.cellInfo,
       color: cellColor,
-      // isFocused: props.cellInfo.isFocused,
     };
   }
   shouldComponentUpdate() {
@@ -25,9 +26,18 @@ export default class Cell extends Component {
   }
 
   setCellColor(color) {
-    // if (this.state.color !== color) {
     this.setState({ color: color });
-    // }
+  }
+
+  getStartOfWordText() {
+    let text = "";
+    text += this.state.cellInfo.isAcrossWordStart
+      ? this.state.cellInfo.getWordPosition(ORIENTATION.ACROSS)
+      : "";
+    text += this.state.cellInfo.isDownWordStart
+      ? this.state.cellInfo.getWordPosition(ORIENTATION.DOWN)
+      : "";
+    return text;
   }
   render() {
     return (
@@ -43,12 +53,17 @@ export default class Cell extends Component {
         }
       >
         {this.state.cellInfo.state === CellState.ACTIVE && (
-          <Text
-            style={cellStyle(this.state.cellInfo.state).cellContent}
-            maxLength={1}
-          >
-            {this.state.cellInfo.value}
-          </Text>
+          <View>
+            {this.state.cellInfo.isStartOfWord() && (
+              <Text>{this.getStartOfWordText()}</Text>
+            )}
+            <Text
+              style={cellStyle(this.state.cellInfo.state).cellContent}
+              maxLength={1}
+            >
+              {this.state.cellInfo.value}
+            </Text>
+          </View>
         )}
       </AspectView>
     );

@@ -52,6 +52,7 @@ export class BoardHandler {
       cell.state = CellState.ACTIVE;
       cell.words[orientation] = this.getWordIndex(wordDescription);
     });
+    this.getCell(positions[0]).activateStartOfWord(orientation);
   }
 
   /**

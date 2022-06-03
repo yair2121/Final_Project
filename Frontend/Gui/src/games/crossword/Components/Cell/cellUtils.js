@@ -11,6 +11,20 @@ export class CellUtils {
     this.value = value;
     this.words = words;
     this.isFocused = false;
+    this.isAcrossWordStart = false;
+    this.isDownWordStart = false;
+  }
+
+  isStartOfWord() {
+    return this.isAcrossWordStart || this.isDownWordStart;
+  }
+
+  activateStartOfWord(orientation) {
+    if (orientation === ORIENTATION.ACROSS) {
+      this.isAcrossWordStart = true;
+    } else {
+      this.isDownWordStart = true;
+    }
   }
 
   getWordsArray() {
@@ -23,6 +37,13 @@ export class CellUtils {
 
   getPosition() {
     return [this.row, this.column];
+  }
+
+  getWordPosition(orientation) {
+    if (orientation in this.words) {
+      return this.words[orientation] + 1; // +1 because position of word is starting from 1.
+    }
+    return -1;
   }
 
   /**
