@@ -3,7 +3,8 @@ import { ORIENTATION } from "../../../../constants/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
 
-const UNOCCUPIED = -1;
+const UNOCCUPIED = 0;
+const UNDEFINED_WORD = -1;
 const LOCAL_PLAYER = 1;
 const UNDEFINED_POSITION = [-1, -1];
 
@@ -19,7 +20,7 @@ export class BoardHandler {
    */
   constructor(boardDescription, setClue) {
     this.setClue = setClue; // Will set state of clue on the Crossword component.
-    this.focusedWordIndex = UNOCCUPIED;
+    this.focusedWordIndex = UNDEFINED_WORD;
     this.focusedCellPosition = UNDEFINED_POSITION;
     this.board = this.initBoard(boardDescription.dimensions);
     this.words = boardDescription.boardWords;
@@ -75,6 +76,11 @@ export class BoardHandler {
    */
   getWord(wordIndex) {
     return this.words[wordIndex];
+  }
+
+  getFocusedCell() {
+    let [row, column] = this.focusedCellPosition;
+    return this.board[row][column];
   }
 
   /**
@@ -247,10 +253,10 @@ export class BoardHandler {
    * Free focused word if necessary, return true if focused word was freed.
    */
   handleFocusedWordFreeing() {
-    if (this.focusedWordIndex !== UNOCCUPIED) {
+    if (this.focusedWordIndex !== UNDEFINED_WORD) {
       this.freeWord(this.focusedWordIndex);
       this.freeFocusedCell();
-      this.focusedWordIndex = UNOCCUPIED;
+      this.focusedWordIndex = UNDEFINED_WORD;
     }
   }
 
@@ -289,7 +295,7 @@ export class BoardHandler {
    * @param {Number} playerIndex
    */
   occupyWord(wordIndex) {
-    if (this.focusedWordIndex !== UNOCCUPIED) {
+    if (this.focusedWordIndex !== UNDEFINED_WORD) {
       this.freeWord(this.focusedWordIndex);
     }
     this.words[wordIndex].state = LOCAL_PLAYER;

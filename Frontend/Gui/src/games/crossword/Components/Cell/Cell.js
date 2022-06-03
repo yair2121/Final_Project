@@ -15,18 +15,27 @@ export default class Cell extends Component {
     this.state = {
       cellInfo: props.cellInfo,
       color: cellColor,
+      isFocused: props.isFocused,
+      value: props.value,
     };
   }
-  shouldComponentUpdate() {
-    return this.state.cellInfo.state === CellState.ACTIVE; // Only active cells should be rendered.
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.cellInfo.state === CellState.ACTIVE;
   }
 
-  updateFocus() {
-    this.setState(this.state);
+  setCellFocus(newFocus) {
+    this.setState({ isFocused: newFocus });
   }
 
   setCellColor(color) {
     this.setState({ color: color });
+    this.state.color = color;
+  }
+
+  setCellValue(newValue) {
+    // if (newValue !== this.state.value) {
+    this.setState({ value: newValue });
+    // }
   }
 
   getStartOfWordText() {
@@ -61,7 +70,7 @@ export default class Cell extends Component {
               style={cellStyle(this.state.cellInfo.state).cellContent}
               maxLength={1}
             >
-              {this.state.cellInfo.value}
+              {this.state.value}
             </Text>
           </View>
         )}

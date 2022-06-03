@@ -34,8 +34,8 @@ export default class Board extends Component {
     const boardDescription = props.boardDescription;
     const boardHandler = new BoardHandler(boardDescription, props.setClue);
 
-    boardHandler.words[2].state = 2; // TODO: this is only for debugging.
-    boardHandler.words[1].state = 4;
+    boardHandler.words[3].state = 2; // TODO: this is only for debugging.
+    boardHandler.words[4].state = 4;
 
     this.state = {
       boardHandler: boardHandler,
@@ -49,7 +49,12 @@ export default class Board extends Component {
   handleBackButton() {
     return true;
   }
-
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log("====================================");
+  //   console.log(nextProps);
+  //   console.log("====================================");
+  //   return false;
+  // }
   componentDidMount() {
     this.updateWordColoring(); // Update board rendering to the current server state.
 
@@ -79,9 +84,8 @@ export default class Board extends Component {
   }
 
   setCellValue = (cell, value) => {
-    // let cell = this.getCell(position);
+    cell.ref.setCellValue(value);
     cell.value = value;
-    this.setState(cell);
   };
 
   /**
@@ -90,24 +94,57 @@ export default class Board extends Component {
    * @param {*} color
    */
   paintCell(cell, color) {
-    cell.ref.setCellColor(color);
+    if (color !== cell.ref.state.color) {
+      // if (cell.isFocused) {
+      // color = COLORS.grey;
+      // }
+      cell.ref.setCellColor(color);
+    }
   }
 
-  // updateCellFocus(prevFocusedCell) {
-  //   let focusedCellPosition = this.state.boardHandler.focusedCellPosition;
-  //   if (this.state.boardHandler.isActivePosition(focusedCellPosition)) {
-  //     this.getCell(focusedCellPosition).ref.updateFocus();
-  //   }
-  //   if (this.state.boardHandler.isActivePosition(prevFocusedCell)) {
-  //     this.getCell(prevFocusedCell).ref.updateFocus();
-  //   }
-  // }
+  setCellFocus(cell, isFocus) {
+    cell.ref.setCellFocus(isFocus);
+    // let focusedCellPosition = this.state.boardHandler.focusedCellPosition;
+    // if (this.state.boardHandler.isActivePosition(focusedCellPosition)) {
+    //   this.getCell(focusedCellPosition).ref.updateFocus();
+    // }
+    // if (this.state.boardHandler.isActivePosition(prevFocusedCell)) {
+    //   this.getCell(prevFocusedCell).ref.updateFocus();
+    // }
+  }
 
+  shouldRepaint(prevCellPosition, prevWord) {
+    let didWordChanged = prevWord !== this.state.boardHandler.focusedWordIndex;
+    let didPositionChanged = !this.state.boardHandler.isSamePosition(
+      prevCellPosition,
+      this.state.boardHandler.focusedCellPosition
+    );
+    if (
+      prevCellPosition[0] !== -1 &&
+      this.state.boardHandler.focusedCellPosition[0] !== -1
+    ) {
+      return didWordChanged || didPositionChanged;
+    }
+    return false;
+  }
   cellPressed(position) {
     let cell = this.getCell(position);
+    let prevCell = undefined;
+    if (this.state.boardHandler.isCellFocused()) {
+      prevCell = this.state.boardHandler.getFocusedCell();
+    }
+    // let prevCellPosition = this.state.boardHandler.focusedCellPosition;
     cell.state === CellState.ACTIVE
       ? this.handleActiveCellPress(cell)
       : this.handleInactiveCellPress();
+    if (prevCell !== undefined) {
+      this.setCellFocus(prevCell, false);
+    }
+    if (this.state.boardHandler.isCellFocused()) {
+      let newCell = this.state.boardHandler.getFocusedCell();
+      this.setCellFocus(newCell, true);
+    }
+    // if (this.shouldRepaint(prevCellPosition, prevFocusedWord)) {
     this.updateWordColoring();
   }
 
@@ -129,12 +166,12 @@ export default class Board extends Component {
       LANGUAGE.ENGLISH.test(input) &&
       this.state.boardHandler.isCellFocused()
     ) {
-      let currentCell = this.getCell(
-        this.state.boardHandler.focusedCellPosition
-      );
+      let currentCell = this.state.boardHandler.getFocusedCell();
       this.setCellValue(currentCell, input);
       this.state.boardHandler.advanceFocusedWordIndex();
-      this.updateWordColoring();
+      let nextCell = this.state.boardHandler.getFocusedCell();
+      this.setCellFocus(currentCell, false);
+      this.setCellFocus(nextCell, true);
     }
     this.textInput.setNativeProps({ text: "" });
   }
@@ -156,9 +193,10 @@ export default class Board extends Component {
     let occupiedWords = [];
     this.state.boardHandler.words.forEach((wordDescription) => {
       let wordIndex = this.state.boardHandler.getWordIndex(wordDescription);
+
       if (this.state.boardHandler.isWordFree(wordIndex)) {
         // Paint unoccupied words first.
-        this.colorWord(wordDescription, playersColors[wordDescription.state]);
+        this.colorWord(wordDescription, playersColors[0]);
       } else {
         occupiedWords.push(wordDescription);
       }
@@ -172,13 +210,13 @@ export default class Board extends Component {
     return `${cell.row}-${cell.column}`;
   }
 
-  getItemLayout(data, index) {
-    return {
-      length: ITEM_HEIGHT,
-      offset: ITEM_HEIGHT * data.length,
-      index,
-    };
-  }
+  // getItemLayout(data, index) {
+  //   return {
+  //     length: ITEM_HEIGHT,
+  //     offset: ITEM_HEIGHT * data.length,
+  //     index,
+  //   };
+  // }
 
   renderCell = (renderObject) => {
     const cell = renderObject.item;
@@ -193,6 +231,8 @@ export default class Board extends Component {
         <Cell
           key={`${cell.row}-${cell.column}`}
           cellInfo={cell}
+          isFocused={cell.isFocused}
+          value={cell.value}
           ref={(ref) => {
             cell["ref"] = ref;
           }}
