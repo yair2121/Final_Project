@@ -168,23 +168,17 @@ export class BoardHandler {
    * Free focused word if necessary, return true if focused word was freed.
    */
   handleFocusedWordFreeing() {
-    let didWordFreed = false;
     if (this.focusedWordIndex !== UNOCCUPIED) {
       this.freeWord(this.focusedWordIndex);
       this.freeFocusedCell();
-      // this.setFocusedCell(UNDEFINEDPOSITION);
-      // this.focusedCell = ;
       this.focusedWordIndex = UNOCCUPIED;
-      didWordFreed = true;
     }
-    return didWordFreed;
   }
   /**
    * Change focusedWord if necessary based on given current cell and return true if word was changed, false if not.
    * @param {Object} currentCell
    */
   handleWordChange(currentCell) {
-    let didChangeWord = false;
     if (this.shouldChangeWord(currentCell)) {
       var newWord;
       if (this.isSamePosition(currentCell.getPosition(), this.focusedCell)) {
@@ -201,12 +195,10 @@ export class BoardHandler {
         this.occupyWord(newWord);
         this.setFocusedCell(currentCell);
         this.setFocusedWord(newWord);
-        didChangeWord = true;
       }
     } else {
       this.setFocusedCell(currentCell); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
     }
-    return didChangeWord;
   }
 
   /**
