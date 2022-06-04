@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { SocketContext, socket } from "./src/contexts/SocketContext";
 import {
+  AppRegistry,
   StyleSheet,
   Button,
   View,
@@ -18,10 +19,12 @@ import {
   AppHeader,
   GameScreen,
 } from "./src/screens";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { UserContext } from "./src/screens/login/Login";
 import { UserProvider } from "./src/contexts/UserContext";
 import { TITLES } from "./src/constants/titles";
+
+import { Crossword } from "./src/games"; // Here only for development.
 
 const headerOption = {
   showBack: false,
@@ -51,13 +54,13 @@ const StackScreen = () => {
         initialParams={headerOption}
       />
       <Stack.Screen
-        name="Setting"
-        component={Setting}
+        name="GameScreen"
+        component={GameScreen}
         initialParams={headerOption}
       />
       <Stack.Screen
-        name="GameScreen"
-        component={GameScreen}
+        name="Setting"
+        component={Setting}
         initialParams={headerOption}
       />
     </Stack.Navigator>
@@ -65,15 +68,17 @@ const StackScreen = () => {
 };
 export default function App() {
   return (
-    <SocketContext.Provider value={socket}>
-      <NavigationContainer
-        documentTitle={{
-          formatter: (options, route) => TITLES.appName,
-        }}
-      >
-        <StatusBar hidden={false} />
-        <StackScreen />
-      </NavigationContainer>
-    </SocketContext.Provider>
+    <SafeAreaProvider>
+      <SocketContext.Provider value={socket}>
+        <NavigationContainer
+          documentTitle={{
+            formatter: (options, route) => TITLES.appName,
+          }}
+        >
+          <StatusBar hidden={false} />
+          <StackScreen />
+        </NavigationContainer>
+      </SocketContext.Provider>
+    </SafeAreaProvider>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
 import { Input } from "react-native-elements";
 
@@ -9,8 +9,10 @@ import { COLORS } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 export default function LoginScreen({ navigation }) {
-  const [playerName, setPlayerName] = useState(null);
+  const [playerName, setPlayerName] = useState("");
 
   const LoginButton = () => {
     const socket = useContext(SocketContext);
@@ -26,14 +28,11 @@ export default function LoginScreen({ navigation }) {
                   id: socketId,
                   name: playerName,
                 })
-              )
-                .then(() => {
-                  navigation.setParams({ playerName: playerName });
-                })
-                .then(() => {
-                  setPlayerName(playerName);
-                  navigation.navigate("MainMenu", {});
-                });
+              ).then(() => {
+                setPlayerName(playerName);
+                navigation.setParams({ playerName: playerName });
+                navigation.navigate("MainMenu", {});
+              });
             });
           }
         }}
@@ -44,7 +43,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image style={styles.logo} source={logo} />
       <View style={styles.inputView}>
         <Input
@@ -56,7 +55,7 @@ export default function LoginScreen({ navigation }) {
         ></Input>
       </View>
       <LoginButton />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -88,10 +87,10 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     width: "80%",
-    backgroundColor: "#FF1493",
+    backgroundColor: COLORS.pink,
     borderWidth: 0,
-    color: "#FFFFFF",
-    borderColor: "#7DE24E",
+    // color: "#FFFFFF",
+    // borderColor: "#7DE24E",
     height: 40,
     alignItems: "center",
     borderRadius: 30,
