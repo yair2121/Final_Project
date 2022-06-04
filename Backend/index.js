@@ -53,8 +53,8 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("connect_to_game", (game_name, callback) => {
-    console.log(game_name);
-    console.log(callback);
+    // console.log(game_name);
+    // console.log(callback);
     let s_id = connect_player(socket.id, socket.data.name, game_name);
     // console.log(session_controller.sessions);
     socket.join(s_id);
@@ -77,6 +77,25 @@ io.on("connection", (socket) => {
   socket.once("login", (username, callback) => {
     socket.data.name = username;
     callback(socket.id);
+  });
+
+  socket.on("connect_as_api", (password) => {
+    //TODO: replace log with authentication
+    console.log(password);
+    socket.on(
+      "connect_to_session",
+      (player_id, player_name, session_id, callback) => {
+        let s_id = session_controller.connect_to_session(
+          player_id,
+          player_name,
+          session_id
+        );
+        callback(s_id);
+      }
+    );
+    socket.on("update_move", (game_name, s_id, move) => {
+      session_controller.make_move(game_name, s_id, move);
+    });
   });
 
   socket.once("disconnect", () => {

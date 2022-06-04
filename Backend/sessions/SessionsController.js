@@ -116,6 +116,19 @@ class SessionsController extends EventEmitter {
     );
     return session_id;
   }
+
+  connect_to_session(player_id, player_name, session_id) {
+    if (session_id in unready_sessions) {
+      try {
+        unready_sessions[session_id].add_player(player_id, player_name);
+        return session_id;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    return -1;
+  }
+
   #subscribe_game_session(game_session) {
     game_session.on("Session started", (game_state, game_name, session_id) => {
       const { container, session } = this.#get_session(game_name, session_id);
@@ -156,7 +169,7 @@ class SessionsController extends EventEmitter {
     const { model } = games_dict[game_name];
     const game_session = new GameSessionServer(
       session_id,
-      new model(game_name),
+      new model(),
       database
     );
     this.#subscribe_game_session(game_session);
