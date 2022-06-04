@@ -44,11 +44,6 @@ const StackScreen = () => {
       }}
     >
       <Stack.Screen
-        name="GameScreen"
-        component={GameScreen}
-        initialParams={headerOption}
-      />
-      <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
         initialParams={Object.assign(headerOption)}
@@ -56,6 +51,11 @@ const StackScreen = () => {
       <Stack.Screen
         name="MainMenu"
         component={MainMenu}
+        initialParams={headerOption}
+      />
+      <Stack.Screen
+        name="GameScreen"
+        component={GameScreen}
         initialParams={headerOption}
       />
       <Stack.Screen

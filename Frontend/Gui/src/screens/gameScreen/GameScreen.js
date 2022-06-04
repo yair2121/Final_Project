@@ -18,30 +18,28 @@ import { Text } from "react-native-elements";
 import { useEffect } from "react";
 
 export default function GameScreen({ route, navigation }) {
-  // const { GameView, title } = GAMES.find(
-  //   (game) => game.title === route.params.title
-  // );
+  const { GameView, title } = GAMES.find(
+    (game) => game.title === route.params.title
+  );
   const [isLoading, setIsLoading] = useState(true);
 
-  //TODO: change it back before merging
-  // useEffect(() => {
-  //   socket.on("Session started", (game_state, s_id) => {
-  //     console.log(game_state);
-  //     AsyncStorage.setItem(SESSION_STATE, JSON.stringify(game_state)).then(
-  //       setIsLoading(false)
-  //     );
-  //     AsyncStorage.getItem(SESSION_STATE).then((item) => console.log(item));
-  //   });
-  //   socket.emit("connect_to_game", title, (response) => {
-  //     AsyncStorage.setItem(SESSION_ID, response);
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket.on("Session started", (game_state, s_id) => {
+      console.log(game_state);
+      AsyncStorage.setItem(SESSION_STATE, JSON.stringify(game_state)).then(
+        setIsLoading(false)
+      );
+      AsyncStorage.getItem(SESSION_STATE).then((item) => console.log(item));
+    });
+    socket.emit("connect_to_game", title, (response) => {
+      AsyncStorage.setItem(SESSION_ID, response);
+    });
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       {/* {isLoading && <LoadingScreen gameName={title} />} */}
-      {/* <Text style={styles.title}>CROSSWORD</Text> */}
       <View style={styles.contentBox}>
-        <Crossword />
+        <GameView />
         {/* {!isLoading && <GameView />} */}
       </View>
 
