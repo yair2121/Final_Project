@@ -40,6 +40,7 @@ export default class Board extends Component {
     this.state = {
       boardHandler: boardHandler,
       isKeyboardHidden: true,
+      flattedBoard: boardHandler.board.flat(), // For rendering
     };
   }
 
@@ -210,14 +211,6 @@ export default class Board extends Component {
     return `${cell.row}-${cell.column}`;
   }
 
-  // getItemLayout(data, index) {
-  //   return {
-  //     length: ITEM_HEIGHT,
-  //     offset: ITEM_HEIGHT * data.length,
-  //     index,
-  //   };
-  // }
-
   renderCell = (renderObject) => {
     const cell = renderObject.item;
     return (
@@ -258,24 +251,16 @@ export default class Board extends Component {
           autoCorrect={false}
           maxLength={1}
         />
-        {map((row) => {
-          const rowId = "" + row;
-          return (
-            <View key={rowId} style={boardStyle.row}>
-              <FlatList
-                keyboardShouldPersistTaps="always"
-                keyboardDismissMode="on-drag"
-                scrollEnabled={false}
-                className={`Row-${rowId}`}
-                data={this.state.boardHandler.board[rowId]}
-                keyExtractor={this.keyExtractor}
-                numColumns={this.state.boardHandler.getColumnCount()}
-                renderItem={this.renderCell}
-                // getItemLayout={this.getItemLayout} // this will optimize Flatlist performance.
-              />
-            </View>
-          );
-        }, range(0, this.state.boardHandler.getRowCount()))}
+        <FlatList
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode="on-drag"
+          scrollEnabled={false}
+          data={this.state.flattedBoard}
+          keyExtractor={this.keyExtractor}
+          numColumns={this.state.boardHandler.getColumnCount()}
+          renderItem={this.renderCell}
+          // getItemLayout={this.getItemLayout} // this will optimize Flatlist performance.
+        />
       </View>
     );
   }
