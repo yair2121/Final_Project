@@ -19,23 +19,24 @@ export default function LoginScreen({ navigation }) {
     return (
       <TouchableOpacity
         style={styles.loginBtn}
-        onPress={async () => {
+        onPress={() => {
           if (playerName) {
-            socket.emit("login", playerName);
-            await AsyncStorage.setItem(
-              USER_KEY,
-              JSON.stringify({
-                id: uuid.v1(),
-                name: playerName,
-              })
-            )
-              .then(() => {
-                navigation.setParams({ playerName: playerName });
-              })
-              .then(() => {
-                setPlayerName("");
-                navigation.navigate("MainMenu", {});
-              });
+            socket.emit("login", playerName, (socketId) => {
+              AsyncStorage.setItem(
+                USER_KEY,
+                JSON.stringify({
+                  id: socketId,
+                  name: playerName,
+                })
+              )
+                .then(() => {
+                  navigation.setParams({ playerName: playerName });
+                })
+                .then(() => {
+                  setPlayerName(playerName);
+                  navigation.navigate("MainMenu", {});
+                });
+            });
           }
         }}
       >

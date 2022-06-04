@@ -4,7 +4,7 @@ const WINNING_NUMBER = 100;
 class HundredSumModel extends BaseGameModel {
   constructor() {
     super("Sum Game", 2, 5);
-    //super("Sum Game", 2, 2);
+    // super("Sum Game", 2, 2);
     this.sum = 0;
     this.current_player = 0;
     this.winning_player = null;
@@ -15,6 +15,14 @@ class HundredSumModel extends BaseGameModel {
   }
   validate_move(move_description) {
     const { number, player } = move_description;
+    console.log({
+      validation: {
+        IsRunning: this.isRunning,
+        player: player,
+        curplayer: this.current_player,
+        number: number,
+      },
+    });
     return (
       this.isRunning &&
       player === this.current_player &&
@@ -27,8 +35,16 @@ class HundredSumModel extends BaseGameModel {
     this.isRunning = false;
     super.finish_game(move_description);
   }
+  make_move(move_description) {
+    console.log("make_move in model");
+    if (this.validate_move(move_description)) {
+      console.log("valid");
+      this.apply_move(move_description);
+    }
+  }
   apply_move(move_description) {
-    const number = move_description.number;
+    const number = parseInt(move_description.number);
+    move_description.number = number;
     this.sum += number;
     if (this.sum >= WINNING_NUMBER) {
       this.finish_game(move_description);

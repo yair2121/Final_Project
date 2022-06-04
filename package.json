@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/yair2121/Final_Project#readme",
   "devDependencies": {
-    "jest": "^27.4.7"
+    "jest": "^27.4.7",
+    "webpack": "^5.72.0"
   },
   "dependencies": {
     "react-native-login-screen": "^2.1.4",

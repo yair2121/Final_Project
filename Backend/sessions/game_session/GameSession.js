@@ -8,7 +8,7 @@ class GameSession extends EventEmitter {
   #database_controller;
   constructor(game_model, database_controller) {
     super();
-    this.player_ids = {};
+    this.players = {};
     this.connected_players = 0;
     this.#game_model = game_model;
     this.#database_controller = database_controller;
@@ -29,6 +29,7 @@ class GameSession extends EventEmitter {
       this.emit("Update state");
     });
     this.#game_model.on("Move made", (move_description) => {
+      console.log("gamemodel move");
       this.emit("Update move", move_description);
     });
   }
@@ -53,7 +54,7 @@ class GameSession extends EventEmitter {
    * @throws When game_model past it's max player_count.
    */
   #validate_add_player(id) {
-    if (id in this.player_ids) {
+    if (id in this.players) {
       throw "Id already in the game";
     }
     if (this.#game_model.max_player_count === this.connected_players) {
@@ -71,7 +72,7 @@ class GameSession extends EventEmitter {
    */
   add_player(id) {
     this.#validate_add_player(id);
-    this.player_ids[id] = this.connected_players;
+    this.players[id] = this.connected_players;
     this.connected_players++;
     if (this.connected_players === this.#game_model.max_player_count) {
       this.emit("Session full", this.#game_model.game_name);
@@ -84,7 +85,7 @@ class GameSession extends EventEmitter {
    */
   make_move(move_description) {
     //TODO: checks if this throw
-    this.#game_model.make_move(JSON.parse(move_description));
+    this.#game_model.make_move(move_description);
   }
 
   /**
@@ -94,8 +95,8 @@ class GameSession extends EventEmitter {
    * @throws When id does not exists.
    */
   remove_player(id) {
-    if (id in this.player_ids) {
-      delete this.player_ids[id];
+    if (id in this.players) {
+      delete this.players[id];
       this.connected_players--;
     } else {
       throw "Id not found in the game";

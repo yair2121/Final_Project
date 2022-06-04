@@ -17,7 +17,7 @@ describe("Test GameSessionServer class", () => {
   });
 
   test("make_move will apply move in game model when called with a JSON dictionary", () => {
-    game_session.make_move(JSON.stringify(mock_move));
+    game_session.make_move(mock_move);
     expect(mock_game.make_move).toHaveBeenCalledWith(mock_move);
   });
   test("Will emit 'Game ended' when game_model finish the game", () => {
