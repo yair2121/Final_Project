@@ -34,9 +34,6 @@ export default class Board extends Component {
     const boardDescription = props.boardDescription;
     const boardHandler = new BoardHandler(boardDescription, props.setClue);
 
-    boardHandler.words[3].state = 2; // TODO: this is only for debugging.
-    boardHandler.words[4].state = 4;
-
     this.state = {
       boardHandler: boardHandler,
       isKeyboardHidden: true,
@@ -50,12 +47,7 @@ export default class Board extends Component {
   handleBackButton() {
     return true;
   }
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log("====================================");
-  //   console.log(nextProps);
-  //   console.log("====================================");
-  //   return false;
-  // }
+
   componentDidMount() {
     this.updateWordColoring(); // Update board rendering to the current server state.
 

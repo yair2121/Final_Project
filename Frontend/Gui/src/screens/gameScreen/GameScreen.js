@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import GAMES from "../../games/gamesArray";
 import LoadingScreen from "../loadingScreen/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SESSION_ID, SESSION_STATE } from "../../constants/keys";
 const emptyjson = JSON.stringify({});
-
 import { Button } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../../constants/colors";
@@ -15,12 +14,11 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Crossword } from "../../games"; // TODO: remove it after finishing working on crossword
 // const SCREENSIZE = Dimensions.get("screen");
 
 import { Text } from "react-native-elements";
 import { useEffect } from "react";
-
+import { SocketContext } from "../../contexts/SocketContext";
 export default function GameScreen({ route, navigation }) {
   const socket = useContext(SocketContext);
   const [initial_state, setInitialState] = useState(null);
@@ -63,12 +61,12 @@ export default function GameScreen({ route, navigation }) {
         {!isLoading && <GameView initial_state={initial_state} />}
       </View>
 
-      {/* <Button
+      <Button
         title="toggle"
         onPress={() => {
           setIsLoading(!isLoading);
         }}
-      /> */}
+      />
     </SafeAreaView>
   );
 }
