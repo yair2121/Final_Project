@@ -4,7 +4,7 @@ import { Input } from "react-native-elements";
 
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 import logo from "../../../assets/logo/controllerLogo.png";
-import uuid from "react-native-uuid";
+// import uuid from "react-native-uuid";
 import { COLORS } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";

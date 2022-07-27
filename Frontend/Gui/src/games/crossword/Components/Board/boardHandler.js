@@ -70,6 +70,8 @@ export class BoardHandler {
     return this.board[position[0]][position[1]];
   }
 
+  //TODO: Add update function which get new state and change to the new state
+
   /**
    * @param {Number} wordIndex
    * @returns Word Description
@@ -172,6 +174,7 @@ export class BoardHandler {
 
   setFocusedWord(wordIndex) {
     this.focusedWordIndex = wordIndex;
+    //TODO: tell server
   }
 
   isSamePosition(position1, position2) {
@@ -238,10 +241,11 @@ export class BoardHandler {
    */
   freeWord(wordIndex) {
     this.words[wordIndex].state = UNOCCUPIED;
+    //TODO: tell server to free word.
   }
 
-  // TODO: ask server here.
   serverCanOccupyWord(wordIndex) {
+    // TODO: ask server here and claim the new word.
     return true;
   }
 
@@ -282,7 +286,7 @@ export class BoardHandler {
         this.setClue(this.words[newWord].position, this.words[newWord].clue);
         this.occupyWord(newWord);
         this.setFocusedCell(currentCell);
-        this.setFocusedWord(newWord);
+        // this.setFocusedWord(newWord);
       }
     } else {
       this.setFocusedCell(currentCell); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
@@ -299,6 +303,7 @@ export class BoardHandler {
       this.freeWord(this.focusedWordIndex);
     }
     this.words[wordIndex].state = LOCAL_PLAYER;
-    this.focusedWordIndex = wordIndex;
+    this.setFocusedWord(wordIndex);
+    // this.focusedWordIndex = wordIndex;
   }
 }

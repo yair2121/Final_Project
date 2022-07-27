@@ -39,10 +39,24 @@ export default class Board extends Component {
       isKeyboardHidden: true,
       flattedBoard: boardHandler.board.flat(), // For rendering
     };
+
+    this.initSocketListener();
   }
 
+  /*
+    TODO: add Function which have a socket listener to update the board according to the server current state.
+    Events:
+    1. A player captured a new word.
+    2. A player Freed a word.
+    3. A player wrote a letter.
+  */
+
+  initSocketListener() {}
+  updateBoard(newBoard) {}
+
   /**
-   * Disable back button on Android.
+   * Disab
+   * le back button on Android.
    */
   handleBackButton() {
     return true;
@@ -88,9 +102,6 @@ export default class Board extends Component {
    */
   paintCell(cell, color) {
     if (color !== cell.ref.state.color) {
-      // if (cell.isFocused) {
-      // color = COLORS.grey;
-      // }
       cell.ref.setCellColor(color);
     }
   }
@@ -107,6 +118,7 @@ export default class Board extends Component {
   }
 
   shouldRepaint(prevCellPosition, prevWord) {
+    // Not used- might delete.
     let didWordChanged = prevWord !== this.state.boardHandler.focusedWordIndex;
     let didPositionChanged = !this.state.boardHandler.isSamePosition(
       prevCellPosition,
@@ -120,6 +132,7 @@ export default class Board extends Component {
     }
     return false;
   }
+
   cellPressed(position) {
     let cell = this.getCell(position);
     let prevCell = undefined;
