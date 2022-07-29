@@ -4,23 +4,27 @@ import { cellStyle } from "../../CrosswordStyles";
 import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
 import { COLORS } from "../../../../constants/colors";
-import { ORIENTATION } from "../../../../constants/orientation";
 import { View } from "react-native";
+import { ORIENTATION } from "../../consts/orientation";
 
+/**
+ * This class component handle the cell rendering for Crossword game.
+ */
 export default class Cell extends Component {
   constructor(props) {
     super(props);
-    let cellColor =
+    let initialCellColor =
       props.cellInfo.state === CellState.ACTIVE ? COLORS.white : COLORS.black;
     this.state = {
       cellInfo: props.cellInfo,
-      color: cellColor,
+      color: initialCellColor,
       isFocused: props.isFocused,
       value: props.value,
     };
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.cellInfo.state === CellState.ACTIVE;
+
+  shouldComponentUpdate() {
+    return this.state.cellInfo.state === CellState.ACTIVE; // Rerender only Active cells.
   }
 
   setCellFocus(newFocus) {
@@ -28,14 +32,12 @@ export default class Cell extends Component {
   }
 
   setCellColor(color) {
-    this.setState({ color: color });
     this.state.color = color;
+    this.setState({ color: color });
   }
 
   setCellValue(newValue) {
-    // if (newValue !== this.state.value) {
     this.setState({ value: newValue });
-    // }
   }
 
   getStartOfWordText() {
@@ -68,7 +70,7 @@ export default class Cell extends Component {
             )}
             <Text
               style={cellStyle(this.state.cellInfo.state).cellContent}
-              maxLength={1}
+              maxLength={1} // One letter per cell.
             >
               {this.state.value}
             </Text>

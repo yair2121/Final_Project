@@ -8,24 +8,24 @@ import { Button } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../../constants/colors";
 
-import {
-  Dimensions,
-  KeyboardAvoidingView,
-  StyleSheet,
-  View,
-} from "react-native";
-// const SCREENSIZE = Dimensions.get("screen");
+import { StyleSheet, View } from "react-native";
 
-import { Text } from "react-native-elements";
 import { useEffect } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
-export default function GameScreen({ route, navigation }) {
+/*
+  Handle all the ui of a game.
+  Wraps the game view.
+  Handle the loading screen.
+  Handle connection to the server game room.
+ */
+export default function GameScreen({ route }) {
   const socket = useContext(SocketContext);
   const [initial_state, setInitialState] = useState(null);
 
   const { GameView, title } = GAMES.find(
     (game) => game.title === route.params.title
   );
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export default function GameScreen({ route, navigation }) {
       // }
     });
   }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* {isLoading && <LoadingScreen gameName={title} />} */}

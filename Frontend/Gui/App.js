@@ -1,13 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import { SocketContext, socket } from "./src/contexts/SocketContext";
-import {
-  AppRegistry,
-  StyleSheet,
-  Button,
-  View,
-  Platform,
-  StatusBar as SB,
-} from "react-native";
+// import {
+//   AppRegistry,
+//   StyleSheet,
+//   Button,
+//   View,
+//   Platform,
+//   StatusBar as SB,
+// } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -20,17 +20,17 @@ import {
   GameScreen,
 } from "./src/screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { UserContext } from "./src/screens/login/Login";
-import { UserProvider } from "./src/contexts/UserContext";
+// import { UserContext } from "./src/screens/login/Login";
+// import { UserProvider } from "./src/contexts/UserContext";
 import { TITLES } from "./src/constants/titles";
 
-import { Crossword } from "./src/games"; // Here only for development.
-
 const headerOption = {
+  // TODO: Use this to make the header dynamic.
   showBack: false,
   showSignOut: false,
   showExitGame: false,
 };
+
 const Stack = createNativeStackNavigator();
 const StackScreen = () => {
   return (
@@ -72,7 +72,7 @@ export default function App() {
       <SocketContext.Provider value={socket}>
         <NavigationContainer
           documentTitle={{
-            formatter: (options, route) => TITLES.appName,
+            formatter: () => TITLES.appName,
           }}
         >
           <StatusBar hidden={false} />

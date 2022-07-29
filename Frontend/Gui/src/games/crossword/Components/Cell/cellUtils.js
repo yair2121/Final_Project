@@ -1,16 +1,19 @@
-import { ORIENTATION } from "../../../../constants/orientation";
+import { INVALID_WORD_POSITION } from "../../consts/generalConsts";
+import { ORIENTATION } from "../../consts/orientation";
 
 /**
- * Utils for handling the cells info.
+ * Utils for handling the cells logic and information.
  */
 export class CellUtils {
-  constructor(row, column, state, value, words) {
+  constructor(row, column, state, letter, words) {
     this.row = row;
     this.column = column;
     this.state = state;
-    this.value = value;
-    this.words = words;
+    this.letter = letter;
+    this.words = words; // Words which this cell is part of.s
     this.isFocused = false;
+
+    // This flags determines whether this cell position is a start of a word
     this.isAcrossWordStart = false;
     this.isDownWordStart = false;
   }
@@ -27,23 +30,36 @@ export class CellUtils {
     }
   }
 
+  /**
+   * @returns All words that corresponds to this cell.
+   */
   getWordsArray() {
     return Object.values(this.words);
   }
 
+  /**
+   * @returns Numbers of words that correspond to this cell.
+   */
   getWordsCount() {
-    return Object.keys(this.words).length;
+    return this.getWordsArray().length;
   }
 
+  /**
+   * @returns Position of this cell in a array of size 2 format.
+   */
   getPosition() {
     return [this.row, this.column];
   }
 
+  /**
+   * @param {*} orientation.
+   * @returns If exists- the word in given orientation the correspond to this cell.
+   */
   getWordPosition(orientation) {
     if (orientation in this.words) {
       return this.words[orientation] + 1; // +1 because position of word is starting from 1.
     }
-    return -1;
+    return INVALID_WORD_POSITION;
   }
 
   /**
@@ -57,6 +73,6 @@ export class CellUtils {
   }
 
   isWordInCell(wordIndex) {
-    return Object.values(this.words).indexOf(wordIndex) > -1;
+    return this.getWordsArray().indexOf(wordIndex) > -1;
   }
 }

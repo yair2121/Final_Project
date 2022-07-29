@@ -21,6 +21,7 @@ if (Platform.OS === "web") {
   var boardFrameHeight = 100;
   var boardFrameWidth = 35;
 }
+
 const mainViewStyle = StyleSheet.create({
   container: {
     flex: 1,
@@ -58,12 +59,13 @@ const boardStyle = StyleSheet.create({
     flexDirection: "row",
   },
 });
-var counter = 0;
+
 const cellStyle = function (cellState, cellColor, isFocused) {
   // if (cellState === CellState.ACTIVE) {
   // }
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
+
   if (isFocused) {
     cellColor = COLORS.grey;
   }
@@ -89,6 +91,7 @@ const cellStyle = function (cellState, cellColor, isFocused) {
   });
   return style;
 };
+
 const clueStyle = StyleSheet.create({
   clue: {
     borderWidth: 0.5,
@@ -99,4 +102,5 @@ const clueStyle = StyleSheet.create({
     fontSize: 15,
   },
 });
+
 export { mainViewStyle, boardStyle, cellStyle, clueStyle };

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 import React, { Component } from "react";
-import { map, range } from "ramda";
+// import { map, range } from "ramda";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
@@ -16,7 +16,7 @@ import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
 import { CellState } from "../Cell/cellStates";
 
-const ITEM_HEIGHT = 65; // fixed height of item component
+// const ITEM_HEIGHT = 65; // fixed height of item component
 
 const playersColors = [
   COLORS.white,
@@ -25,8 +25,9 @@ const playersColors = [
   COLORS.grey,
   COLORS.secondary,
 ];
+
 /**
- * This class handle the Board rendering and the board data handling(using BoardUtils) for Crossword game.
+ * This class component handle the Board rendering for Crossword game.
  */
 export default class Board extends Component {
   constructor(props) {
@@ -55,8 +56,7 @@ export default class Board extends Component {
   updateBoard(newBoard) {}
 
   /**
-   * Disab
-   * le back button on Android.
+   * Used to prevent back button on Android from changing screens.
    */
   handleBackButton() {
     return true;
@@ -83,7 +83,7 @@ export default class Board extends Component {
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton); // Remove keyboard
   }
 
   getCell(position) {
@@ -101,64 +101,65 @@ export default class Board extends Component {
    * @param {*} color
    */
   paintCell(cell, color) {
+    // No need to repaint if cell is already in the given color.
     if (color !== cell.ref.state.color) {
       cell.ref.setCellColor(color);
     }
   }
 
-  setCellFocus(cell, isFocus) {
+  setCellFocusState(cell, isFocus) {
     cell.ref.setCellFocus(isFocus);
-    // let focusedCellPosition = this.state.boardHandler.focusedCellPosition;
-    // if (this.state.boardHandler.isActivePosition(focusedCellPosition)) {
-    //   this.getCell(focusedCellPosition).ref.updateFocus();
-    // }
-    // if (this.state.boardHandler.isActivePosition(prevFocusedCell)) {
-    //   this.getCell(prevFocusedCell).ref.updateFocus();
-    // }
   }
 
-  shouldRepaint(prevCellPosition, prevWord) {
-    // Not used- might delete.
-    let didWordChanged = prevWord !== this.state.boardHandler.focusedWordIndex;
-    let didPositionChanged = !this.state.boardHandler.isSamePosition(
-      prevCellPosition,
-      this.state.boardHandler.focusedCellPosition
-    );
-    if (
-      prevCellPosition[0] !== -1 &&
-      this.state.boardHandler.focusedCellPosition[0] !== -1
-    ) {
-      return didWordChanged || didPositionChanged;
-    }
-    return false;
-  }
+  // shouldRepaint(prevCellPosition, prevWord) {
+  //   // Not used- might delete.
+  //   let didWordChanged = prevWord !== this.state.boardHandler.focusedWordIndex;
+  //   let didPositionChanged = !this.state.boardHandler.isSamePosition(
+  //     prevCellPosition,
+  //     this.state.boardHandler.focusedCellPosition
+  //   );
+  //   if (
+  //     prevCellPosition[0] !== -1 &&
+  //     this.state.boardHandler.focusedCellPosition[0] !== -1
+  //   ) {
+  //     return didWordChanged || didPositionChanged;
+  //   }
+  //   return false;
+  // }
 
+  /*
+     Handle user press on a cell.
+  */
   cellPressed(position) {
     let cell = this.getCell(position);
-    let prevCell = undefined;
+    let prevCell;
     if (this.state.boardHandler.isCellFocused()) {
       prevCell = this.state.boardHandler.getFocusedCell();
     }
-    // let prevCellPosition = this.state.boardHandler.focusedCellPosition;
+
     cell.state === CellState.ACTIVE
       ? this.handleActiveCellPress(cell)
       : this.handleInactiveCellPress();
-    if (prevCell !== undefined) {
-      this.setCellFocus(prevCell, false);
+
+    // Remove focus from previous cell if needed.
+    if (prevCell) {
+      this.setCellFocusState(prevCell, false);
     }
+
+    // If there is a new focused cell- focus the Cell component.
     if (this.state.boardHandler.isCellFocused()) {
       let newCell = this.state.boardHandler.getFocusedCell();
-      this.setCellFocus(newCell, true);
+      this.setCellFocusState(newCell, true);
     }
-    // if (this.shouldRepaint(prevCellPosition, prevFocusedWord)) {
+
     this.updateWordColoring();
   }
 
   handleActiveCellPress(cell) {
     if (this.state.isKeyboardHidden) {
-      Keyboard.dismiss(); // Keyboard need to be dismissed if It was hidden by OS(pressing back button).
+      Keyboard.dismiss(); // Keyboard need to be locally dismissed if It was hidden by OS(pressing back button on Android).
     }
-    this.textInput.focus(); // Make sure that focus is maintained.
+    this.textInput.focus(); // Make sure that keyboard focus is maintained.
     this.state.boardHandler.handleWordChange(cell);
   }
 
@@ -176,9 +177,10 @@ export default class Board extends Component {
       this.setCellValue(currentCell, input);
       this.state.boardHandler.advanceFocusedWordIndex();
       let nextCell = this.state.boardHandler.getFocusedCell();
-      this.setCellFocus(currentCell, false);
-      this.setCellFocus(nextCell, true);
+      this.setCellFocusState(currentCell, false);
+      this.setCellFocusState(nextCell, true);
     }
+
     this.textInput.setNativeProps({ text: "" });
   }
 
@@ -207,6 +209,7 @@ export default class Board extends Component {
         occupiedWords.push(wordDescription);
       }
     });
+
     occupiedWords.forEach((wordDescription) => {
       this.colorWord(wordDescription, playersColors[wordDescription.state]);
     });
@@ -220,14 +223,14 @@ export default class Board extends Component {
     const cell = renderObject.item;
     return (
       <TouchableOpacity
-        activeOpacity={cell.state ? 0.7 : 1} // Black cell should not respond to touches.
+        activeOpacity={cell.state ? 0.7 : 1} // Black cell should not have graphics for responding to touches.
         style={{ flex: 1 }}
         onPress={() => {
           this.cellPressed([cell.row, cell.column]);
         }}
       >
         <Cell
-          key={`${cell.row}-${cell.column}`}
+          key={this.keyExtractor(cell)}
           cellInfo={cell}
           isFocused={cell.isFocused}
           value={cell.value}
@@ -242,10 +245,10 @@ export default class Board extends Component {
   render() {
     return (
       <View className="Board" style={boardStyle.board}>
-        <TextInput
+        <TextInput // Invisible textInput to control Android keyboard.
           blurOnSubmit={false}
-          autoFocus={true}
-          style={{ height: 0, width: 0 }}
+          autoFocus={true} // Get keyboard to show automatically on start(for Android).
+          style={{ height: 0, width: 0 }} // Invisible.
           onChangeText={(text) => {
             this.onKeyboardInput(text);
           }}
@@ -254,7 +257,7 @@ export default class Board extends Component {
           }}
           autoCapitalize="none"
           autoCorrect={false}
-          maxLength={1}
+          maxLength={1} // One letter per cell.
         />
         <FlatList
           keyboardShouldPersistTaps="always"
@@ -264,7 +267,6 @@ export default class Board extends Component {
           keyExtractor={this.keyExtractor}
           numColumns={this.state.boardHandler.getColumnCount()}
           renderItem={this.renderCell}
-          // getItemLayout={this.getItemLayout} // this will optimize Flatlist performance.
         />
       </View>
     );

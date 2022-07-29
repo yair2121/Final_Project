@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
-import { SocketContext } from "../../contexts/SocketContext";
 import { Input } from "react-native-elements";
-
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { SocketContext } from "../../contexts/SocketContext";
+
 import logo from "../../../assets/logo/controllerLogo.png";
-// import uuid from "react-native-uuid";
 import { COLORS } from "../../constants/colors";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
-
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState("");
@@ -20,20 +20,21 @@ export default function LoginScreen({ navigation }) {
       <TouchableOpacity
         style={styles.loginBtn}
         onPress={() => {
+          // Make sure that the user entered a name.
           if (playerName) {
-            socket.emit("login", playerName, (socketId) => {
-              AsyncStorage.setItem(
-                USER_KEY,
-                JSON.stringify({
-                  id: socketId,
-                  name: playerName,
-                })
-              ).then(() => {
-                setPlayerName(playerName);
-                navigation.setParams({ playerName: playerName });
-                navigation.navigate("MainMenu", {});
-              });
-            });
+            // socket.emit("login", playerName, (socketId) => {
+            //   AsyncStorage.setItem(
+            //     USER_KEY,
+            //     JSON.stringify({
+            //       id: socketId,
+            //       name: playerName,
+            //     })
+            // ).then(() => {
+            setPlayerName(playerName);
+            navigation.setParams({ playerName: playerName }); // TODO: Maybe delete this.
+            navigation.navigate("MainMenu", {});
+            // });
+            // });
           }
         }}
       >
@@ -89,8 +90,6 @@ const styles = StyleSheet.create({
     width: "80%",
     backgroundColor: COLORS.pink,
     borderWidth: 0,
-    // color: "#FFFFFF",
-    // borderColor: "#7DE24E",
     height: 40,
     alignItems: "center",
     borderRadius: 30,
