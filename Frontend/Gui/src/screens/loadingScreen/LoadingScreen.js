@@ -1,3 +1,4 @@
+// Not implemented yet- currently just rotating circle.
 import { View, Text } from "react-native";
 import React from "react";
 import { ActivityIndicator } from "react-native";

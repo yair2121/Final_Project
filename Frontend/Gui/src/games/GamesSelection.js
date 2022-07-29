@@ -6,6 +6,9 @@ import { COLORS } from "../constants/colors";
 
 import GAMES from "./gamesArray";
 
+/*
+Game selection button component.
+*/
 const GameButton = ({ item, navigation }) => (
   <Button
     title={item.title}
@@ -18,6 +21,9 @@ const GameButton = ({ item, navigation }) => (
   ></Button>
 );
 
+/*
+Render a GameButton per available game.
+ */
 const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);
   return (

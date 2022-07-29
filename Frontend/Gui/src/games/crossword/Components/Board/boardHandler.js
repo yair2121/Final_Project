@@ -1,7 +1,14 @@
 import { map, range } from "ramda";
-import { ORIENTATION } from "../../../../constants/orientation";
+import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
+
+// import {
+//   UNOCCUPIED,
+//   UNDEFINED_WORD,
+//   LOCAL_PLAYER,
+//   UNDEFINED_POSITION,
+// } from "../consts/generalConsts"; // TODO: Fix importing this constants
 
 const UNOCCUPIED = 0;
 const UNDEFINED_WORD = -1;
@@ -24,10 +31,12 @@ export class BoardHandler {
     this.focusedCellPosition = UNDEFINED_POSITION;
     this.board = this.initBoard(boardDescription.dimensions);
     this.words = boardDescription.boardWords;
+
     for (let [index] of this.words.entries()) {
       this.words[index]["state"] = UNOCCUPIED;
       this.words[index]["positions"] = this.getWordPositions(this.words[index]);
     }
+
     this.activateWordsOnBoard(boardDescription.boardWords);
   }
 
@@ -35,24 +44,26 @@ export class BoardHandler {
     const [rowCount, columnCount] = dimensions;
     return map((row) => {
       return map((column) => {
-        return new CellUtils(row, column, CellState.NONACTIVE, "", {});
+        return new CellUtils(row, column, CellState.NONACTIVE, "", {}); // Initial state of all cells is NONACTIVE
       }, range(0, columnCount));
     }, range(0, rowCount));
   }
 
   /**
-   * Activate the state and add word index to all the cells which belongs to given words.
+   * Activate the word on the board and add word index to all the cells which belongs to given words.
    * @param {Object} wordDescription
    */
   activateWordOnBoard(wordDescription) {
     let wordIndex = this.getWordIndex(wordDescription);
     let positions = this.words[wordIndex].positions;
     let orientation = wordDescription["orientation"];
+
     positions.forEach((position) => {
       let cell = this.getCell(position);
       cell.state = CellState.ACTIVE;
       cell.words[orientation] = this.getWordIndex(wordDescription);
     });
+
     this.getCell(positions[0]).activateStartOfWord(orientation);
   }
 
@@ -70,16 +81,17 @@ export class BoardHandler {
     return this.board[position[0]][position[1]];
   }
 
-  //TODO: Add update function which get new state and change to the new state
-
   /**
-   * @param {Number} wordIndex
-   * @returns Word Description
+   * @param {Number} wordIndex.
+   * @returns Word Description.
    */
   getWord(wordIndex) {
     return this.words[wordIndex];
   }
 
+  /*
+  Return the currently in focus cell.
+  */
   getFocusedCell() {
     let [row, column] = this.focusedCellPosition;
     return this.board[row][column];
@@ -94,7 +106,7 @@ export class BoardHandler {
 
   /**
    * Find all the positions on the board which are part of the given word.
-   * @param {Object} wordDescription
+   * @param {Object} wordDescription.
    * @returns array of positions on the board.
    */
   getWordPositions(wordDescription) {
@@ -115,7 +127,7 @@ export class BoardHandler {
   }
 
   getWordStartPosition(wordDescription) {
-    return [wordDescription.starty - 1, wordDescription.startx - 1];
+    return [wordDescription.starty - 1, wordDescription.startx - 1]; // -1 Because startx and starty starts from 1.
   }
 
   getWordIndex(wordDescription) {
@@ -152,6 +164,7 @@ export class BoardHandler {
       let direction = this.getOrientationDirection(currentWord.orientation);
       let [row, column] = this.focusedCellPosition;
       let nextPosition = [row + direction[0], column + direction[1]];
+      // Checks whether the new positions is valid and active.
       if (this.isActivePosition(nextPosition)) {
         let nextCell = this.getCell(nextPosition);
         this.setFocusedCell(nextCell);
@@ -263,30 +276,38 @@ export class BoardHandler {
       this.focusedWordIndex = UNDEFINED_WORD;
     }
   }
-
+  /**
+   * Given currentCell- determines the index of the next focused word.
+   * Assumes the cell is active.
+   * @returns Index of the next focused word.
+   */
+  getNewWord(currentCell) {
+    let newWord;
+    if (
+      this.isSamePosition(currentCell.getPosition(), this.focusedCellPosition)
+    ) {
+      // If positions is equal- then new words is the currentCell word with opposite orientation to the current focusedWordIndex.
+      newWord = this.getOppositeCellWord(
+        currentCell,
+        this.getWord(this.focusedWordIndex).orientation
+      );
+    } else {
+      newWord = currentCell.getDefaultWord();
+    }
+    return newWord;
+  }
   /**
    * Change focusedWord if necessary based on given current cell and return true if word was changed, false if not.
    * @param {Object} currentCell
    */
   handleWordChange(currentCell) {
     if (this.shouldChangeWord(currentCell)) {
-      var newWord;
-      if (
-        this.isSamePosition(currentCell.getPosition(), this.focusedCellPosition)
-      ) {
-        // If positions it equal- then new words is the currentCell word with opposite orientation to focusedWordIndex
-        newWord = this.getOppositeCellWord(
-          currentCell,
-          this.getWord(this.focusedWordIndex).orientation
-        );
-      } else {
-        newWord = currentCell.getDefaultWord();
-      }
+      let newWord = this.getNewWord(currentCell);
+
       if (this.canOccupyWord(newWord)) {
         this.setClue(this.words[newWord].position, this.words[newWord].clue);
         this.occupyWord(newWord);
         this.setFocusedCell(currentCell);
-        // this.setFocusedWord(newWord);
       }
     } else {
       this.setFocusedCell(currentCell); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
@@ -299,11 +320,12 @@ export class BoardHandler {
    * @param {Number} playerIndex
    */
   occupyWord(wordIndex) {
+    // Remove current word if needed.
     if (this.focusedWordIndex !== UNDEFINED_WORD) {
       this.freeWord(this.focusedWordIndex);
     }
+
     this.words[wordIndex].state = LOCAL_PLAYER;
     this.setFocusedWord(wordIndex);
-    // this.focusedWordIndex = wordIndex;
   }
 }

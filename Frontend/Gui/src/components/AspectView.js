@@ -1,5 +1,9 @@
+/*
+This tool allows to use aspect ratio on the web.
+ */
+
 import * as React from "react";
-import { Text, View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 
 export default function AspectView(props) {
   const [layout, setLayout] = React.useState(null);
