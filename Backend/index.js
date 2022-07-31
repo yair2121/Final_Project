@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const { SessionsController } = require("./sessions/SessionsController");
 var path = require("path");
+// Path to web build files
 public_path = path.dirname(__dirname) + "/Frontend/Gui/web-build";
 const session_controller = new SessionsController();
 port = 3000;
@@ -22,7 +23,7 @@ function connect_player(player_id, player_name, game_name) {
 
 session_controller.on("Session started", (game_state, s_id) => {
   incomplete_sessions[s_id] = game_state;
-  console.log("initialised incomplete session");
+  //console.log("initialised incomplete session");
   io.to(s_id).emit("Session started", game_state, s_id);
 });
 
@@ -31,8 +32,8 @@ session_controller.on("Update session state", (game_state, s_id) => {
 });
 
 session_controller.on("Update session move", (move, s_id) => {
-  console.log("indexjs update session move");
-  console.log(move);
+  //console.log("indexjs update session move");
+  //console.log(move);
   io.to(s_id).emit("Update move", move, s_id);
 });
 
@@ -52,18 +53,13 @@ app.get("/", (req, res) => {
 // });
 
 io.on("connection", (socket) => {
+  // Connects a player to a game and uses callback function to respond with the session id and game state.
   socket.on("connect_to_game", (game_name, callback) => {
-    console.log(game_name);
-    console.log(callback);
     let s_id = connect_player(socket.id, socket.data.name, game_name);
-    // console.log(session_controller.sessions);
     socket.join(s_id);
-    // console.log(s_id);
     if (s_id in incomplete_sessions) {
       console.log("started send new client");
       callback({ s_id: s_id, game_state: incomplete_sessions[s_id] });
-      console.log("new client sent update");
-      console.log(incomplete_sessions[s_id]);
       delete incomplete_sessions[s_id];
     } else {
       callback({ s_id: s_id, game_state: {} });
@@ -84,6 +80,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(port, () => {
-  // console.log("listening on *:3000");
-});
+server.listen(port, () => {});

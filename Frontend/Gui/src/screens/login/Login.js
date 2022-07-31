@@ -22,19 +22,19 @@ export default function LoginScreen({ navigation }) {
         onPress={() => {
           // Make sure that the user entered a name.
           if (playerName) {
-            // socket.emit("login", playerName, (socketId) => {
-            //   AsyncStorage.setItem(
-            //     USER_KEY,
-            //     JSON.stringify({
-            //       id: socketId,
-            //       name: playerName,
-            //     })
-            // ).then(() => {
-            setPlayerName(playerName);
-            navigation.setParams({ playerName: playerName }); // TODO: Maybe delete this.
-            navigation.navigate("MainMenu", {});
-            // });
-            // });
+            socket.emit("login", playerName, (socketId) => {
+              AsyncStorage.setItem(
+                USER_KEY,
+                JSON.stringify({
+                  id: socketId,
+                  name: playerName,
+                })
+              ).then(() => {
+                setPlayerName(playerName);
+                navigation.setParams({ playerName: playerName }); // TODO: Maybe delete this.
+                navigation.navigate("MainMenu", {});
+              });
+            });
           }
         }}
       >

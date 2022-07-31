@@ -5,7 +5,7 @@ const {
 } = require("../sessions/game_session/GameSessionServer");
 const { v1: uuidv1 } = require("uuid");
 /**
- * Manage games sessions and connection between the client to them.
+ * Manage games sessions and forwards clients to relevant game sessions.
  */
 class SessionsController extends EventEmitter {
   constructor() {
@@ -116,6 +116,7 @@ class SessionsController extends EventEmitter {
     );
     return session_id;
   }
+
   #subscribe_game_session(game_session) {
     game_session.on("Session started", (game_state, game_name, session_id) => {
       const { container, session } = this.#get_session(game_name, session_id);
@@ -136,12 +137,10 @@ class SessionsController extends EventEmitter {
     });
 
     game_session.on("Update session state", (game_state, session_id) => {
-      console.log("sessionscontroller emitted");
       this.emit("Update session state", game_state, session_id);
     });
 
     game_session.on("Update session move", (move_description, session_id) => {
-      console.log("sessionscontroller move");
       this.emit("Update session move", move_description, session_id);
     });
   }

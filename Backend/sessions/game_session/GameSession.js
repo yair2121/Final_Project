@@ -2,12 +2,14 @@ const EventEmitter = require("events");
 
 /**
  * A game session.
+ * Forwards relevant emits from game_model to GameSessionServer
  */
 class GameSession extends EventEmitter {
   #game_model;
   #database_controller;
   constructor(game_model, database_controller) {
     super();
+    // Maps socket_id to player index.  players[<player_socket_id>] = <player_index>
     this.players = {};
     this.connected_players = 0;
     this.#game_model = game_model;
@@ -44,7 +46,6 @@ class GameSession extends EventEmitter {
   start_session() {
     this.#game_model.play(this.connected_players);
     this.emit("Session started", this.#game_model.game_name);
-    //this.emit("Update state");
   }
 
   /**

@@ -1,5 +1,9 @@
 const { GameSession } = require("./GameSession");
 const EventEmitter = require("events");
+/**
+ * Encapsulation of GameSession class.
+ * Handles communication with sockets of players in the gamesession.
+ */
 class GameSessionServer extends EventEmitter {
   #game_session;
   constructor(session_id, game_model, database_controller) {
@@ -113,12 +117,6 @@ class GameSessionServer extends EventEmitter {
    * @returns The current state of the game.
    */
   get_state() {
-    //console.log(this.players);
-    // console.log(
-    //   Object.assign({}, this.#game_session.get_state(), {
-    //     players: this.players,
-    //   })
-    // );
     return Object.assign({}, this.#game_session.get_state(), {
       players: this.players,
     });
