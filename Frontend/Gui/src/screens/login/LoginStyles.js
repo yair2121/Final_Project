@@ -4,6 +4,7 @@ import { isMobilePlatform } from "../../generalUtils/systemUtils";
 import { heightResponsive, widthResponsive } from "../../stylingUtils.js";
 
 const borderRadius = 30;
+
 export const LoginStyles = StyleSheet.create({
   safeContainer: {
     flex: 1,
@@ -28,6 +29,7 @@ export const LoginStyles = StyleSheet.create({
     height: heightResponsive(4),
     borderRadius: borderRadius,
     overflow: "hidden",
+    alignItems: "center",
   },
   TextInput: {
     textAlign: "center",
@@ -35,28 +37,23 @@ export const LoginStyles = StyleSheet.create({
     height: heightResponsive(4),
     borderRadius: borderRadius,
     borderColor: "black",
-    // borderColor: COLORS.black,
-    fontSize: 16,
-    // padding: 10,
-    // marginLeft: 20,
+    fontSize: 25,
+    fontWeight: "bold",
   },
+  space: {
+    height: heightResponsive(2),
+  },
+
   loginBtn: {
     width: widthResponsive(80),
     height: heightResponsive(4.5),
     backgroundColor: COLORS.pink,
-    // width: "80%",
     borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
   },
   loginText: {
-    // height: heightResponsive(100),
     textAlign: "center",
     fontWeight: "bold",
-
-    // flex: 1,
-    // padding: 10,
-    // marginLeft: 20,
   },
 });

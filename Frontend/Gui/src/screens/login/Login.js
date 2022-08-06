@@ -48,6 +48,7 @@ export default function LoginScreen({ navigation }) {
     return (
       <Button
         title="LOGIN"
+        type="solid"
         buttonStyle={LoginStyles.loginBtn}
         titleStyle={LoginStyles.loginText}
         onPress={() => {
@@ -69,6 +70,7 @@ export default function LoginScreen({ navigation }) {
             setPlayerName(name); // TODO: check if it's an issue that the name can includes non english letters.
           }}
         ></Input>
+        <View style={LoginStyles.space} />
         <LoginButton onLogin={login} />
       </View>
     </SafeAreaView>
