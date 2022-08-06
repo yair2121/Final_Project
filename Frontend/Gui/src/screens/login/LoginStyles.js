@@ -1,54 +1,62 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "../../constants/colors";
+import { isMobilePlatform } from "../../generalUtils/systemUtils";
 import { heightResponsive, widthResponsive } from "../../stylingUtils.js";
 
+const borderRadius = 30;
 export const LoginStyles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
     backgroundColor: COLORS.backgroundBlue,
+  },
+  container: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: isMobilePlatform() ? "60%" : "0%",
   },
   logo: {
-    width: 66,
-    height: 58,
-    marginBottom: 40,
+    width: widthResponsive(20),
+    height: heightResponsive(10),
+    marginBottom: "5%",
+    resizeMode: "contain",
+    alignSelf: "center",
   },
   inputView: {
-    backgroundColor: "#FFC0CB",
-    borderRadius: 30,
-    width: "70%",
-    height: 45,
-    marginBottom: 20,
-    alignItems: "center",
+    backgroundColor: COLORS.white,
+    width: widthResponsive(70),
+    height: heightResponsive(4),
+    borderRadius: borderRadius,
+    overflow: "hidden",
   },
   TextInput: {
-    // height: 50,
-    width: widthResponsive(80),
-    height: heightResponsive(4.5),
-    flex: 1,
-    padding: 10,
-    marginLeft: 20,
+    textAlign: "center",
+    width: widthResponsive(70),
+    height: heightResponsive(4),
+    borderRadius: borderRadius,
+    borderColor: "black",
+    // borderColor: COLORS.black,
+    fontSize: 16,
+    // padding: 10,
+    // marginLeft: 20,
   },
   loginBtn: {
     width: widthResponsive(80),
     height: heightResponsive(4.5),
     backgroundColor: COLORS.pink,
-    borderWidth: 0,
-    // height: "20%",
+    // width: "80%",
+    borderRadius: 25,
     alignItems: "center",
-    borderRadius: 30,
-    // marginLeft: 35,
-    // marginRight: 35,
-    // marginTop: 20,
-    // marginBottom: 25,
+    justifyContent: "center",
+    marginTop: 40,
   },
   loginText: {
     // height: heightResponsive(100),
     textAlign: "center",
     fontWeight: "bold",
-    flex: 1,
-    padding: 10,
+
+    // flex: 1,
+    // padding: 10,
     // marginLeft: 20,
   },
 });

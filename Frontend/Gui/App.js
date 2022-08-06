@@ -32,7 +32,7 @@ const headerOption = {
 };
 
 const Stack = createNativeStackNavigator();
-const StackScreen = () => {
+const StackScreen = function () {
   return (
     <Stack.Navigator
       screenOptions={{

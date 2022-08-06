@@ -3,12 +3,7 @@ import { StyleSheet } from "react-native";
 import { COLORS } from "../../constants/colors";
 import { CellState } from "./Components/Cell/cellStates";
 
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-
-import { toResponsive } from "../../stylingUtils";
+import { heightResponsive, widthResponsive } from "../../stylingUtils";
 
 var boardFrameHeight = 45;
 var boardFrameWidth = 30;
@@ -28,8 +23,8 @@ const mainViewStyle = StyleSheet.create({
     flex: 0,
     borderColor: COLORS.black,
     backgroundColor: COLORS.white,
-    height: toResponsive(hp, boardFrameHeight), // 70% of height device screen
-    width: toResponsive(wp, boardFrameWidth), // 80% of width device screen
+    width: widthResponsive(boardFrameWidth), // 80% of width device screen
+    height: heightResponsive(boardFrameHeight), // 70% of height device screen
     // aspectRatio: 1,
   },
 

@@ -1,16 +1,17 @@
-import React, { useContext, useState, Component } from "react";
-import { Button, Input, Text } from "react-native-elements";
-import { View, Image, TouchableOpacity } from "react-native";
+import React, { useContext, useState } from "react";
+import { Button, Input } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SocketContext } from "../../contexts/SocketContext";
 
-import logo from "../../../assets/logo/controllerLogo.png";
 import { COLORS } from "../../constants/colors";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
 import { LoginStyles } from "./LoginStyles.js";
+import LoginLogo from "./LoginLogo";
+import { LANGUAGE } from "../../constants/languageRegex";
+import { View } from "react-native";
 
 export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState("");
@@ -56,18 +57,20 @@ export default function LoginScreen({ navigation }) {
     );
   };
   return (
-    <SafeAreaView style={LoginStyles.container}>
-      <Image style={LoginStyles.logo} source={logo} />
-      <View style={LoginStyles.inputView}>
+    <SafeAreaView style={LoginStyles.safeContainer}>
+      <View style={LoginStyles.container}>
+        <LoginLogo />
         <Input
           value={playerName}
-          inputStyle={LoginStyles.inputView}
-          placeholder="Enter your name."
-          placeholderTextColor={COLORS.black}
-          onChangeText={(name) => setPlayerName(name)}
+          containerStyle={LoginStyles.inputView}
+          inputStyle={LoginStyles.TextInput}
+          placeholder="Enter your name"
+          onChangeText={(name) => {
+            setPlayerName(name); // TODO: check if it's an issue that the name can includes non english letters.
+          }}
         ></Input>
+        <LoginButton onLogin={login} />
       </View>
-      <LoginButton onLogin={login} />
     </SafeAreaView>
   );
 }
