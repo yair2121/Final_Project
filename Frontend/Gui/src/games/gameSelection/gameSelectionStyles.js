@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "../../constants/colors";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
-import { heightResponsive, widthResponsive } from "../../stylingUtils";
+import { widthResponsive } from "../../stylingUtils";
 
 export const gameSelectionStyles = StyleSheet.create({
   list: {
