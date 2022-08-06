@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { View } from "react-native";
+import { FlatList } from "react-native";
 
 import { Button } from "react-native-elements";
-import { COLORS } from "../constants/colors";
 
-import GAMES from "./gamesArray";
+import GAMES from "../gamesArray";
+import { gameSelectionStyles } from "./gameSelectionStyles";
 
 /*
 Game selection button component.
@@ -15,9 +16,9 @@ const GameButton = ({ item, navigation }) => (
     onPress={() => {
       navigation.navigate("GameScreen", { title: item.title });
     }}
-    buttonStyle={styles.button}
-    titleStyle={styles.gameTitle}
-    containerStyle={styles.container}
+    buttonStyle={gameSelectionStyles.button}
+    titleStyle={gameSelectionStyles.gameTitle}
+    // containerStyle={gameSelectionStyles.container}
   ></Button>
 );
 
@@ -28,6 +29,7 @@ const GameSelection = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(null);
   return (
     <FlatList
+      style={gameSelectionStyles.list}
       scrollEnabled={false}
       data={GAMES}
       renderItem={({ item }) => (
@@ -38,23 +40,5 @@ const GameSelection = ({ navigation }) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 50,
-    height: 50,
-    width: 200,
-    marginVertical: 10,
-    backgroundColor: COLORS.backgroundBlue,
-  },
-  button: {
-    backgroundColor: "rgba(111, 202, 186, 1)",
-    borderRadius: 30,
-  },
-  gameTitle: {
-    fontWeight: "bold",
-    fontSize: 23,
-  },
-});
 
 export default GameSelection;
