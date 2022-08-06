@@ -4,6 +4,7 @@ import { COLORS } from "../../constants/colors";
 import { CellState } from "./Components/Cell/cellStates";
 
 import { heightResponsive, widthResponsive } from "../../stylingUtils";
+import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
 var boardFrameHeight = 45;
 var boardFrameWidth = 30;
@@ -63,21 +64,33 @@ const cellStyle = function (cellState, cellColor, isFocused) {
   const style = StyleSheet.create({
     cell: {
       backgroundColor: cellColor,
-      borderColor: borderColor,
-      // justifyContent: "center",
-      // alignItems: "center",
-      // TODO: make dynamic based on cell status(occupied or not and if occupied then color should be the same as the player color)
+      borderColor: isMobilePlatform() ? borderColor : "",
       flex: 1,
       borderWidth: 0.5,
     },
-    cellContent: {
+    activeCell: {
       // flex: 1,
       // justifyContent: "center",
+      // alignItems: "center",
+    },
+    cellInput: {
+      // marginTop: "35%",
       fontWeight: "bold",
       textAlign: "center",
+
       textTransform: "uppercase",
-      alignItems: "center",
-      justifyContent: "center",
+    },
+    cellWord: {
+      position: "absolute",
+      // marginRight: "50%",
+      // textAlign: "left",
+      // alignSelf: "flex-end",
+      // alignSelf: "baseline",
+      // marginRight: "auto",
+      // position: "absolute",
+      top: -2,
+      left: 2,
+      zIndex: 1,
     },
   });
   return style;

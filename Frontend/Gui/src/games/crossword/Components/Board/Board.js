@@ -223,7 +223,7 @@ export default class Board extends Component {
     const cell = renderObject.item;
     return (
       <TouchableOpacity
-        activeOpacity={cell.state ? 0.7 : 1} // Black cell should not have graphics for responding to touches.
+        activeOpacity={cell.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
         style={{ flex: 1 }}
         onPress={() => {
           this.cellPressed([cell.row, cell.column]);
