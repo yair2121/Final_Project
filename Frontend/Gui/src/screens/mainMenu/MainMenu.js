@@ -6,8 +6,9 @@ import { COLORS } from "../../constants/colors";
 // import { USER_KEY } from "../../constants/keys";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
+import GameSelection from "../../games/gameSelection/GamesSelection";
 
-import GameSelection from "../../games/GamesSelection";
+// import GameSelection from "../../games/GamesSelection";
 // AsyncStorage.getItem(USER_KEY).then((item) => {
 //   console.log(JSON.parse(item));
 // });

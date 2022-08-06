@@ -1,17 +1,17 @@
 import React, { useContext, useState } from "react";
-import GAMES from "../../games/gamesArray";
 import LoadingScreen from "../loadingScreen/LoadingScreen";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SESSION_ID, SESSION_STATE } from "../../constants/keys";
 const emptyjson = JSON.stringify({});
 import { Button } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS } from "../../constants/colors";
-
 import { StyleSheet, View } from "react-native";
 
 import { useEffect } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
+import GAMES from "../../games/gamesArray";
+import { COLORS } from "../../constants/colors";
 /*
   Handle all the ui of a game.
   Wraps the game view.
