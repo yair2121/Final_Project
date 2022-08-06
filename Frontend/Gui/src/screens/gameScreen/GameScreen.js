@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
 import GAMES from "../../games/gamesArray";
 import { COLORS } from "../../constants/colors";
+import { gameScreenStyles } from "./gameScreenStyles";
+
 /*
   Handle all the ui of a game.
   Wraps the game view.
@@ -45,46 +47,19 @@ export default function GameScreen({ route }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={gameScreenStyles.container}>
       {/* {isLoading && <LoadingScreen gameName={title} />} */}
-      <View style={styles.contentBox}>
+      <View style={gameScreenStyles.contentBox}>
         {isLoading && <LoadingScreen gameName={title} />}
         {!isLoading && <GameView initial_state={initial_state} />}
       </View>
 
-      <Button
+      {/* <Button
         title="toggle"
         onPress={() => {
           setIsLoading(!isLoading);
         }}
-      />
+      /> */}
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.backgroundBlue,
-    // width: Dimensions.get("window").width,
-    // height: Dimensions.get("window").height,
-    // width: "100%",
-    // justifyContent: "center",
-    // alignItems: "center",
-  },
-  contentBox: {
-    // alignItems: "center",
-    // backgroundColor: "white",
-    // width: SCREENSIZE.width * 0.8,
-    flex: 1,
-    // aspectRatio: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-  },
-  title: {
-    color: COLORS.lightgrey,
-    fontSize: 32,
-    fontWeight: "bold",
-    letterSpacing: 7,
-    alignSelf: "center",
-  },
-});

@@ -21,7 +21,7 @@ import { CellState } from "../Cell/cellStates";
 const playersColors = [
   COLORS.white,
   COLORS.green,
-  COLORS.darkgrey,
+  COLORS.darkGrey,
   COLORS.grey,
   COLORS.secondary,
 ];
