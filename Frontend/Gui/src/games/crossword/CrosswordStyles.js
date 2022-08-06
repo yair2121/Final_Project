@@ -2,17 +2,13 @@ import { Platform } from "react-native";
 import { StyleSheet } from "react-native";
 import { COLORS } from "../../constants/colors";
 import { CellState } from "./Components/Cell/cellStates";
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-function toResponsive(orientation, value) {
-  /**
-   * Create a react-native-responsive-screen string based on the given orientation and value.
-   */
-  return orientation(value.toString() + "%");
-}
+import { toResponsive } from "../../stylingUtils";
 
 var boardFrameHeight = 45;
 var boardFrameWidth = 30;
