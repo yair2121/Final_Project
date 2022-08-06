@@ -84,13 +84,18 @@ const cellStyle = function (cellState, cellColor, isFocused) {
 };
 
 const clueStyle = StyleSheet.create({
-  clue: {
-    borderWidth: 0.5,
-    backgroundColor: "#FFF",
+  clueContainer: {
+    flex: 1,
+    textTransform: "uppercase",
+  },
+  clueText: {
+    flex: 1,
+    backgroundColor: COLORS.black,
+    textAlign: "center",
+    letterSpacing: 1,
     textTransform: "uppercase",
     fontWeight: "bold",
-    color: "#000000",
-    fontSize: 15,
+    color: COLORS.white,
   },
 });
 

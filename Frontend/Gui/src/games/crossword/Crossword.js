@@ -1,14 +1,11 @@
 import React, { Component } from "react";
-import { Platform, View, Text } from "react-native";
+import { View } from "react-native";
 
 import AspectView from "../../components/AspectView";
 
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
 import Board from "./Components/Board";
-
-// function isMobilePlatform() { // Might not be needed.
-//   return Platform.OS === "android" || Platform.OS == "ios";
-// }
+import { Text } from "react-native-elements";
 
 /*
 Crossword GUI class.
@@ -31,7 +28,7 @@ export default class Crossword extends Component {
   }
 
   setClue(wordPosition, clue) {
-    this.setState({ currentClue: wordPosition + ":" + clue });
+    this.setState({ currentClue: wordPosition + ": " + clue });
   }
 
   render() {
@@ -44,7 +41,11 @@ export default class Crossword extends Component {
               this.setClue(wordPosition, clue);
             }}
           />
-          <Text style={clueStyle.clue}>{this.state.currentClue}</Text>
+          <View style={clueStyle.clueContainer}>
+            <Text adjustsFontSizeToFit={true} style={clueStyle.clueText}>
+              {this.state.currentClue ? this.state.currentClue : "Clues"}
+            </Text>
+          </View>
         </AspectView>
       </View>
     );

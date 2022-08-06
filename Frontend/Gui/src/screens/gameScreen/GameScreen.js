@@ -50,16 +50,16 @@ export default function GameScreen({ route }) {
     <SafeAreaView style={gameScreenStyles.container}>
       {/* {isLoading && <LoadingScreen gameName={title} />} */}
       <View style={gameScreenStyles.contentBox}>
-        {isLoading && <LoadingScreen gameName={title} />}
-        {!isLoading && <GameView initial_state={initial_state} />}
+        <GameView initial_state={initial_state} />
+        {/* {isLoading && <LoadingScreen gameName={title} />} */}
+        {/* {!isLoading && <GameView initial_state={initial_state} />} */}
       </View>
-
-      {/* <Button
-        title="toggle"
-        onPress={() => {
-          setIsLoading(!isLoading);
-        }}
-      /> */}
+      {/* <Button */}
+      {/* title="toggle" */}
+      {/* onPress={() => { */}
+      {/* setIsLoading(!isLoading); */}
+      {/* }} */}
+      {/* /> */}
     </SafeAreaView>
   );
 }
