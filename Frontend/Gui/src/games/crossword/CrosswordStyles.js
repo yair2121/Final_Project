@@ -67,14 +67,9 @@ const cellStyle = function (cellState, cellColor, isFocused) {
       borderColor: isMobilePlatform() ? borderColor : "",
       flex: 1,
       borderWidth: 0.5,
-    },
-    activeCell: {
-      // flex: 1,
-      // justifyContent: "center",
-      // alignItems: "center",
+      justifyContent: "center",
     },
     cellInput: {
-      // marginTop: "35%",
       fontWeight: "bold",
       textAlign: "center",
 
@@ -82,12 +77,6 @@ const cellStyle = function (cellState, cellColor, isFocused) {
     },
     cellWord: {
       position: "absolute",
-      // marginRight: "50%",
-      // textAlign: "left",
-      // alignSelf: "flex-end",
-      // alignSelf: "baseline",
-      // marginRight: "auto",
-      // position: "absolute",
       top: -2,
       left: 2,
       zIndex: 1,

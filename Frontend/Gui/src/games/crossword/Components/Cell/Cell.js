@@ -63,21 +63,21 @@ export default class Cell extends Component {
           ).cell
         }
       >
+        {this.state.cellInfo.isStartOfWord() && (
+          //Render word index.
+          <Text style={cellStyle(this.state.cellInfo.state).cellWord}>
+            {this.getStartOfWordText()}
+          </Text>
+        )}
         {this.state.cellInfo.state === CellState.ACTIVE && (
-          <View style={cellStyle(this.state.cellInfo.state).activeCell}>
-            {this.state.cellInfo.isStartOfWord() && (
-              <Text style={cellStyle(this.state.cellInfo.state).cellWord}>
-                {this.getStartOfWordText()}
-              </Text>
-            )}
-            <Text
-              style={cellStyle(this.state.cellInfo.state).cellInput}
-              maxLength={1} // One letter per cell.
-              adjustsFontSizeToFit={true}
-            >
-              {this.state.value}
-            </Text>
-          </View>
+          // Render cell current value.
+          <Text
+            style={cellStyle(this.state.cellInfo.state).cellInput}
+            maxLength={1} // One letter per cell.
+            adjustsFontSizeToFit={true}
+          >
+            {this.state.value}
+          </Text>
         )}
       </AspectView>
     );
