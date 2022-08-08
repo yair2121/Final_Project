@@ -6,13 +6,14 @@ import { CellState } from "./Components/Cell/cellStates";
 import { heightResponsive, widthResponsive } from "../../stylingUtils";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
-var boardFrameHeight = 45;
-var boardFrameWidth = 30;
+var boardFrameHeight = 60;
+var boardFrameWidth = 90;
 
 if (Platform.OS === "web") {
   var boardFrameHeight = 100;
-  var boardFrameWidth = 35;
+  var boardFrameWidth = 50;
 }
+let isMobile = isMobilePlatform();
 
 const mainViewStyle = StyleSheet.create({
   container: {
@@ -20,14 +21,15 @@ const mainViewStyle = StyleSheet.create({
     backgroundColor: COLORS.backgroundBlue,
     alignItems: "center",
   },
-  boardFrame: {
-    flex: 0,
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.white,
-    width: widthResponsive(boardFrameWidth), // 80% of width device screen
-    height: heightResponsive(boardFrameHeight), // 70% of height device screen
-    // aspectRatio: 1,
-  },
+  // boardFrame: {
+  //   flex: 1,
+  //   // flexDirection: "row",
+  //   borderColor: COLORS.black,
+  //   backgroundColor: COLORS.white,
+  //   // width: widthResponsive(boardFrameWidth), // 80% of width device screen
+  //   // height: heightResponsive(boardFrameHeight), // 70% of height device screen
+  //   aspectRatio: isMobile ? 1 : 0,
+  // },
 
   title: {
     color: COLORS.lightgrey,
@@ -39,13 +41,10 @@ const mainViewStyle = StyleSheet.create({
 const boardStyle = StyleSheet.create({
   board: {
     // flex: 1,
-    // display: "flex",
-    // flexDirection: "column",
-    // height: "100%",
-    borderWidth: 0.1,
-    // borderColor: "black",
-    // borderWidth: 1,
-    backgroundColor: "white",
+    // backgroundColor: "white",
+    width: widthResponsive(boardFrameWidth),
+    height: heightResponsive(boardFrameHeight),
+    // aspectRatio: 1,
   },
   row: {
     flexDirection: "row",
@@ -53,8 +52,6 @@ const boardStyle = StyleSheet.create({
 });
 
 const cellStyle = function (cellState, cellColor, isFocused) {
-  // if (cellState === CellState.ACTIVE) {
-  // }
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
 
@@ -64,7 +61,7 @@ const cellStyle = function (cellState, cellColor, isFocused) {
   const style = StyleSheet.create({
     cell: {
       backgroundColor: cellColor,
-      borderColor: isMobilePlatform() ? borderColor : "",
+      borderColor: isMobile ? borderColor : "",
       flex: 1,
       borderWidth: 0.5,
       justifyContent: "center",
@@ -77,8 +74,8 @@ const cellStyle = function (cellState, cellColor, isFocused) {
     },
     cellWord: {
       position: "absolute",
-      top: -2,
-      left: 2,
+      top: -3,
+      left: 0,
       zIndex: 1,
     },
   });
@@ -87,14 +84,14 @@ const cellStyle = function (cellState, cellColor, isFocused) {
 
 const clueStyle = StyleSheet.create({
   clueContainer: {
-    flex: 1,
-    textTransform: "uppercase",
+    width: widthResponsive(boardFrameWidth),
+    height: heightResponsive(7),
+    backgroundColor: COLORS.black,
   },
   clueText: {
     flex: 1,
-    backgroundColor: COLORS.black,
     textAlign: "center",
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     textTransform: "uppercase",
     fontWeight: "bold",
     color: COLORS.white,

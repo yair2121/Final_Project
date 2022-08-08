@@ -248,7 +248,7 @@ export default class Board extends Component {
         <TextInput // Invisible textInput to control Android keyboard.
           blurOnSubmit={false}
           autoFocus={true} // Get keyboard to show automatically on start(for Android).
-          style={{ height: 0, width: 0 }} // Invisible.
+          style={{ height: 0, width: 0, flex: 0 }} // Invisible.
           onChangeText={(text) => {
             this.onKeyboardInput(text);
           }}

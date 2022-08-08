@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import AspectView from "../../components/AspectView";
 
@@ -30,23 +30,22 @@ export default class Crossword extends Component {
   setClue(wordPosition, clue) {
     this.setState({ currentClue: wordPosition + ": " + clue });
   }
-
+  // TODO: Change font size per click
   render() {
     return (
       <View style={mainViewStyle.container}>
-        <AspectView style={mainViewStyle.boardFrame}>
-          <Board
-            boardDescription={this.state.boardDescription}
-            setClue={(wordPosition, clue) => {
-              this.setClue(wordPosition, clue);
-            }}
-          />
-          <View style={clueStyle.clueContainer}>
-            <Text adjustsFontSizeToFit={true} style={clueStyle.clueText}>
-              {this.state.currentClue ? this.state.currentClue : "Clues"}
-            </Text>
-          </View>
-        </AspectView>
+        <TouchableOpacity style={clueStyle.clueContainer} activeOpacity={0.7}>
+          <Text adjustsFontSizeToFit={true} style={clueStyle.clueText}>
+            {this.state.currentClue ? this.state.currentClue : "Clues"}
+          </Text>
+        </TouchableOpacity>
+
+        <Board
+          boardDescription={this.state.boardDescription}
+          setClue={(wordPosition, clue) => {
+            this.setClue(wordPosition, clue);
+          }}
+        />
       </View>
     );
   }

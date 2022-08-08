@@ -4,7 +4,6 @@ import { cellStyle } from "../../CrosswordStyles";
 import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
 import { COLORS } from "../../../../constants/colors";
-import { TextInput, View } from "react-native";
 import { ORIENTATION } from "../../consts/orientation";
 
 /**
