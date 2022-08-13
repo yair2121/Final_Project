@@ -17,7 +17,6 @@ if (Platform.OS === "web") {
 const mainViewStyle = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundBlue,
     alignItems: "center",
     justifyContent: "center",
   },

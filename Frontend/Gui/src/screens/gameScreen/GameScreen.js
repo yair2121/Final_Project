@@ -14,6 +14,8 @@ import GAMES from "../../games/gamesArray";
 import { COLORS } from "../../constants/colors";
 import { gameScreenStyles } from "./gameScreenStyles";
 import { Crossword } from "../../games";
+import { LinearGradient } from "expo-linear-gradient";
+import { backgroundStyle } from "../../constants/backgroundStyle";
 
 /*
   Handle all the ui of a game.
@@ -48,20 +50,22 @@ export default function GameScreen({ route }) {
   // }, []);
 
   return (
-    <View style={gameScreenStyles.container}>
-      {/* {isLoading && <LoadingScreen gameName={title} />} */}
-      <View style={gameScreenStyles.contentBox}>
-        {/* <GameView initial_state={initial_state} /> */}
-        <Crossword />
+    <LinearGradient colors={COLORS.background} style={backgroundStyle}>
+      <View style={gameScreenStyles.container}>
         {/* {isLoading && <LoadingScreen gameName={title} />} */}
-        {/* {!isLoading && <GameView initial_state={initial_state} />} */}
+        <View style={gameScreenStyles.contentBox}>
+          {/* <GameView initial_state={initial_state} /> */}
+          <Crossword />
+          {/* {isLoading && <LoadingScreen gameName={title} />} */}
+          {/* {!isLoading && <GameView initial_state={initial_state} />} */}
+        </View>
+        {/* <Button */}
+        {/* title="toggle" */}
+        {/* onPress={() => { */}
+        {/* setIsLoading(!isLoading); */}
+        {/* }} */}
+        {/* /> */}
       </View>
-      {/* <Button */}
-      {/* title="toggle" */}
-      {/* onPress={() => { */}
-      {/* setIsLoading(!isLoading); */}
-      {/* }} */}
-      {/* /> */}
-    </View>
+    </LinearGradient>
   );
 }

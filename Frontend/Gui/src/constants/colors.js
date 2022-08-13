@@ -1,5 +1,5 @@
 export const COLORS = {
-  backgroundBlue: "#307ecc",
+  // backgroundBlue: "#307ecc",
   black: "#121214",
   white: "#FFF",
   darkGrey: "#3A3A3D",
@@ -9,4 +9,5 @@ export const COLORS = {
   lightGreen: "#00ff00",
   lightBrown: "#B59F3B",
   pink: "#FF1493",
+  background: ["#0ba19e", "#1A2980"],
 };
