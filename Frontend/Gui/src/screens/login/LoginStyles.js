@@ -14,7 +14,7 @@ export const LoginStyles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: isMobilePlatform() ? "60%" : "0%",
+    marginBottom: isMobilePlatform ? "60%" : "0%",
   },
   logo: {
     width: widthResponsive(20),
@@ -37,7 +37,7 @@ export const LoginStyles = StyleSheet.create({
     height: heightResponsive(4),
     borderRadius: borderRadius,
     borderColor: "black",
-    fontSize: isMobilePlatform() ? 20 : 25,
+    fontSize: isMobilePlatform ? 20 : 25,
     fontWeight: "bold",
   },
   space: {
@@ -56,6 +56,6 @@ export const LoginStyles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     color: COLORS.white,
-    fontSize: isMobilePlatform() ? 20 : 25,
+    fontSize: isMobilePlatform ? 20 : 25,
   },
 });

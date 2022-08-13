@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native";
 
-import { Button } from "react-native-elements";
+import { Button, Text } from "react-native-elements";
 
 import GAMES from "../gamesArray";
 import { gameSelectionStyles } from "./gameSelectionStyles";
@@ -11,15 +11,15 @@ import { gameSelectionStyles } from "./gameSelectionStyles";
 Game selection button component.
 */
 const GameButton = ({ item, navigation }) => (
-  <Button
-    title={item.title}
+  <TouchableOpacity
+    activeOpacity={0.5}
     onPress={() => {
       navigation.navigate("GameScreen", { title: item.title });
     }}
-    buttonStyle={gameSelectionStyles.button}
-    titleStyle={gameSelectionStyles.gameTitle}
-    // containerStyle={gameSelectionStyles.container}
-  ></Button>
+    style={gameSelectionStyles.button}
+  >
+    <Text style={gameSelectionStyles.gameTitle}>{item.title}</Text>
+  </TouchableOpacity>
 );
 
 /*

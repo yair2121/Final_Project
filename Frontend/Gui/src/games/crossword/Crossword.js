@@ -14,7 +14,6 @@ export default class Crossword extends Component {
   constructor(props) {
     super(props);
 
-    let isMobile = isMobilePlatform();
     const boardJSON = Crossword.getBoardJSON();
 
     this.state = {
@@ -22,7 +21,6 @@ export default class Crossword extends Component {
       currentClue: "",
       clueFont: [10, 15, 20, 25],
       fontIndex: 0,
-      isMobile: isMobile,
     };
   }
 
@@ -53,7 +51,7 @@ export default class Crossword extends Component {
             style={[
               clueStyle.clueText,
               {
-                fontSize: this.state.isMobile
+                fontSize: isMobilePlatform
                   ? this.state.clueFont[this.state.fontIndex]
                   : 20,
               },
@@ -61,7 +59,7 @@ export default class Crossword extends Component {
           >
             {this.state.currentClue
               ? this.state.currentClue
-              : this.state.isMobile
+              : isMobilePlatform
               ? "CLUES: press here to change font size" // Changing font only for Mobile (Web does not support adjustsFontSizeToFit).
               : "clues"}
           </Text>

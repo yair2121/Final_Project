@@ -6,8 +6,6 @@ import { CellState } from "./Components/Cell/cellStates";
 import { heightResponsive, widthResponsive } from "../../stylingUtils";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
-let isMobile = isMobilePlatform();
-
 var boardWidthPercent = 90;
 var boardHeightPercent = 100;
 
@@ -61,7 +59,7 @@ const cellStyle = function (cellState, cellColor, isFocused) {
       backgroundColor: cellColor,
       borderColor: borderColor,
       // borderColor: isMobile ? borderColor : "",
-      borderWidth: isMobile ? 0.2 : 0.1,
+      borderWidth: isMobilePlatform ? 0.2 : 0.1,
       justifyContent: "center",
     },
     cellInput: {
