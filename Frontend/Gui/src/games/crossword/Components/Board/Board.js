@@ -20,7 +20,7 @@ const playersColors = [
   COLORS.green,
   COLORS.darkGrey,
   COLORS.grey,
-  COLORS.secondary,
+  COLORS.lightBrown,
 ];
 
 /**
@@ -81,6 +81,8 @@ export default class Board extends Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton); // Remove keyboard
+    this.keyboardDidShowSubscription.remove();
+    this.keyboardDidHideSubscription.remove();
   }
 
   getCell(position) {
