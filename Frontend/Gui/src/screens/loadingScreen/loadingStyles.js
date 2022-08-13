@@ -7,7 +7,7 @@ export const loadingStyles = StyleSheet.create({
     backgroundColor: COLORS.backgroundBlue,
   },
   title: {
-    marginTop: isMobilePlatform() ? "30%" : "20%",
+    marginTop: isMobilePlatform ? "30%" : "20%",
     color: COLORS.lightGreen,
     fontSize: 32,
     letterSpacing: 3,
