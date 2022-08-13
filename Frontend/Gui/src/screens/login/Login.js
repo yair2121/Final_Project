@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Button, Input } from "react-native-elements";
+import { Button, Input, Text } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SocketContext } from "../../contexts/SocketContext";
@@ -12,6 +12,7 @@ import { LoginStyles } from "./LoginStyles.js";
 import LoginLogo from "./LoginLogo";
 import { LANGUAGE } from "../../constants/languageRegex";
 import { View } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState("");
@@ -46,15 +47,22 @@ export default function LoginScreen({ navigation }) {
   const LoginButton = ({ onLogin }) => {
     const socket = useContext(SocketContext);
     return (
-      <Button
-        title="LOGIN"
-        type="solid"
-        buttonStyle={LoginStyles.loginBtn}
-        titleStyle={LoginStyles.loginText}
+      <TouchableOpacity
+        activeOpacity={0.5} // Black cell should not have graphics for responding to touches.
+        style={LoginStyles.loginBtnContainer}
         onPress={() => {
           onLogin(socket);
         }}
-      />
+      >
+        <Text
+          type="solid"
+          // style={}
+          style={LoginStyles.loginText}
+          // titleStyle={}
+        >
+          LOGIN
+        </Text>
+      </TouchableOpacity>
     );
   };
   return (

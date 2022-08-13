@@ -28,7 +28,7 @@ export default function GameScreen({ route }) {
   // const { GameView, title } = GAMES.find(
   //   (game) => game.title === route.params.title
   // );
-
+  // TODO: change back for develop
   // const [isLoading, setIsLoading] = useState(true);
   // // Connects to game. When game starts stop loading.
   // useEffect(() => {
