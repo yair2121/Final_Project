@@ -44,11 +44,6 @@ const StackScreen = function () {
         },
       }}
     >
-      <Stack.Screen //TODO: remove this
-        name="App"
-        component={GameScreen}
-        // initialParams={Object.assign(headerOption)}
-      />
       <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
