@@ -8,15 +8,12 @@ import {
 } from "react-native";
 
 import React, { Component } from "react";
-// import { map, range } from "ramda";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
 import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
 import { CellState } from "../Cell/cellStates";
-
-// const ITEM_HEIGHT = 65; // fixed height of item component
 
 const playersColors = [
   COLORS.white,
@@ -244,7 +241,7 @@ export default class Board extends Component {
 
   render() {
     return (
-      <View className="Board" style={boardStyle.board}>
+      <View style={{ flex: 1 }}>
         <TextInput // Invisible textInput to control Android keyboard.
           blurOnSubmit={false}
           autoFocus={true} // Get keyboard to show automatically on start(for Android).
@@ -259,15 +256,17 @@ export default class Board extends Component {
           autoCorrect={false}
           maxLength={1} // One letter per cell.
         />
-        <FlatList
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="on-drag"
-          scrollEnabled={false}
-          data={this.state.flattedBoard}
-          keyExtractor={this.keyExtractor}
-          numColumns={this.state.boardHandler.getColumnCount()}
-          renderItem={this.renderCell}
-        />
+        <View className="Board" style={boardStyle.board}>
+          <FlatList
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="on-drag"
+            scrollEnabled={false}
+            data={this.state.flattedBoard}
+            keyExtractor={this.keyExtractor}
+            numColumns={this.state.boardHandler.getColumnCount()}
+            renderItem={this.renderCell}
+          />
+        </View>
       </View>
     );
   }

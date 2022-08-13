@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import AspectView from "../../components/AspectView";
-
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
 import Board from "./Components/Board";
 import { Text } from "react-native-elements";
+
+import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
 /*
 Crossword GUI class.
@@ -14,12 +14,21 @@ export default class Crossword extends Component {
   constructor(props) {
     super(props);
 
+    let isMobile = isMobilePlatform();
     const boardJSON = Crossword.getBoardJSON();
 
     this.state = {
       boardDescription: JSON.parse(boardJSON),
       currentClue: "",
+      clueFont: [10, 15, 20, 25],
+      fontIndex: 0,
+      isMobile: isMobile,
     };
+  }
+
+  changeFontSize() {
+    let newFontIndex = (this.state.fontIndex + 1) % this.state.clueFont.length;
+    this.setState({ fontIndex: newFontIndex });
   }
 
   // TODO: change this to get the board from the server
@@ -30,22 +39,42 @@ export default class Crossword extends Component {
   setClue(wordPosition, clue) {
     this.setState({ currentClue: wordPosition + ": " + clue });
   }
-  // TODO: Change font size per click
   render() {
     return (
       <View style={mainViewStyle.container}>
-        <TouchableOpacity style={clueStyle.clueContainer} activeOpacity={0.7}>
-          <Text adjustsFontSizeToFit={true} style={clueStyle.clueText}>
-            {this.state.currentClue ? this.state.currentClue : "Clues"}
+        <TouchableOpacity
+          onPress={() => this.changeFontSize()}
+          style={clueStyle.clueContainer}
+          activeOpacity={0.7}
+        >
+          <Text
+            adjustsFontSizeToFit={true}
+            numberOfLines={3}
+            style={[
+              clueStyle.clueText,
+              {
+                fontSize: this.state.isMobile
+                  ? this.state.clueFont[this.state.fontIndex]
+                  : 20,
+              },
+            ]}
+          >
+            {this.state.currentClue
+              ? this.state.currentClue
+              : this.state.isMobile
+              ? "CLUES: press here to change font size" // Changing font only for Mobile (Web does not support adjustsFontSizeToFit).
+              : "clues"}
           </Text>
         </TouchableOpacity>
 
-        <Board
-          boardDescription={this.state.boardDescription}
-          setClue={(wordPosition, clue) => {
-            this.setClue(wordPosition, clue);
-          }}
-        />
+        <View style={mainViewStyle.boardFrame}>
+          <Board
+            boardDescription={this.state.boardDescription}
+            setClue={(wordPosition, clue) => {
+              this.setClue(wordPosition, clue);
+            }}
+          />
+        </View>
       </View>
     );
   }
