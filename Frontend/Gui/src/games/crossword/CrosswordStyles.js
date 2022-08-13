@@ -4,13 +4,16 @@ import { COLORS } from "../../constants/colors";
 import { CellState } from "./Components/Cell/cellStates";
 
 import { heightResponsive, widthResponsive } from "../../stylingUtils";
+import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
-var boardFrameHeight = 45;
-var boardFrameWidth = 30;
+let isMobile = isMobilePlatform();
+
+var boardWidthPercent = 90;
+var boardHeightPercent = 100;
 
 if (Platform.OS === "web") {
-  var boardFrameHeight = 100;
-  var boardFrameWidth = 35;
+  var boardWidthPercent = 40;
+  var boardHeightPercent = 60;
 }
 
 const mainViewStyle = StyleSheet.create({
@@ -18,14 +21,12 @@ const mainViewStyle = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.backgroundBlue,
     alignItems: "center",
+    justifyContent: "center",
   },
   boardFrame: {
-    flex: 0,
+    flex: 9,
     borderColor: COLORS.black,
-    backgroundColor: COLORS.white,
-    width: widthResponsive(boardFrameWidth), // 80% of width device screen
-    height: heightResponsive(boardFrameHeight), // 70% of height device screen
-    // aspectRatio: 1,
+    // aspectRatio: isMobile ? 1 : 0,
   },
 
   title: {
@@ -37,23 +38,17 @@ const mainViewStyle = StyleSheet.create({
 });
 const boardStyle = StyleSheet.create({
   board: {
-    // flex: 1,
-    // display: "flex",
-    // flexDirection: "column",
-    // height: "100%",
-    borderWidth: 0.1,
-    // borderColor: "black",
-    // borderWidth: 1,
-    backgroundColor: "white",
+    flex: 1,
+    width: widthResponsive(boardWidthPercent),
+    height: heightResponsive(boardHeightPercent),
   },
   row: {
     flexDirection: "row",
+    flex: 1,
   },
 });
 
 const cellStyle = function (cellState, cellColor, isFocused) {
-  // if (cellState === CellState.ACTIVE) {
-  // }
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
 
@@ -62,35 +57,43 @@ const cellStyle = function (cellState, cellColor, isFocused) {
   }
   const style = StyleSheet.create({
     cell: {
+      flex: 1,
       backgroundColor: cellColor,
       borderColor: borderColor,
-      // justifyContent: "center",
-      // alignItems: "center",
-      // TODO: make dynamic based on cell status(occupied or not and if occupied then color should be the same as the player color)
-      flex: 1,
-      borderWidth: 0.5,
+      // borderColor: isMobile ? borderColor : "",
+      borderWidth: isMobile ? 0.2 : 0.1,
+      justifyContent: "center",
     },
-    cellContent: {
-      // flex: 1,
-      // justifyContent: "center",
+    cellInput: {
       fontWeight: "bold",
       textAlign: "center",
+
       textTransform: "uppercase",
-      alignItems: "center",
-      justifyContent: "center",
+    },
+    cellWord: {
+      position: "absolute",
+      top: -3,
+      left: 0,
+      zIndex: 1,
     },
   });
   return style;
 };
 
 const clueStyle = StyleSheet.create({
-  clue: {
-    borderWidth: 0.5,
-    backgroundColor: "#FFF",
-    textTransform: "uppercase",
+  clueContainer: {
+    flex: 1,
+    backgroundColor: COLORS.black,
+  },
+  clueText: {
+    width: widthResponsive(boardWidthPercent),
+    // height: heightResponsive(10),
+
+    textAlign: "center",
+    letterSpacing: 0.3,
+    // textTransform: "uppercase",
     fontWeight: "bold",
-    color: "#000000",
-    fontSize: 15,
+    color: COLORS.white,
   },
 });
 
