@@ -23,6 +23,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 // import { UserContext } from "./src/screens/login/Login";
 // import { UserProvider } from "./src/contexts/UserContext";
 import { TITLES } from "./src/constants/titles";
+import { Crossword } from "./src/games";
 
 const headerOption = {
   // TODO: Use this to make the header dynamic.
@@ -43,6 +44,11 @@ const StackScreen = function () {
         },
       }}
     >
+      <Stack.Screen //TODO: remove this
+        name="App"
+        component={GameScreen}
+        // initialParams={Object.assign(headerOption)}
+      />
       <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
@@ -53,6 +59,7 @@ const StackScreen = function () {
         component={MainMenu}
         initialParams={headerOption}
       />
+
       <Stack.Screen
         name="GameScreen"
         component={GameScreen}

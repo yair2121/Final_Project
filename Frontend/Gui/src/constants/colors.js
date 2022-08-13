@@ -7,6 +7,6 @@ export const COLORS = {
   lightgrey: "#D7DADC",
   green: "#538D4E",
   lightGreen: "#00ff00",
-  secondary: "#B59F3B",
+  lightBrown: "#B59F3B",
   pink: "#FF1493",
 };
