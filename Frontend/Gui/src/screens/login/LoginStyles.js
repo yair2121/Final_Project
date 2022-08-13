@@ -8,7 +8,6 @@ const borderRadius = 30;
 export const LoginStyles = StyleSheet.create({
   safeContainer: {
     flex: 1,
-    backgroundColor: COLORS.backgroundBlue,
   },
   container: {
     flex: 1,

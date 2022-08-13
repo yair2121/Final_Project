@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
-import { Button, Input, Text } from "react-native-elements";
+import { Input, Text } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { SocketContext } from "../../contexts/SocketContext";
 
@@ -10,9 +11,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
 import { LoginStyles } from "./LoginStyles.js";
 import LoginLogo from "./LoginLogo";
-import { LANGUAGE } from "../../constants/languageRegex";
 import { View } from "react-native";
 import { TouchableOpacity } from "react-native";
+import { backgroundStyle } from "../../constants/backgroundStyle";
 
 export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState("");
@@ -24,19 +25,19 @@ export default function LoginScreen({ navigation }) {
    */
   const login = (socket) => {
     if (playerName) {
-      socket.emit("login", playerName, (socketId) => {
-        AsyncStorage.setItem(
-          USER_KEY,
-          JSON.stringify({
-            id: socketId,
-            name: playerName,
-          })
-        ).then(() => {
-          setPlayerName(playerName);
-          navigation.setParams({ playerName: playerName }); // TODO: Maybe delete this.
-          navigation.navigate("MainMenu", {});
-        });
-      });
+      // socket.emit("login", playerName, (socketId) => {
+      // AsyncStorage.setItem(
+      //   USER_KEY,
+      //   JSON.stringify({
+      //     id: socketId,
+      //     name: playerName,
+      //   })
+      // ).then(() => {
+      setPlayerName(playerName);
+      navigation.setParams({ playerName: playerName }); // TODO: Maybe delete this.
+      navigation.navigate("MainMenu", {});
+      // });
+      // });
     }
   };
 
@@ -54,33 +55,30 @@ export default function LoginScreen({ navigation }) {
           onLogin(socket);
         }}
       >
-        <Text
-          type="solid"
-          // style={}
-          style={LoginStyles.loginText}
-          // titleStyle={}
-        >
+        <Text type="solid" style={LoginStyles.loginText}>
           LOGIN
         </Text>
       </TouchableOpacity>
     );
   };
   return (
-    <SafeAreaView style={LoginStyles.safeContainer}>
-      <View style={LoginStyles.container}>
-        <LoginLogo />
-        <Input
-          value={playerName}
-          containerStyle={LoginStyles.inputView}
-          inputStyle={LoginStyles.TextInput}
-          placeholder="Enter your name"
-          onChangeText={(name) => {
-            setPlayerName(name); // TODO: check if it's an issue that the name can includes non english letters.
-          }}
-        ></Input>
-        <View style={LoginStyles.space} />
-        <LoginButton onLogin={login} />
-      </View>
-    </SafeAreaView>
+    <LinearGradient colors={COLORS.background} style={backgroundStyle}>
+      <SafeAreaView style={LoginStyles.safeContainer}>
+        <View style={LoginStyles.container}>
+          <LoginLogo />
+          <Input
+            value={playerName}
+            containerStyle={LoginStyles.inputView}
+            inputStyle={LoginStyles.TextInput}
+            placeholder="Enter your name"
+            onChangeText={(name) => {
+              setPlayerName(name); // TODO: check if it's an issue that the name can includes non english letters.
+            }}
+          ></Input>
+          <View style={LoginStyles.space} />
+          <LoginButton onLogin={login} />
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

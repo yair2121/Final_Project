@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native";
 
-import { Button, Text } from "react-native-elements";
+import { Text } from "react-native-elements";
 
 import GAMES from "../gamesArray";
 import { gameSelectionStyles } from "./gameSelectionStyles";

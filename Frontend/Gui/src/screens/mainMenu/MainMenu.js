@@ -7,6 +7,8 @@ import { COLORS } from "../../constants/colors";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GameSelection from "../../games/gameSelection/GamesSelection";
+import { LinearGradient } from "expo-linear-gradient";
+import { backgroundStyle } from "../../constants/backgroundStyle";
 
 // import GameSelection from "../../games/GamesSelection";
 // AsyncStorage.getItem(USER_KEY).then((item) => {
@@ -18,15 +20,16 @@ It displays a games selection boxes.
 */
 export default function MainMenu({ navigation }) {
   return (
-    <SafeAreaView style={styles.container}>
-      <GameSelection navigation={navigation} style={styles.inputView} />
-    </SafeAreaView>
+    <LinearGradient colors={COLORS.background} style={backgroundStyle}>
+      <SafeAreaView style={styles.container}>
+        <GameSelection navigation={navigation} style={styles.inputView} />
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundBlue,
     alignItems: "center",
     justifyContent: "center",
   },
