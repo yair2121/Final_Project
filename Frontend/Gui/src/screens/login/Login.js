@@ -50,15 +50,15 @@ export default function LoginScreen({ navigation }) {
       <TouchableOpacity
         activeOpacity={0.5} // Black cell should not have graphics for responding to touches.
         style={LoginStyles.loginBtnContainer}
+        onPress={() => {
+          onLogin(socket);
+        }}
       >
         <Text
           type="solid"
           // style={}
           style={LoginStyles.loginText}
           // titleStyle={}
-          onPress={() => {
-            onLogin(socket);
-          }}
         >
           LOGIN
         </Text>
