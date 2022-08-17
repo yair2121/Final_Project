@@ -1,9 +1,18 @@
 const express = require("express");
+
 const app = express();
+
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  },
+});
 const { SessionsController } = require("./sessions/SessionsController");
 var path = require("path");
 // Path to web build files
@@ -53,6 +62,7 @@ app.get("/", (req, res) => {
 // });
 
 io.on("connection", (socket) => {
+  console.log("connect");
   // Connects a player to a game and uses callback function to respond with the session id and game state.
   socket.on("connect_to_game", (game_name, callback) => {
     let s_id = connect_player(socket.id, socket.data.name, game_name);
@@ -73,6 +83,25 @@ io.on("connection", (socket) => {
   socket.once("login", (username, callback) => {
     socket.data.name = username;
     callback(socket.id);
+  });
+
+  socket.on("connect_as_api", (password) => {
+    //TODO: replace log with authentication
+    console.log(password);
+    socket.on(
+      "connect_to_session",
+      (player_id, player_name, session_id, callback) => {
+        let s_id = session_controller.connect_to_session(
+          player_id,
+          player_name,
+          session_id
+        );
+        callback(s_id);
+      }
+    );
+    socket.on("update_move", (game_name, s_id, move) => {
+      session_controller.make_move(game_name, s_id, move);
+    });
   });
 
   socket.once("disconnect", () => {

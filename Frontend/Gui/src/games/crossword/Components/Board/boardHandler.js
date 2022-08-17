@@ -2,7 +2,7 @@ import { map, range } from "ramda";
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
-
+import { SocketContext } from "../../contexts/SocketContext";
 // import {
 //   UNOCCUPIED,
 //   UNDEFINED_WORD,
