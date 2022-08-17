@@ -8,18 +8,17 @@ const borderRadius = 30;
 export const LoginStyles = StyleSheet.create({
   safeContainer: {
     flex: 1,
-    backgroundColor: COLORS.backgroundBlue,
   },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: isMobilePlatform() ? "60%" : "0%",
+    marginBottom: isMobilePlatform ? "60%" : "0%",
   },
   logo: {
     width: widthResponsive(20),
     height: heightResponsive(10),
-    marginBottom: "5%",
+    marginBottom: "15%",
     resizeMode: "contain",
     alignSelf: "center",
   },
@@ -37,14 +36,14 @@ export const LoginStyles = StyleSheet.create({
     height: heightResponsive(4),
     borderRadius: borderRadius,
     borderColor: "black",
-    fontSize: 25,
+    fontSize: isMobilePlatform ? 20 : 25,
     fontWeight: "bold",
   },
   space: {
     height: heightResponsive(2),
   },
 
-  loginBtn: {
+  loginBtnContainer: {
     width: widthResponsive(80),
     height: heightResponsive(4.5),
     backgroundColor: COLORS.pink,
@@ -55,5 +54,7 @@ export const LoginStyles = StyleSheet.create({
   loginText: {
     textAlign: "center",
     fontWeight: "bold",
+    color: COLORS.white,
+    fontSize: isMobilePlatform ? 20 : 25,
   },
 });

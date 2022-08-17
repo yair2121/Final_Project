@@ -1,15 +1,12 @@
 import React, { Component } from "react";
-import { Platform, View, Text } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { SocketContext } from "../../contexts/SocketContext";
 import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
-import AspectView from "../../components/AspectView";
-
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
 import Board from "./Components/Board";
+import { Text } from "react-native-elements";
 
-// function isMobilePlatform() { // Might not be needed.
-//   return Platform.OS === "android" || Platform.OS == "ios";
-// }
+import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
 /*
 Crossword GUI class.
@@ -28,7 +25,14 @@ export default class Crossword extends Component {
       currentClue: "",
       player: {},
       sessionId: "",
+      clueFont: [10, 15, 20, 25],
+      fontIndex: 0,
     };
+  }
+
+  changeFontSize() {
+    let newFontIndex = (this.state.fontIndex + 1) % this.state.clueFont.length;
+    this.setState({ fontIndex: newFontIndex });
   }
 
   componentDidMount() {
@@ -65,21 +69,44 @@ export default class Crossword extends Component {
   }
 
   setClue(wordPosition, clue) {
-    this.setState({ currentClue: wordPosition + ":" + clue });
+    this.setState({ currentClue: wordPosition + ": " + clue });
   }
-
   render() {
     return (
       <View style={mainViewStyle.container}>
-        <AspectView style={mainViewStyle.boardFrame}>
+        <TouchableOpacity
+          onPress={() => this.changeFontSize()}
+          style={clueStyle.clueContainer}
+          activeOpacity={0.7}
+        >
+          <Text
+            adjustsFontSizeToFit={true}
+            numberOfLines={3}
+            style={[
+              clueStyle.clueText,
+              {
+                fontSize: isMobilePlatform
+                  ? this.state.clueFont[this.state.fontIndex]
+                  : 20,
+              },
+            ]}
+          >
+            {this.state.currentClue
+              ? this.state.currentClue
+              : isMobilePlatform
+              ? "CLUES: press here to change font size" // Changing font only for Mobile (Web does not support adjustsFontSizeToFit).
+              : "clues"}
+          </Text>
+        </TouchableOpacity>
+
+        <View style={mainViewStyle.boardFrame}>
           <Board
             boardDescription={this.state.boardDescription}
             setClue={(wordPosition, clue) => {
               this.setClue(wordPosition, clue);
             }}
           />
-          <Text style={clueStyle.clue}>{this.state.currentClue}</Text>
-        </AspectView>
+        </View>
       </View>
     );
   }

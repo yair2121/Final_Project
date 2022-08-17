@@ -1,19 +1,15 @@
 import { map, range } from "ramda";
+import {
+  UNOCCUPIED,
+  UNDEFINED_POSITION,
+  LOCAL_PLAYER,
+  UNDEFINED_WORD,
+} from "../../consts/generalConsts";
+
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
 import { SocketContext } from "../../contexts/SocketContext";
-// import {
-//   UNOCCUPIED,
-//   UNDEFINED_WORD,
-//   LOCAL_PLAYER,
-//   UNDEFINED_POSITION,
-// } from "../consts/generalConsts"; // TODO: Fix importing this constants
-
-const UNOCCUPIED = 0;
-const UNDEFINED_WORD = -1;
-const LOCAL_PLAYER = 1;
-const UNDEFINED_POSITION = [-1, -1];
 
 export class BoardHandler {
   /**
