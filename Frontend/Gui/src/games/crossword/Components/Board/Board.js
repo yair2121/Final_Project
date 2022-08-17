@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { SocketContext } from "../../contexts/SocketContext";
+
 import React, { Component } from "react";
 // import { map, range } from "ramda";
 import { boardStyle } from "../../CrosswordStyles";
@@ -16,6 +16,7 @@ import { BoardHandler } from "./boardHandler";
 import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
 import { CellState } from "../Cell/cellStates";
+import { SocketContext } from "../../../../contexts/SocketContext";
 
 // const ITEM_HEIGHT = 65; // fixed height of item component
 
