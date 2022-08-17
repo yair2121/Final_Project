@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Platform, View, Text } from "react-native";
-
+import { SocketContext } from "../../contexts/SocketContext";
+import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
 import AspectView from "../../components/AspectView";
 
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
@@ -15,14 +16,47 @@ Crossword GUI class.
 */
 export default class Crossword extends Component {
   constructor(props) {
+    const socket = useContext(SocketContext);
     super(props);
 
-    const boardJSON = Crossword.getBoardJSON();
+    //unused variable
+    //const boardJSON = props.initial_state.boardDescription;
 
     this.state = {
-      boardDescription: JSON.parse(boardJSON),
+      boardDescription: props.initial_state.boardDescription,
+      players: props.initial_state.players,
       currentClue: "",
+      player: {},
+      sessionId: "",
     };
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem(USER_KEY).then((item) => {
+      this.setState({ player: JSON.parse(item) });
+    });
+    AsyncStorage.getItem(SESSION_ID).then((item) => {
+      this.setState({ sessionId: item });
+    });
+    socket.on("Update state", (game_state, s_id) => {
+      players_changed = false;
+      if (this.state.players.length == game_state.players.length) {
+        for (var i = 0; i < this.state.players.length; i++) {
+          if (this.state.players[i].id != game_state.players[i].id) {
+            players_changed = true;
+            break;
+          }
+        }
+      } else {
+        players_changed = true;
+      }
+      if (players_changed) {
+        this.setState({ players: game_state });
+      }
+      if (game_state.boardDescription != this.state.boardDescription) {
+        this.setState({ boardDescription: game_state.boardDescription });
+      }
+    });
   }
 
   // TODO: change this to get the board from the server
