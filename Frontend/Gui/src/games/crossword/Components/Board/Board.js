@@ -9,7 +9,6 @@ import {
 } from "react-native";
 
 import React, { Component } from "react";
-// import { map, range } from "ramda";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
 import { BoardHandler } from "./boardHandler";
@@ -18,14 +17,12 @@ import { LANGUAGE } from "../../../../constants/languageRegex";
 import { CellState } from "../Cell/cellStates";
 import { SocketContext } from "../../../../contexts/SocketContext";
 
-// const ITEM_HEIGHT = 65; // fixed height of item component
-
 const playersColors = [
   COLORS.white,
   COLORS.green,
-  COLORS.darkgrey,
+  COLORS.darkGrey,
   COLORS.grey,
-  COLORS.secondary,
+  COLORS.lightBrown,
 ];
 
 /**
@@ -99,6 +96,8 @@ export default class Board extends Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton); // Remove keyboard
+    this.keyboardDidShowSubscription.remove();
+    this.keyboardDidHideSubscription.remove();
   }
 
   getCell(position) {
@@ -238,7 +237,7 @@ export default class Board extends Component {
     const cell = renderObject.item;
     return (
       <TouchableOpacity
-        activeOpacity={cell.state ? 0.7 : 1} // Black cell should not have graphics for responding to touches.
+        activeOpacity={cell.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
         style={{ flex: 1 }}
         onPress={() => {
           this.cellPressed([cell.row, cell.column]);
@@ -259,11 +258,11 @@ export default class Board extends Component {
 
   render() {
     return (
-      <View className="Board" style={boardStyle.board}>
+      <View style={{ flex: 1 }}>
         <TextInput // Invisible textInput to control Android keyboard.
           blurOnSubmit={false}
           autoFocus={true} // Get keyboard to show automatically on start(for Android).
-          style={{ height: 0, width: 0 }} // Invisible.
+          style={{ height: 0, width: 0, flex: 0 }} // Invisible.
           onChangeText={(text) => {
             this.onKeyboardInput(text);
           }}
@@ -274,15 +273,17 @@ export default class Board extends Component {
           autoCorrect={false}
           maxLength={1} // One letter per cell.
         />
-        <FlatList
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="on-drag"
-          scrollEnabled={false}
-          data={this.state.flattedBoard}
-          keyExtractor={this.keyExtractor}
-          numColumns={this.state.boardHandler.getColumnCount()}
-          renderItem={this.renderCell}
-        />
+        <View className="Board" style={boardStyle.board}>
+          <FlatList
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="on-drag"
+            scrollEnabled={false}
+            data={this.state.flattedBoard}
+            keyExtractor={this.keyExtractor}
+            numColumns={this.state.boardHandler.getColumnCount()}
+            renderItem={this.renderCell}
+          />
+        </View>
       </View>
     );
   }

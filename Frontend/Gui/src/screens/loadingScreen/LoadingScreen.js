@@ -1,12 +1,22 @@
-// Not implemented yet- currently just rotating circle.
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import React from "react";
+
 import { ActivityIndicator } from "react-native";
+
+import { Text } from "react-native-elements";
+
+import { loadingStyles } from "./loadingStyles";
+import { COLORS } from "../../constants/colors";
+
 export default function LoadingScreen({ gameName }) {
   return (
-    <View>
-      <Text>Loading {gameName}</Text>
-      <ActivityIndicator size="large" color="#00ff00" />
+    <View style={loadingStyles.container}>
+      <Text style={loadingStyles.title}>Loading {gameName}</Text>
+      <ActivityIndicator
+        style={loadingStyles.loadingWheel}
+        size="large"
+        color={COLORS.lightGreen}
+      />
     </View>
   );
 }
