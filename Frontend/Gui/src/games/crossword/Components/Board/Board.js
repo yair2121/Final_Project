@@ -1,3 +1,4 @@
+// TODO: understand Board and BoardHandler
 import {
   View,
   FlatList,
@@ -6,7 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-
+import { SocketContext } from "../../contexts/SocketContext";
 import React, { Component } from "react";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
@@ -29,6 +30,7 @@ const playersColors = [
 export default class Board extends Component {
   constructor(props) {
     super(props);
+    const socket = useContext(SocketContext);
     const boardDescription = props.boardDescription;
     const boardHandler = new BoardHandler(boardDescription, props.setClue);
 
@@ -49,7 +51,19 @@ export default class Board extends Component {
     3. A player wrote a letter.
   */
 
-  initSocketListener() {}
+  initSocketListener() {
+    socket.on("Update move", (move_description, s_id) => {
+      console.log("update move");
+      let { type, body } = move_description;
+      if (type === "claim") {
+        //claim(body)
+      } else if (type === "release") {
+        //release(body)
+      } else if (type === "move") {
+        //apply move (body)
+      }
+    });
+  }
   updateBoard(newBoard) {}
 
   /**

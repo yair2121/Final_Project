@@ -22,6 +22,8 @@
     "webpack": "^5.72.0"
   },
   "dependencies": {
+    "crossword-layout-generator": "^0.1.1",
+    "lodash.samplesize": "^4.2.0",
     "react-native-login-screen": "^2.1.4",
     "react-native-vector-icons": "^9.1.0",
     "socket.io": "^4.4.1"

@@ -9,6 +9,7 @@ import {
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
+import { SocketContext } from "../../contexts/SocketContext";
 
 export class BoardHandler {
   /**
