@@ -27,44 +27,39 @@ export default function GameScreen({ route }) {
   const socket = useContext(SocketContext);
   const [initial_state, setInitialState] = useState(null);
 
-  // const { GameView, title } = GAMES.find(
-  //   (game) => game.title === route.params.title
-  // );
-  // TODO: change back for develop
-  // const [isLoading, setIsLoading] = useState(true);
-  // // Connects to game. When game starts stop loading.
-  // useEffect(() => {
-  //   socket.on("Session started", (game_state, s_id) => {
-  //     console.log(game_state);
-  //     AsyncStorage.setItem(SESSION_ID, s_id);
-  //     setInitialState(game_state);
-  //     setIsLoading(false);
-  //   });
-  //   socket.emit("connect_to_game", title, (callback) => {
-  //     AsyncStorage.setItem(SESSION_ID, callback.s_id);
-  //     if (JSON.stringify(callback.game_state) != emptyjson) {
-  //       setInitialState(callback.game_state);
-  //       setIsLoading(false);
-  //     }
-  //   });
-  // }, []);
+  const { GameView, title } = GAMES.find(
+    (game) => game.title === route.params.title
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  // Connects to game. When game starts stop loading.
+  useEffect(() => {
+    socket.on("Session started", (game_state, s_id) => {
+      AsyncStorage.setItem(SESSION_ID, s_id);
+      setInitialState(game_state);
+      setIsLoading(false);
+    });
+    socket.emit("connect_to_game", title, (callback) => {
+      AsyncStorage.setItem(SESSION_ID, callback.s_id);
+      if (JSON.stringify(callback.game_state) != emptyjson) {
+        setInitialState(callback.game_state);
+        setIsLoading(false);
+      }
+    });
+  }, []);
 
   return (
     <LinearGradient colors={COLORS.background} style={backgroundStyle}>
       <View style={gameScreenStyles.container}>
-        {/* {isLoading && <LoadingScreen gameName={title} />} */}
         <View style={gameScreenStyles.contentBox}>
-          {/* <GameView initial_state={initial_state} /> */}
-          <Crossword />
-          {/* {isLoading && <LoadingScreen gameName={title} />} */}
-          {/* {!isLoading && <GameView initial_state={initial_state} />} */}
+          {isLoading && <LoadingScreen gameName={title} />}
+          {!isLoading && <GameView initial_state={initial_state} />}
         </View>
-        {/* <Button */}
-        {/* title="toggle" */}
-        {/* onPress={() => { */}
-        {/* setIsLoading(!isLoading); */}
-        {/* }} */}
-        {/* /> */}
+        <Button
+          title="toggle"
+          onPress={() => {
+            setIsLoading(!isLoading);
+          }}
+        />
       </View>
     </LinearGradient>
   );

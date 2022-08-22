@@ -5,12 +5,20 @@ const generate_layout = require("./CrosswordGenerator");
 const NUM_OF_CLUES = 5;
 class CrosswordModel extends BaseGameModel {
   constructor(difficulty = 1) {
-    super("Crossword", 1, 4);
+    super("Crossword", 1, 2);
     let layout = generate_layout(difficulty, NUM_OF_CLUES);
     this.cols = layout.cols;
     this.rows = layout.rows;
-    this.layout = layout.result;
-    this.empty_layout = this.layout.map(({ answer, ...item }) => item);
+    this.layout = {
+      dimensions: [layout.rows, layout.cols],
+      boardWords: layout.result.filter(function (word) {
+        return word.orientation != "none";
+      }),
+    };
+    console.log(this.layout);
+    this.empty_layout = this.layout.boardWords.map(
+      ({ answer, ...item }) => item
+    );
     this.current_boardstate = layout.table;
     // remove letters from the table so we have an empty board to start with. black squares are '-' white squares are ' '
     for (let i = 0; i < this.rows; i++) {
@@ -21,8 +29,8 @@ class CrosswordModel extends BaseGameModel {
       }
     }
 
-    this.claims_by_position = new Array(this.layout.length).fill(-1);
-    this.num_of_clues = this.layout.length;
+    this.claims_by_position = new Array(this.layout.boardWords.length).fill(-1);
+    this.num_of_clues = this.layout.boardWords.length;
     this.claims_by_player = [];
   }
   play(number_of_players) {
@@ -91,7 +99,7 @@ class CrosswordModel extends BaseGameModel {
     return (
       this.claims_by_position[position] == player &&
       index >= 0 &&
-      index < this.layout[position].clue.length
+      index < this.layout.boardWords[position].clue.length
     );
   }
 
@@ -99,7 +107,7 @@ class CrosswordModel extends BaseGameModel {
   // returns the coordinates of the letter on the board.
   position_index_to_coords(position, index) {
     if (position > 0 && position <= this.num_of_clues) {
-      let clue = this.layout[position - 1];
+      let clue = this.layout.boardWords[position - 1];
       if (index < clue.answer.length && index >= 0) {
         if (clue.orientation == "down") {
           return [clue.startx, clue.starty + index];
@@ -125,7 +133,8 @@ class CrosswordModel extends BaseGameModel {
     return Object.assign({}, super.get_state(), {
       claims_by_player: this.claims_by_player,
       claims_by_position: this.claims_by_position,
-      board: this.current_boardstate,
+      current_boardstate: this.current_boardstate,
+      boardDescription: this.layout,
     });
   }
   // TODO: this and everything under this

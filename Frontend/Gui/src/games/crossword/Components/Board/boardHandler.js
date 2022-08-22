@@ -2,7 +2,7 @@ import { map, range } from "ramda";
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
-import { SocketContext } from "../../../../contexts/SocketContext";
+//import { SocketContext } from "../../../../contexts/SocketContext";
 
 import {
   UNOCCUPIED,
@@ -29,8 +29,8 @@ export class BoardHandler {
     this.words = boardDescription.boardWords;
 
     for (let [index] of this.words.entries()) {
-      this.words[index]["state"] = UNOCCUPIED;
-      this.words[index]["positions"] = this.getWordPositions(this.words[index]);
+      this.words[index].state = UNOCCUPIED;
+      this.words[index].positions = this.getWordPositions(this.words[index]);
     }
 
     this.activateWordsOnBoard(boardDescription.boardWords);

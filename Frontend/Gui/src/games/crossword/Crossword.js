@@ -1,21 +1,19 @@
-import React, { Component } from "react";
+import React, { useContext, Component } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { SocketContext } from "../../contexts/SocketContext";
 import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
 import Board from "./Components/Board";
 import { Text } from "react-native-elements";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
 /*
 Crossword GUI class.
 */
-export default class Crossword extends Component {
+class Crossword extends Component {
   constructor(props) {
-    const socket = useContext(SocketContext);
     super(props);
-
     //unused variable
     //const boardJSON = props.initial_state.boardDescription;
 
@@ -36,13 +34,14 @@ export default class Crossword extends Component {
   }
 
   componentDidMount() {
+    this.socket = this.context;
     AsyncStorage.getItem(USER_KEY).then((item) => {
       this.setState({ player: JSON.parse(item) });
     });
     AsyncStorage.getItem(SESSION_ID).then((item) => {
       this.setState({ sessionId: item });
     });
-    socket.on("Update state", (game_state, s_id) => {
+    this.socket.on("Update state", (game_state, s_id) => {
       players_changed = false;
       if (this.state.players.length == game_state.players.length) {
         for (var i = 0; i < this.state.players.length; i++) {
@@ -111,3 +110,5 @@ export default class Crossword extends Component {
     );
   }
 }
+Crossword.contextType = SocketContext;
+export default Crossword;

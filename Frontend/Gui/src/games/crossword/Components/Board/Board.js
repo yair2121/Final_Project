@@ -31,7 +31,6 @@ const playersColors = [
 export default class Board extends Component {
   constructor(props) {
     super(props);
-    const socket = useContext(SocketContext);
     const boardDescription = props.boardDescription;
     const boardHandler = new BoardHandler(boardDescription, props.setClue);
 
@@ -40,8 +39,6 @@ export default class Board extends Component {
       isKeyboardHidden: true,
       flattedBoard: boardHandler.board.flat(), // For rendering
     };
-
-    this.initSocketListener();
   }
 
   /*
@@ -53,7 +50,7 @@ export default class Board extends Component {
   */
 
   initSocketListener() {
-    socket.on("Update move", (move_description, s_id) => {
+    this.socket.on("Update move", (move_description, s_id) => {
       console.log("update move");
       let { type, body } = move_description;
       if (type === "claim") {
@@ -75,6 +72,8 @@ export default class Board extends Component {
   }
 
   componentDidMount() {
+    this.socket = this.context;
+    this.initSocketListener();
     this.updateWordColoring(); // Update board rendering to the current server state.
 
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
@@ -115,6 +114,7 @@ export default class Board extends Component {
    * @param {*} color
    */
   paintCell(cell, color) {
+    console.log(cell);
     // No need to repaint if cell is already in the given color.
     if (color !== cell.ref.state.color) {
       cell.ref.setCellColor(color);
@@ -209,7 +209,7 @@ export default class Board extends Component {
   }
 
   /**
-   * Paint all the words on the board based on there current state
+   * Paint all the words on the board based on their current state
    */
   updateWordColoring() {
     let occupiedWords = [];
@@ -288,3 +288,5 @@ export default class Board extends Component {
     );
   }
 }
+
+Board.contextType = SocketContext;
