@@ -2,15 +2,28 @@
 
 const BaseGameModel = require("../BaseGameModel").BaseGameModel;
 const generate_layout = require("./CrosswordGenerator");
-const NUM_OF_CLUES = 5;
+const NUM_OF_CLUES = 30;
 class CrosswordModel extends BaseGameModel {
   constructor(difficulty = 1) {
-    super("Crossword", 1, 4);
+    super("Crossword", 1, 2);
     let layout = generate_layout(difficulty, NUM_OF_CLUES);
     this.cols = layout.cols;
     this.rows = layout.rows;
-    this.layout = layout.result;
-    this.empty_layout = this.layout.map(({ answer, ...item }) => item);
+    this.layout = {
+      dimensions: [layout.rows, layout.cols],
+      boardWords: layout.result.filter(function (word) {
+        return word.orientation != "none";
+      }),
+    };
+    let i = 1;
+    for (const word of this.layout.boardWords) {
+      word.position = i;
+      i = i + 1;
+    }
+    console.log(this.layout);
+    this.empty_layout = this.layout.boardWords.map(
+      ({ answer, ...item }) => item
+    );
     this.current_boardstate = layout.table;
     // remove letters from the table so we have an empty board to start with. black squares are '-' white squares are ' '
     for (let i = 0; i < this.rows; i++) {
@@ -21,8 +34,8 @@ class CrosswordModel extends BaseGameModel {
       }
     }
 
-    this.claims_by_position = new Array(this.layout.length).fill(-1);
-    this.num_of_clues = this.layout.length;
+    this.claims_by_position = new Array(this.layout.boardWords.length).fill(-1);
+    this.num_of_clues = this.layout.boardWords.length;
     this.claims_by_player = [];
   }
   play(number_of_players) {
@@ -34,11 +47,9 @@ class CrosswordModel extends BaseGameModel {
   make_move(move_description) {
     console.log("make_move in model");
     let { type, body } = move_description;
+    console.log(move_description);
     if (type == "move") {
-      if (this.validate_move(body)) {
-        console.log("valid");
-        this.apply_move(body);
-      }
+      this.apply_move(move_description);
     } else if (type == "claim") {
       this.claim_clue_by_position(body);
     } else if (type == "release") {
@@ -47,9 +58,6 @@ class CrosswordModel extends BaseGameModel {
   }
   // Lock a clue's row/column for a certain player (by position as defined in crosswordgenerator)
   // Checks if player and position are both valid. If so, releases previous claim of player and checks
-  // if the requested position is available. If so, locks it for the player.
-  // Returns the claimed position, or -1 if failed for any reason.
-  // TODO: research if need to add mutexes here! (probably not)
   claim_clue_by_position(claim_description) {
     let { position, player } = claim_description;
     position--;
@@ -67,10 +75,21 @@ class CrosswordModel extends BaseGameModel {
       if (this.claims_by_position[position] == -1) {
         this.claims_by_position[position] = player;
         this.claims_by_player[player] = position;
-        return position + 1;
+        console.log(
+          player,
+          position,
+          this.claims_by_position[position],
+          this.claims_by_player[player]
+        );
+        this.emit("Move made", {
+          type: "claim",
+          position: position + 1,
+          player: player,
+        });
+      } else {
+        console.log(this.claims_by_position[position]);
       }
     }
-    return -1;
   }
 
   // Gets index of player and releases associated claim.
@@ -87,11 +106,19 @@ class CrosswordModel extends BaseGameModel {
   //Checks if a move is valid (i.e word is claimed by player)
   validate_move(move_description) {
     let { letter, position, index, player } = move_description;
+    console.log(move_description);
     position--;
+    console.log(
+      "Validate move",
+      player,
+      position,
+      this.claims_by_position[position],
+      this.claims_by_player[player]
+    );
     return (
       this.claims_by_position[position] == player &&
       index >= 0 &&
-      index < this.layout[position].clue.length
+      index < this.layout.boardWords[position].clue.length
     );
   }
 
@@ -99,14 +126,13 @@ class CrosswordModel extends BaseGameModel {
   // returns the coordinates of the letter on the board.
   position_index_to_coords(position, index) {
     if (position > 0 && position <= this.num_of_clues) {
-      let clue = this.layout[position - 1];
+      let clue = this.layout.boardWords[position - 1];
       if (index < clue.answer.length && index >= 0) {
-        if (clue.orientation == "down") {
-          return [clue.startx, clue.starty + index];
-        } else if (clue.orientation == "across") {
-          return [clue.startx + index, clue.starty];
+        if (clue.orientation == "across") {
+          return [clue.starty - 1, clue.startx - 1 + index];
+        } else if (clue.orientation == "down") {
+          return [clue.starty - 1 + index, clue.startx - 1];
         }
-        return clue.orientation;
       }
     }
     return [-1, -1];
@@ -114,10 +140,12 @@ class CrosswordModel extends BaseGameModel {
 
   //Calls validate_move. If the move is valid, applies move (puts letter into cell)
   apply_move(move_description) {
-    if (this.validate_move(move_description)) {
-      const { letter, position, index, player } = move_description;
+    if (this.validate_move(move_description.body)) {
+      const { letter, position, index, player } = move_description.body;
       let coords = this.position_index_to_coords(position, index);
       this.current_boardstate[coords[0]][coords[1]] = letter;
+      // delete move_description.index;
+      // move_description.position = coords
       this.emit("Move made", move_description);
     }
   }
@@ -125,7 +153,8 @@ class CrosswordModel extends BaseGameModel {
     return Object.assign({}, super.get_state(), {
       claims_by_player: this.claims_by_player,
       claims_by_position: this.claims_by_position,
-      board: this.current_boardstate,
+      current_boardstate: this.current_boardstate,
+      boardDescription: this.layout,
     });
   }
   // TODO: this and everything under this

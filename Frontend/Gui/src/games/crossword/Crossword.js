@@ -1,30 +1,24 @@
-import React, { Component } from "react";
+import React, { useContext, Component } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { SocketContext } from "../../contexts/SocketContext";
 import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
 import Board from "./Components/Board";
 import { Text } from "react-native-elements";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
 /*
 Crossword GUI class.
 */
-export default class Crossword extends Component {
+class Crossword extends Component {
   constructor(props) {
-    const socket = useContext(SocketContext);
     super(props);
-
-    //unused variable
-    //const boardJSON = props.initial_state.boardDescription;
-
     this.state = {
       boardDescription: props.initial_state.boardDescription,
       players: props.initial_state.players,
       currentClue: "",
-      player: {},
-      sessionId: "",
+      player: { id: "", name: "" },
       clueFont: [10, 15, 20, 25],
       fontIndex: 0,
     };
@@ -35,14 +29,28 @@ export default class Crossword extends Component {
     this.setState({ fontIndex: newFontIndex });
   }
 
+  updateClientPlayerIndex() {
+    console.log(this.state.player.id);
+    for (var index = 0; index < this.state.players.length; index++) {
+      console.log(this.state.players[index]);
+      if (this.state.players[index].id == this.state.player.id) {
+        if (this.state.clientplayerindex != index) {
+          this.setState({ clientplayerindex: index });
+        }
+        break;
+      }
+    }
+    console.log("Updated client player index:" + this.state.clientplayerindex);
+  }
   componentDidMount() {
+    this.socket = this.context;
     AsyncStorage.getItem(USER_KEY).then((item) => {
       this.setState({ player: JSON.parse(item) });
+      this.updateClientPlayerIndex();
     });
-    AsyncStorage.getItem(SESSION_ID).then((item) => {
-      this.setState({ sessionId: item });
-    });
-    socket.on("Update state", (game_state, s_id) => {
+    this.state.clientplayerindex = -1;
+
+    this.socket.on("Update state", (game_state, s_id) => {
       players_changed = false;
       if (this.state.players.length == game_state.players.length) {
         for (var i = 0; i < this.state.players.length; i++) {
@@ -60,12 +68,8 @@ export default class Crossword extends Component {
       if (game_state.boardDescription != this.state.boardDescription) {
         this.setState({ boardDescription: game_state.boardDescription });
       }
+      this.updateClientPlayerIndex();
     });
-  }
-
-  // TODO: change this to get the board from the server
-  static getBoardJSON() {
-    return '{"dimensions":[9,10],"boardWords":[{"clue":"the collective designation of items for a particular purpose","answer":"equipment","startx":1,"starty":4,"position":1,"orientation":"across"},{"clue":"an opening or entrance to an inclosed place","answer":"port","startx":5,"starty":4,"position":2,"orientation":"down"},{"clue":"that which is established as a rule or model by authority, custom, or general consent","answer":"standard","startx":8,"starty":1,"position":3,"orientation":"down"},{"clue":"a machine that computes","answer":"computer","startx":3,"starty":2,"position":4,"orientation":"across"},{"clue":"a point where two things can connect and interact","answer":"interface","startx":1,"starty":1,"position":5,"orientation":"down"}]}';
   }
 
   setClue(wordPosition, clue) {
@@ -105,9 +109,12 @@ export default class Crossword extends Component {
             setClue={(wordPosition, clue) => {
               this.setClue(wordPosition, clue);
             }}
+            clientplayerindex={this.state.clientplayerindex}
           />
         </View>
       </View>
     );
   }
 }
+Crossword.contextType = SocketContext;
+export default Crossword;
