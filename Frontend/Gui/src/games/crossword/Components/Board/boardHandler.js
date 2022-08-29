@@ -2,7 +2,6 @@ import { map, range } from "ramda";
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
 import { CellUtils } from "../Cell/cellUtils";
-//import { SocketContext } from "../../../../contexts/SocketContext";
 
 import {
   UNOCCUPIED,
@@ -25,6 +24,7 @@ export class BoardHandler {
     this.setClue = setClue; // Will set state of clue on the Crossword component.
     this.focusedWordIndex = UNDEFINED_WORD;
     this.focusedCellPosition = UNDEFINED_POSITION;
+    this.requestedCell = undefined;
     this.board = this.initBoard(boardDescription.dimensions);
     this.words = boardDescription.boardWords;
 
@@ -34,6 +34,43 @@ export class BoardHandler {
     }
 
     this.activateWordsOnBoard(boardDescription.boardWords);
+  }
+
+  // BoardHandler gets socket, local player data (id and index in game)
+  // and session_id from Board.
+  setSocket(socket) {
+    this.socket = socket;
+    this.initSocketListener();
+  }
+
+  setPlayerIndex(player_index) {
+    this.clientplayerindex = player_index;
+  }
+
+  setSessionId(s_id) {
+    this.sessionId = s_id;
+  }
+
+  initSocketListener() {
+    this.socket.on("Update move", (move_description, s_id) => {
+      let { type, body } = move_description;
+      if (type === "claim") {
+        /*if(me)
+          this.setClue(this.words[newWord].position, this.words[newWord].clue);
+          this.setFocusedCell(this.requestedCell);
+          this.requestedCell = undefined;
+        */
+        /*
+          if(not me and word = this.requestedWord) {
+            this.requestedWord = undefined
+            this.requestedCell = undefined
+          }
+       */
+        this.claimWord(body);
+      } else if (type === "release") {
+        this.releaseWord(body);
+      }
+    });
   }
 
   initBoard(dimensions) {
@@ -186,6 +223,19 @@ export class BoardHandler {
     //TODO: tell server
   }
 
+  // Returns current position and index according to the update_move format
+  // i.e: position: wordIndex, index: index of cell in word (First cell 0, second cell 1 etc.)
+  getFocusedPositionAndIndex() {
+    let start_coords = this.getWordStartPosition(
+      this.getWord(this.focusedWordIndex)
+    );
+    let index_in_word =
+      this.focusedCellPosition[0] -
+      start_coords[0] +
+      this.focusedCellPosition[1] -
+      start_coords[1];
+    return { position: this.focusedWordIndex, index: index_in_word };
+  }
   isSamePosition(position1, position2) {
     return position1[0] === position2[0] && position1[1] === position2[1];
   }
@@ -254,12 +304,20 @@ export class BoardHandler {
   }
 
   serverCanOccupyWord(wordIndex) {
-    // TODO: ask server here and claim the new word.
+    this.socket.emit("update_move", "Crossword", this.sessionId, {
+      type: "claim",
+      body: {
+        position: wordIndex + 1,
+        player: this.clientplayerindex,
+      },
+    });
+    console.log(this.clientplayerindex);
     return true;
   }
 
   canOccupyWord(wordIndex) {
-    return this.isWordFree(wordIndex) && this.serverCanOccupyWord(wordIndex);
+    this.serverCanOccupyWord(wordIndex);
+    return this.isWordFree(wordIndex);
   }
 
   /**
@@ -272,6 +330,7 @@ export class BoardHandler {
       this.focusedWordIndex = UNDEFINED_WORD;
     }
   }
+
   /**
    * Given currentCell- determines the index of the next focused word.
    * Assumes the cell is active.
@@ -292,17 +351,24 @@ export class BoardHandler {
     }
     return newWord;
   }
+
   /**
-   * Change focusedWord if necessary based on given current cell and return true if word was changed, false if not.
+   * Change focusedWord if necessary based on given current cell.
    * @param {Object} currentCell
    */
   handleWordChange(currentCell) {
     if (this.shouldChangeWord(currentCell)) {
       let newWord = this.getNewWord(currentCell);
 
+      if (this.isWordFree(newWord)) {
+        this.requestedCell = currentCell; // Changed to set.'
+        this.requestedWord = newWord;
+      }
       if (this.canOccupyWord(newWord)) {
+        // start listener for player claims
+        this.occupyWord(newWord); // Evreyone do it
+        // Only me
         this.setClue(this.words[newWord].position, this.words[newWord].clue);
-        this.occupyWord(newWord);
         this.setFocusedCell(currentCell);
       }
     } else {
