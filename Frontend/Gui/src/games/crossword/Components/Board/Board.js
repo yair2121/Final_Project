@@ -1,4 +1,3 @@
-// TODO: understand Board and BoardHandler
 import {
   View,
   FlatList,
@@ -33,7 +32,13 @@ export default class Board extends Component {
   constructor(props) {
     super(props);
     const boardDescription = props.boardDescription;
-    const boardHandler = new BoardHandler(boardDescription, props.setClue);
+    const boardHandler = new BoardHandler(
+      boardDescription,
+      props.setClue,
+      () => {
+        this.updateWordColoring();
+      }
+    );
     this.clientplayerindex = props.clientplayerindex;
     this.state = {
       boardHandler: boardHandler,
@@ -42,39 +47,17 @@ export default class Board extends Component {
     };
   }
 
-  /*
-    TODO: add Function which have a socket listener to update the board according to the server current state.
-    Events:
-    1. A player captured a new word.
-    2. A player Freed a word.
-    3. A player wrote a letter.
-  */
-  /*
-    TODO: implement claimWord()
-    add socket emits when claiming/releasing/inputting character
-  */
   initSocketListener() {
-    this.socket.on("Update move", (move_description, s_id) => {
+    this.socket.on("Update move", async (move_description, s_id) => {
       let { type, body } = move_description;
-      if (type === "claim") {
-        //claim(body)
-        this.claimWord(body);
-      } else if (type === "release") {
-        //release(body)
-        this.releaseWord(body);
-      } else if (type === "move") {
+      if (type === "move") {
         //apply move (body)
         this.applyMove(body);
+      } else {
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+        // this.updateWordColoring();
       }
     });
-  }
-
-  claimWord(moveBody) {
-    let { position, player } = moveBody;
-    this.state.boardHandler.getWord(position).state = player + 1;
-    this.updateWordColoring();
-    // TODO: replace updateWordColoring with boarHandler.occupyWord
-    //This currently does not properly handle the intersection of two words
   }
 
   applyMove(move_body) {
@@ -108,7 +91,7 @@ export default class Board extends Component {
     this.state.boardHandler.setSocket(this.socket);
     this.state.boardHandler.setPlayerIndex(this.clientplayerindex);
     this.initSocketListener();
-    this.updateWordColoring(); // Update board rendering to the current server state.
+    //this.updateWordColoring(); // Update board rendering to the current server state.
 
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
@@ -266,7 +249,6 @@ export default class Board extends Component {
     let occupiedWords = [];
     this.state.boardHandler.words.forEach((wordDescription) => {
       let wordIndex = this.state.boardHandler.getWordIndex(wordDescription);
-
       if (this.state.boardHandler.isWordFree(wordIndex)) {
         // Paint unoccupied words first.
         this.colorWord(wordDescription, playersColors[0]);

@@ -1,8 +1,6 @@
-// TODO: tests.
-
 const BaseGameModel = require("../BaseGameModel").BaseGameModel;
 const generate_layout = require("./CrosswordGenerator");
-const NUM_OF_CLUES = 30;
+const NUM_OF_CLUES = 5;
 class CrosswordModel extends BaseGameModel {
   constructor(difficulty = 1) {
     super("Crossword", 1, 2);
@@ -20,7 +18,7 @@ class CrosswordModel extends BaseGameModel {
       word.position = i;
       i = i + 1;
     }
-    console.log(this.layout);
+
     this.empty_layout = this.layout.boardWords.map(
       ({ answer, ...item }) => item
     );
@@ -45,9 +43,7 @@ class CrosswordModel extends BaseGameModel {
   }
   // move_description = {type="claim"/"release"/"move", body=parameters of action}
   make_move(move_description) {
-    console.log("make_move in model");
     let { type, body } = move_description;
-    console.log(move_description);
     if (type == "move") {
       this.apply_move(move_description);
     } else if (type == "claim") {
@@ -69,36 +65,43 @@ class CrosswordModel extends BaseGameModel {
     ) {
       let previous_claim = this.claims_by_player[player];
       if (previous_claim >= 0) {
-        this.claims_by_position[previous_claim] = -1;
-        this.claims_by_player[player] = -1;
+        this.release_claim({ position: previous_claim + 1, player });
       }
       if (this.claims_by_position[position] == -1) {
         this.claims_by_position[position] = player;
         this.claims_by_player[player] = position;
-        console.log(
-          player,
-          position,
-          this.claims_by_position[position],
-          this.claims_by_player[player]
-        );
         this.emit("Move made", {
           type: "claim",
-          position: position + 1,
-          player: player,
+          body: {
+            position: position + 1,
+            player: player,
+          },
         });
-      } else {
-        console.log(this.claims_by_position[position]);
       }
     }
   }
 
-  // Gets index of player and releases associated claim.
-  release_claim(player) {
+  // Given player and wordIndex, releases claim if player has the claim to word.
+  release_claim(body) {
+    let { position, player } = body;
+    position--;
     if (this.claims_by_player.length > player && player >= 0) {
-      let previous_claim = this.claims_by_player[player];
-      if (previous_claim >= 0) {
-        this.claims_by_position[previous_claim] = -1;
-        this.claims_by_player[player] = -1;
+      if (this.claims_by_position.length > position && position >= 0) {
+        if (
+          this.claims_by_player[player] == position &&
+          this.claims_by_position[position] == player
+        ) {
+          this.claims_by_position[position] = -1;
+          this.claims_by_player[player] = -1;
+          this.emit("Move made", {
+            type: "release",
+            body: {
+              position: position + 1,
+              player: player,
+            },
+          });
+          return;
+        }
       }
     }
   }
@@ -106,15 +109,7 @@ class CrosswordModel extends BaseGameModel {
   //Checks if a move is valid (i.e word is claimed by player)
   validate_move(move_description) {
     let { letter, position, index, player } = move_description;
-    console.log(move_description);
     position--;
-    console.log(
-      "Validate move",
-      player,
-      position,
-      this.claims_by_position[position],
-      this.claims_by_player[player]
-    );
     return (
       this.claims_by_position[position] == player &&
       index >= 0 &&

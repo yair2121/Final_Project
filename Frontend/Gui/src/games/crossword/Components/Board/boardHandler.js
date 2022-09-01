@@ -1,3 +1,6 @@
+//TODO: add release emit when freeing a word by clicking on inactive cell.
+// (Currently done by passing updateWordColoring to boardhandler via constructor)
+//TODO: add release emit in CrosswordModel when a player that has one claim claims another (this covers freeing word by clicking on active cell)
 import { map, range } from "ramda";
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
@@ -20,8 +23,9 @@ export class BoardHandler {
    * @param {Number} columnCount: amount of columns in the board.
    * @param {Object} boardWords: description of each word(position, orientation, clue)
    */
-  constructor(boardDescription, setClue) {
+  constructor(boardDescription, setClue, updateWordColoring) {
     this.setClue = setClue; // Will set state of clue on the Crossword component.
+    this.updateWordColoring = updateWordColoring; // Will update coloring of cells in Board
     this.focusedWordIndex = UNDEFINED_WORD;
     this.focusedCellPosition = UNDEFINED_POSITION;
     this.requestedCell = undefined;
@@ -55,20 +59,22 @@ export class BoardHandler {
     this.socket.on("Update move", (move_description, s_id) => {
       let { type, body } = move_description;
       if (type === "claim") {
-        /*if(me)
-          this.setClue(this.words[newWord].position, this.words[newWord].clue);
-          this.setFocusedCell(this.requestedCell);
-          this.requestedCell = undefined;
-        */
-        /*
-          if(not me and word = this.requestedWord) {
-            this.requestedWord = undefined
-            this.requestedCell = undefined
+        let { position, player } = body;
+        if (position == this.requestedWordIndex + 1) {
+          if (player == this.clientplayerindex) {
+            this.setClue(
+              this.words[this.requestedWordIndex].position,
+              this.words[this.requestedWordIndex].clue
+            );
+            this.setFocusedCell(this.requestedCell);
           }
-       */
-        this.claimWord(body);
+          this.requestedCell = undefined;
+          this.requestedWordIndex = undefined;
+        }
+        this.occupyWord(position - 1, player);
       } else if (type === "release") {
-        this.releaseWord(body);
+        let { position, player } = body;
+        this.freeWord(position - 1);
       }
     });
   }
@@ -220,7 +226,6 @@ export class BoardHandler {
 
   setFocusedWord(wordIndex) {
     this.focusedWordIndex = wordIndex;
-    //TODO: tell server
   }
 
   // Returns current position and index according to the update_move format
@@ -300,7 +305,7 @@ export class BoardHandler {
    */
   freeWord(wordIndex) {
     this.words[wordIndex].state = UNOCCUPIED;
-    //TODO: tell server to free word.
+    this.updateWordColoring();
   }
 
   serverCanOccupyWord(wordIndex) {
@@ -311,20 +316,32 @@ export class BoardHandler {
         player: this.clientplayerindex,
       },
     });
-    console.log(this.clientplayerindex);
-    return true;
+  }
+
+  localPlayerFreeWord(wordIndex) {
+    this.socket.emit("update_move", "Crossword", this.sessionId, {
+      type: "release",
+      body: {
+        position: wordIndex + 1,
+        player: this.clientplayerindex,
+      },
+    });
   }
 
   canOccupyWord(wordIndex) {
-    this.serverCanOccupyWord(wordIndex);
-    return this.isWordFree(wordIndex);
+    if (this.isWordFree(wordIndex)) {
+      this.serverCanOccupyWord(wordIndex);
+      return true;
+    }
+    return false;
   }
 
   /**
-   * Free focused word if necessary, return true if focused word was freed.
+   * Free focused word if necessary.
    */
   handleFocusedWordFreeing() {
     if (this.focusedWordIndex !== UNDEFINED_WORD) {
+      //this.localPlayerFreeWord(this.focusedWordIndex);
       this.freeWord(this.focusedWordIndex);
       this.freeFocusedCell();
       this.focusedWordIndex = UNDEFINED_WORD;
@@ -359,17 +376,9 @@ export class BoardHandler {
   handleWordChange(currentCell) {
     if (this.shouldChangeWord(currentCell)) {
       let newWord = this.getNewWord(currentCell);
-
-      if (this.isWordFree(newWord)) {
-        this.requestedCell = currentCell; // Changed to set.'
-        this.requestedWord = newWord;
-      }
       if (this.canOccupyWord(newWord)) {
-        // start listener for player claims
-        this.occupyWord(newWord); // Evreyone do it
-        // Only me
-        this.setClue(this.words[newWord].position, this.words[newWord].clue);
-        this.setFocusedCell(currentCell);
+        this.requestedWordIndex = newWord;
+        this.requestedCell = currentCell;
       }
     } else {
       this.setFocusedCell(currentCell); // Word isn't changed and Cell is on focused word- so only need to updated the focused cell.
@@ -381,13 +390,14 @@ export class BoardHandler {
    * @param {Number} wordIndex
    * @param {Number} playerIndex
    */
-  occupyWord(wordIndex) {
-    // Remove current word if needed.
-    if (this.focusedWordIndex !== UNDEFINED_WORD) {
-      this.freeWord(this.focusedWordIndex);
-    }
-
-    this.words[wordIndex].state = LOCAL_PLAYER;
+  occupyWord(wordIndex, playerIndex) {
+    // if (this.clientplayerindex == playerIndex) {
+    //   if (this.focusedWordIndex !== UNDEFINED_WORD) {
+    //     this.localPlayerFreeWord(this.focusedWordIndex);
+    //   }
+    // }
+    this.words[wordIndex].state = playerIndex + 1;
     this.setFocusedWord(wordIndex);
+    this.updateWordColoring();
   }
 }
