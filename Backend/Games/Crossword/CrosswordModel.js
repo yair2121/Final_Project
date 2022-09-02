@@ -4,6 +4,7 @@ const NUM_OF_CLUES = 5;
 class CrosswordModel extends BaseGameModel {
   constructor(difficulty = 1) {
     super("Crossword", 1, 2);
+    this.game_report = [];
     let layout = generate_layout(difficulty, NUM_OF_CLUES);
     this.cols = layout.cols;
     this.rows = layout.rows;
@@ -35,6 +36,11 @@ class CrosswordModel extends BaseGameModel {
     this.claims_by_position = new Array(this.layout.boardWords.length).fill(-1);
     this.num_of_clues = this.layout.boardWords.length;
     this.claims_by_player = [];
+
+    this.game_report.push({
+      time: Date.now(),
+      layout: this.layout,
+    });
   }
   play(number_of_players) {
     super.play(number_of_players);
@@ -44,6 +50,12 @@ class CrosswordModel extends BaseGameModel {
   // move_description = {type="claim"/"release"/"move", body=parameters of action}
   make_move(move_description) {
     let { type, body } = move_description;
+    this.game_report.push({
+      time: Date.now(),
+      type: type,
+      player: body.player,
+      body: body,
+    });
     if (type == "move") {
       this.apply_move(move_description);
     } else if (type == "claim") {
@@ -152,7 +164,9 @@ class CrosswordModel extends BaseGameModel {
       boardDescription: this.layout,
     });
   }
-  // TODO: this and everything under this
-  get_game_report() {}
+
+  get_game_report() {
+    return this.game_report;
+  }
 }
 module.exports = { CrosswordModel };

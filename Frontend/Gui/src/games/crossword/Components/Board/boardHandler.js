@@ -397,7 +397,9 @@ export class BoardHandler {
     //   }
     // }
     this.words[wordIndex].state = playerIndex + 1;
-    this.setFocusedWord(wordIndex);
+    if (playerIndex == this.clientplayerindex) {
+      this.setFocusedWord(wordIndex);
+    }
     this.updateWordColoring();
   }
 }
