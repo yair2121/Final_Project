@@ -52,12 +52,12 @@ export default function GameScreen({ route }) {
           {isLoading && <LoadingScreen gameName={title} />}
           {!isLoading && <GameView initial_state={initial_state} />}
         </View>
-        <Button
+        {/* <Button
           title="toggle"
           onPress={() => {
             setIsLoading(!isLoading);
           }}
-        />
+        /> */}
       </View>
     </LinearGradient>
   );

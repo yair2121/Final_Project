@@ -213,7 +213,9 @@ export class BoardHandler {
 
   freeFocusedCell() {
     if (this.isCellFocused()) {
-      this.getCell(this.focusedCellPosition).isFocused = false;
+      let focusedCell = this.getCell(this.focusedCellPosition);
+      focusedCell.isFocused = false;
+      focusedCell.ref.setCellFocus(false); // Remove focus rendering from previous cell.
       this.focusedCellPosition = UNDEFINED_POSITION;
     }
   }
