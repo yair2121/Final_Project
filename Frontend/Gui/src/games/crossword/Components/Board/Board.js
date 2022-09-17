@@ -20,7 +20,7 @@ import { USER_KEY, SESSION_ID } from "../../../../constants/keys";
 const playersColors = [
   COLORS.white,
   COLORS.green,
-  COLORS.darkGrey,
+  COLORS.pink,
   COLORS.grey,
   COLORS.lightBrown,
 ];
