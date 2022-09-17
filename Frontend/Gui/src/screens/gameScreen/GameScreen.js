@@ -28,12 +28,10 @@ export default function GameScreen({ route }) {
   const { GameView, title } = GAMES.find(
     (game) => game.title === route.params.title
   );
-  // TODO: change back for develop
   const [isLoading, setIsLoading] = useState(true);
   // Connects to game. When game starts stop loading.
   useEffect(() => {
     socket.on("Session started", (game_state, s_id) => {
-      console.log(game_state);
       AsyncStorage.setItem(SESSION_ID, s_id);
       setInitialState(game_state);
       setIsLoading(false);
@@ -51,20 +49,15 @@ export default function GameScreen({ route }) {
     <LinearGradient colors={COLORS.background} style={backgroundStyle}>
       <View style={gameScreenStyles.container}>
         <View style={gameScreenStyles.contentBox}>
-          {/* <GameView initial_state={initial_state} /> */}
-          {isLoading && (
-            <View>
-              <LoadingScreen gameName={title} />
-              <Button
-                style={{ flex: 1 }}
-                onPress={() => {
-                  setIsLoading(false);
-                }}
-              ></Button>
-            </View>
-          )}
+          {isLoading && <LoadingScreen gameName={title} />}
           {!isLoading && <GameView initial_state={initial_state} />}
         </View>
+        <Button
+          title="toggle"
+          onPress={() => {
+            setIsLoading(!isLoading);
+          }}
+        />
       </View>
     </LinearGradient>
   );

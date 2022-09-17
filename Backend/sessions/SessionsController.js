@@ -47,6 +47,7 @@ class SessionsController extends EventEmitter {
     }
     if (container === null) {
       // throw (session_id, this.sessions);
+      console.log(session_id);
       throw "session_id does not exist";
     }
     return {

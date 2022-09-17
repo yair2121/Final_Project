@@ -1,4 +1,3 @@
-// TODO: understand Board and BoardHandler
 import {
   View,
   FlatList,
@@ -16,7 +15,8 @@ import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
 import { CellState } from "../Cell/cellStates";
 import { SocketContext } from "../../../../contexts/SocketContext";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { USER_KEY, SESSION_ID } from "../../../../constants/keys";
 const playersColors = [
   COLORS.white,
   COLORS.green,
@@ -31,40 +31,43 @@ const playersColors = [
 export default class Board extends Component {
   constructor(props) {
     super(props);
-    const socket = useContext(SocketContext);
     const boardDescription = props.boardDescription;
-    const boardHandler = new BoardHandler(boardDescription, props.setClue);
-
+    const boardHandler = new BoardHandler(
+      boardDescription,
+      props.setClue,
+      () => {
+        this.updateWordColoring();
+      }
+    );
+    this.clientplayerindex = props.clientplayerindex;
     this.state = {
       boardHandler: boardHandler,
       isKeyboardHidden: true,
       flattedBoard: boardHandler.board.flat(), // For rendering
     };
-
-    this.initSocketListener();
   }
 
-  /*
-    TODO: add Function which have a socket listener to update the board according to the server current state.
-    Events:
-    1. A player captured a new word.
-    2. A player Freed a word.
-    3. A player wrote a letter.
-  */
-
   initSocketListener() {
-    socket.on("Update move", (move_description, s_id) => {
-      console.log("update move");
+    this.socket.on("Update move", async (move_description, s_id) => {
       let { type, body } = move_description;
-      if (type === "claim") {
-        //claim(body)
-      } else if (type === "release") {
-        //release(body)
-      } else if (type === "move") {
+      if (type === "move") {
         //apply move (body)
+        this.applyMove(body);
+      } else {
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+        // this.updateWordColoring();
       }
     });
   }
+
+  applyMove(move_body) {
+    let { letter, position, index, player } = move_body;
+    let cell_position = this.state.boardHandler.getWord(position - 1);
+    cell_position = cell_position.positions[index];
+    let cell = this.state.boardHandler.getCell(cell_position);
+    this.setCellValue(cell, letter);
+  }
+
   updateBoard(newBoard) {}
 
   /**
@@ -75,7 +78,20 @@ export default class Board extends Component {
   }
 
   componentDidMount() {
-    this.updateWordColoring(); // Update board rendering to the current server state.
+    this.socket = this.context;
+
+    AsyncStorage.getItem(USER_KEY).then((item) => {
+      this.setState({ player: JSON.parse(item) });
+    });
+    AsyncStorage.getItem(SESSION_ID).then((item) => {
+      this.setState({ sessionId: item });
+      this.state.boardHandler.setSessionId(item);
+    });
+
+    this.state.boardHandler.setSocket(this.socket);
+    this.state.boardHandler.setPlayerIndex(this.clientplayerindex);
+    this.initSocketListener();
+    //this.updateWordColoring(); // Update board rendering to the current server state.
 
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
@@ -116,8 +132,13 @@ export default class Board extends Component {
    */
   paintCell(cell, color) {
     // No need to repaint if cell is already in the given color.
-    if (color !== cell.ref.state.color) {
-      cell.ref.setCellColor(color);
+    // delete the condition later
+    if (cell.ref != undefined) {
+      if (color !== cell.ref.state.color) {
+        cell.ref.setCellColor(color);
+      }
+    } else {
+      console.warn("should have broken");
     }
   }
 
@@ -187,12 +208,25 @@ export default class Board extends Component {
       LANGUAGE.ENGLISH.test(input) &&
       this.state.boardHandler.isCellFocused()
     ) {
+      let { position, index } =
+        this.state.boardHandler.getFocusedPositionAndIndex();
+
       let currentCell = this.state.boardHandler.getFocusedCell();
       this.setCellValue(currentCell, input);
       this.state.boardHandler.advanceFocusedWordIndex();
       let nextCell = this.state.boardHandler.getFocusedCell();
       this.setCellFocusState(currentCell, false);
       this.setCellFocusState(nextCell, true);
+
+      this.socket.emit("update_move", "Crossword", this.state.sessionId, {
+        type: "move",
+        body: {
+          letter: input,
+          position: position + 1,
+          index: index,
+          player: this.clientplayerindex,
+        },
+      });
     }
 
     this.textInput.setNativeProps({ text: "" });
@@ -209,13 +243,12 @@ export default class Board extends Component {
   }
 
   /**
-   * Paint all the words on the board based on there current state
+   * Paint all the words on the board based on their current state
    */
   updateWordColoring() {
     let occupiedWords = [];
     this.state.boardHandler.words.forEach((wordDescription) => {
       let wordIndex = this.state.boardHandler.getWordIndex(wordDescription);
-
       if (this.state.boardHandler.isWordFree(wordIndex)) {
         // Paint unoccupied words first.
         this.colorWord(wordDescription, playersColors[0]);
@@ -257,6 +290,8 @@ export default class Board extends Component {
   };
 
   render() {
+    this.clientplayerindex = this.props.clientplayerindex;
+    this.state.boardHandler.setPlayerIndex(this.clientplayerindex);
     return (
       <View style={{ flex: 1 }}>
         <TextInput // Invisible textInput to control Android keyboard.
@@ -288,3 +323,5 @@ export default class Board extends Component {
     );
   }
 }
+
+Board.contextType = SocketContext;

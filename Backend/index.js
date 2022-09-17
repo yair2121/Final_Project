@@ -104,6 +104,7 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("echo", (body) => console.log(body));
   socket.once("disconnect", () => {
     // console.log("user disconnected");
   });
