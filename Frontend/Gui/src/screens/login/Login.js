@@ -3,8 +3,6 @@ import { Input, Text } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { SocketContext } from "../../contexts/SocketContext";
-
 import { COLORS } from "../../constants/colors";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,7 +12,7 @@ import LoginLogo from "./LoginLogo";
 import { View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { backgroundStyle } from "../../constants/backgroundStyle";
-
+import { SocketContext } from "../../contexts/SocketContext";
 export default function LoginScreen({ navigation }) {
   const [playerName, setPlayerName] = useState("");
 

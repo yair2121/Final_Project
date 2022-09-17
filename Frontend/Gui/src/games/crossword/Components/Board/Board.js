@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { SocketContext } from "../../contexts/SocketContext";
+
 import React, { Component } from "react";
 import { boardStyle } from "../../CrosswordStyles";
 import Cell from "../Cell";
@@ -15,6 +15,7 @@ import { BoardHandler } from "./boardHandler";
 import { COLORS } from "../../../../constants/colors";
 import { LANGUAGE } from "../../../../constants/languageRegex";
 import { CellState } from "../Cell/cellStates";
+import { SocketContext } from "../../../../contexts/SocketContext";
 
 const playersColors = [
   COLORS.white,
