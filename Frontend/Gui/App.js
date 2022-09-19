@@ -13,14 +13,16 @@ import {
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TITLES } from "./src/constants/titles";
+import { HEADER_TYPES } from "./src/components/AppHeader/HeaderTypes";
 
 const Stack = createNativeStackNavigator();
-
 const StackScreen = function () {
   return (
     <Stack.Navigator
       screenOptions={{
         animation: "fade",
+        // contentStyle: { flex: 10 },
+        // headerStyle: { flex: 1 },
         header: ({ navigation, route }) => {
           return <AppHeader navigation={navigation} route={route} />;
         },
@@ -36,9 +38,9 @@ const StackScreen = function () {
       <Stack.Screen
         name="GameScreen"
         component={GameScreen}
-        initialParams={{}}
+        initialParams={{ header: HEADER_TYPES.GAME }}
       />
-      <Stack.Screen name="Setting" component={Setting} initialParams={{}} />
+      {/* <Stack.Screen name="Setting" component={Setting} initialParams={{}} /> */}
     </Stack.Navigator>
   );
 };
