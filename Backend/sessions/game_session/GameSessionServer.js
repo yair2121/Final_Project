@@ -45,7 +45,7 @@ class GameSessionServer extends EventEmitter {
       this.emit("Update session state", this.get_state(), this.session_id);
     });
     this.#game_session.on("Update move", (move_description) => {
-      console.log("gamesesssionserver move");
+      // console.log("gamesesssionserver move");
       this.emit("Update session move", move_description, this.session_id);
     });
   }

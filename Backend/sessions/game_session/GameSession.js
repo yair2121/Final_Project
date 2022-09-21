@@ -27,11 +27,11 @@ class GameSession extends EventEmitter {
       this.emit("Game ended");
     });
     this.#game_model.on("Game state updated", () => {
-      console.log("gamesession emitted");
+      // console.log("gamesession emitted");
       this.emit("Update state");
     });
     this.#game_model.on("Move made", (move_description) => {
-      console.log("gamesession move");
+      // console.log("gamesession move");
       this.emit("Update move", move_description);
     });
   }

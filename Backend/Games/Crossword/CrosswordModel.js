@@ -3,7 +3,7 @@ const generate_layout = require("./CrosswordGenerator");
 const NUM_OF_CLUES = 5;
 class CrosswordModel extends BaseGameModel {
   constructor(difficulty = 1) {
-    super("Crossword", 1, 2);
+    super("Crossword", 1, 1);
     this.game_report = [];
     let layout = generate_layout(difficulty, NUM_OF_CLUES);
     this.cols = layout.cols;
