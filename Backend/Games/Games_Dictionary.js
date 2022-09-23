@@ -1,6 +1,6 @@
-const { HundredSumModel, HundredSumView } = require("./SumGame/index");
-const { CrosswordModel, CrosswordView } = require("./Crossword/index");
+const { HundredSumModel } = require("./SumGame/index");
+const { CrosswordModel } = require("./Crossword/index");
 const games_dict = {};
-games_dict["Crossword"] = { model: CrosswordModel, view: CrosswordView };
-games_dict["Sum Game"] = { model: HundredSumModel, view: HundredSumView };
+games_dict["Crossword"] = { model: CrosswordModel };
+games_dict["Sum Game"] = { model: HundredSumModel };
 module.exports = { games_dict };
