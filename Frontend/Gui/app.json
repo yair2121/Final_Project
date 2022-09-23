@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }      
+      },
+      "package": "com.yairroey.crossword"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "69093aa3-609b-410a-871d-3455f71b26e1"
+      }
     }
   }
 }
