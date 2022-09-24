@@ -47,12 +47,12 @@ export class BoardHandler {
     this.initSocketListener();
   }
 
-  setPlayerIndex(player_index) {
-    this.clientplayerindex = player_index;
+  setPlayerIndex(playerIndex) {
+    this.clientPlayerIndex = playerIndex;
   }
 
-  setSessionId(s_id) {
-    this.sessionId = s_id;
+  setSessionId(sessionId) {
+    this.sessionId = sessionId;
   }
 
   initSocketListener() {
@@ -60,8 +60,8 @@ export class BoardHandler {
       let { type, body } = move_description;
       if (type === "claim") {
         let { position, player } = body;
-        if (position == this.requestedWordIndex + 1) {
-          if (player == this.clientplayerindex) {
+        if (position === this.requestedWordIndex + 1) {
+          if (player === this.clientPlayerIndex) {
             this.setClue(
               this.words[this.requestedWordIndex].position,
               this.words[this.requestedWordIndex].clue
@@ -315,7 +315,7 @@ export class BoardHandler {
       type: "claim",
       body: {
         position: wordIndex + 1,
-        player: this.clientplayerindex,
+        player: this.clientPlayerIndex,
       },
     });
   }
@@ -325,7 +325,7 @@ export class BoardHandler {
       type: "release",
       body: {
         position: wordIndex + 1,
-        player: this.clientplayerindex,
+        player: this.clientPlayerIndex,
       },
     });
   }
@@ -393,13 +393,8 @@ export class BoardHandler {
    * @param {Number} playerIndex
    */
   occupyWord(wordIndex, playerIndex) {
-    // if (this.clientplayerindex == playerIndex) {
-    //   if (this.focusedWordIndex !== UNDEFINED_WORD) {
-    //     this.localPlayerFreeWord(this.focusedWordIndex);
-    //   }
-    // }
     this.words[wordIndex].state = playerIndex + 1;
-    if (playerIndex == this.clientplayerindex) {
+    if (playerIndex === this.clientPlayerIndex) {
       this.setFocusedWord(wordIndex);
     }
     this.updateWordColoring();
