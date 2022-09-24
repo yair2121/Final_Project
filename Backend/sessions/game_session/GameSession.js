@@ -7,6 +7,7 @@ const EventEmitter = require("events");
 class GameSession extends EventEmitter {
   #game_model;
   #database_controller;
+
   constructor(game_model, database_controller) {
     super();
     // Maps socket_id to player index.  players[<player_socket_id>] = <player_index>

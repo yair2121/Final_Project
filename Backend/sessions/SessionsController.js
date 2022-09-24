@@ -79,6 +79,7 @@ class SessionsController extends EventEmitter {
     const { container } = this.#get_session(game_name, session_id);
     delete container[game_name][session_id];
   }
+
   /**
    * Validate that given player request can be given.
    * @param {string} player_id- id of player.
@@ -157,6 +158,7 @@ class SessionsController extends EventEmitter {
       this.emit("Update session move", move_description, session_id);
     });
   }
+
   /**
    * Create a new game session of game_name.
    * @param {string} game_name-  Create new session of game_name.

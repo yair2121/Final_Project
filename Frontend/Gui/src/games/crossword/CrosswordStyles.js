@@ -74,7 +74,6 @@ const cellStyle = function (cellState, cellBackgroundColor, isFocused) {
       textTransform: "uppercase",
     },
     cellAcrossWord: {
-      color: COLORS.red,
       fontWeight: "bold",
       fontSize: celWordFontSize,
       position: "absolute",
@@ -83,7 +82,6 @@ const cellStyle = function (cellState, cellBackgroundColor, isFocused) {
       zIndex: 1,
     },
     cellDownWord: {
-      color: cellWordColor,
       fontWeight: "bold",
       fontSize: celWordFontSize,
       position: "absolute",
