@@ -7,6 +7,7 @@ import Board from "./Components/Board";
 import { Text } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
+import { DEFAULT_CLUE } from "./consts/generalConsts";
 
 /*
 Crossword GUI class.
@@ -17,7 +18,7 @@ class Crossword extends Component {
     this.state = {
       boardDescription: props.initial_state.boardDescription,
       players: props.initial_state.players,
-      currentClue: "",
+      currentClue: DEFAULT_CLUE,
       player: { id: "", name: "" },
       clueFont: [10, 15, 20, 25],
       fontIndex: 0,
@@ -72,8 +73,12 @@ class Crossword extends Component {
     });
   }
 
-  setClue(wordPosition, clue) {
-    this.setState({ currentClue: wordPosition + ": " + clue });
+  setClue(wordPosition, clue = DEFAULT_CLUE) {
+    if (wordPosition === undefined) {
+      this.setState({ currentClue: clue });
+    } else {
+      this.setState({ currentClue: wordPosition + ": " + clue });
+    }
   }
   render() {
     return (
@@ -95,11 +100,7 @@ class Crossword extends Component {
               },
             ]}
           >
-            {this.state.currentClue
-              ? this.state.currentClue
-              : isMobilePlatform
-              ? "CLUES: press here to change font size" // Changing font only for Mobile (Web does not support adjustsFontSizeToFit).
-              : "clues"}
+            {this.state.currentClue}
           </Text>
         </TouchableOpacity>
 
