@@ -39,16 +39,42 @@ export default class Cell extends Component {
     this.setState({ value: newValue });
   }
 
-  getStartOfWordText() {
-    let text = "";
-    text += this.state.cellInfo.isAcrossWordStart
-      ? this.state.cellInfo.getWordPosition(ORIENTATION.ACROSS)
-      : "";
-    text += this.state.cellInfo.isDownWordStart
-      ? this.state.cellInfo.getWordPosition(ORIENTATION.DOWN)
-      : "";
-    return text;
+  getStartWordPosition(orientation) {
+    if (
+      orientation === ORIENTATION.ACROSS &&
+      this.state.cellInfo.isAcrossWordStart
+    ) {
+      return this.state.cellInfo.getWordPosition(orientation);
+    }
+    if (
+      orientation === ORIENTATION.DOWN &&
+      this.state.cellInfo.isDownWordStart
+    ) {
+      return this.state.cellInfo.getWordPosition(orientation);
+    }
+    return "";
   }
+
+  ActiveCellInput = () => {
+    return (
+      <Text
+        style={cellStyle(this.state.cellInfo.state).cellInput}
+        maxLength={1} // One letter per cell.
+        adjustsFontSizeToFit={true}
+      >
+        {this.state.value}
+      </Text>
+    );
+  };
+
+  ActiveCellWord = (orientation) => {
+    let style =
+      orientation === ORIENTATION.ACROSS
+        ? cellStyle(this.state.cellInfo.state).cellAcrossWord
+        : cellStyle(this.state.cellInfo.state).cellDownWord;
+    return <Text style={style}>{this.getStartWordPosition(orientation)}</Text>;
+  };
+
   render() {
     return (
       <AspectView
@@ -62,22 +88,13 @@ export default class Cell extends Component {
           ).cell
         }
       >
-        {this.state.cellInfo.isStartOfWord() && (
-          //Render word index.
-          <Text style={cellStyle(this.state.cellInfo.state).cellWord}>
-            {this.getStartOfWordText()}
-          </Text>
-        )}
-        {this.state.cellInfo.state === CellState.ACTIVE && (
+        {this.state.cellInfo.isAcrossWordStart &&
+          this.ActiveCellWord(ORIENTATION.ACROSS)}
+        {this.state.cellInfo.isDownWordStart &&
+          this.ActiveCellWord(ORIENTATION.DOWN)}
+        {this.state.cellInfo.state === CellState.ACTIVE &&
           // Render cell current value.
-          <Text
-            style={cellStyle(this.state.cellInfo.state).cellInput}
-            maxLength={1} // One letter per cell.
-            adjustsFontSizeToFit={true}
-          >
-            {this.state.value}
-          </Text>
-        )}
+          this.ActiveCellInput()}
       </AspectView>
     );
   }
