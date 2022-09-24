@@ -1,19 +1,26 @@
-import { Platform } from "react-native";
-import { StyleSheet } from "react-native";
+import { Dimensions, Platform, StyleSheet } from "react-native";
 import { COLORS } from "../../constants/colors";
 import { CellState } from "./Components/Cell/cellStates";
 
 import { heightResponsive, widthResponsive } from "../../stylingUtils";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
-var boardWidthPercent = 90;
+var boardWidthPercent = 99;
 var boardHeightPercent = 100;
-
+const { fontScale } = Dimensions.get("window");
 if (Platform.OS === "web") {
   var boardWidthPercent = 40;
   var boardHeightPercent = 60;
 }
+let cellWordOffset = isMobilePlatform ? -1 : -2;
+let celWordLeftOffset = 0;
+let celWordFontSize = isMobilePlatform ? 7 : 12;
+celWordFontSize /= fontScale;
 
+let celInputFontSize = isMobilePlatform ? 8 : 23;
+celWordFontSize /= fontScale;
+
+let cellWordColor = COLORS.red;
 const mainViewStyle = StyleSheet.create({
   container: {
     flex: 1,
@@ -23,7 +30,6 @@ const mainViewStyle = StyleSheet.create({
   boardFrame: {
     flex: 9,
     borderColor: COLORS.black,
-    // aspectRatio: isMobile ? 1 : 0,
   },
 
   title: {
@@ -45,33 +51,45 @@ const boardStyle = StyleSheet.create({
   },
 });
 
-const cellStyle = function (cellState, cellColor, isFocused) {
+const cellStyle = function (cellState, cellBackgroundColor, isFocused) {
   const borderColor =
     cellState === CellState.ACTIVE ? COLORS.black : COLORS.white;
 
   if (isFocused) {
-    cellColor = COLORS.grey;
+    cellBackgroundColor = COLORS.grey;
   }
+
   const style = StyleSheet.create({
     cell: {
       flex: 1,
-      backgroundColor: cellColor,
+      backgroundColor: cellBackgroundColor,
       borderColor: borderColor,
-      // borderColor: isMobile ? borderColor : "",
       borderWidth: isMobilePlatform ? 0.2 : 0.1,
       justifyContent: "center",
     },
     cellInput: {
+      fontSize: celInputFontSize,
       fontWeight: "bold",
       textAlign: "center",
-
       textTransform: "uppercase",
     },
-    cellWord: {
+    cellAcrossWord: {
+      color: COLORS.red,
+      fontWeight: "bold",
+      fontSize: celWordFontSize,
       position: "absolute",
-      top: -3,
-      left: 0,
+      top: cellWordOffset,
+      left: celWordLeftOffset,
       zIndex: 1,
+    },
+    cellDownWord: {
+      color: cellWordColor,
+      fontWeight: "bold",
+      fontSize: celWordFontSize,
+      position: "absolute",
+      left: celWordLeftOffset,
+      zIndex: 1,
+      bottom: cellWordOffset,
     },
   });
   return style;
