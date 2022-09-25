@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import LoadingScreen from "../loadingScreen/LoadingScreen";
+import FinishScreen from "../finishScreen/FinishScreen";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SESSION_ID, SESSION_STATE } from "../../constants/keys";
@@ -29,12 +30,16 @@ export default function GameScreen({ route }) {
     (game) => game.title === route.params.title
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [isFinished, setIsFinished] = useState(false);
   // Connects to game. When game starts stop loading.
   useEffect(() => {
     socket.on("Session started", (game_state, s_id) => {
       AsyncStorage.setItem(SESSION_ID, s_id);
       setInitialState(game_state);
       setIsLoading(false);
+    });
+    socket.on("Session ended", (game_state, s_id) => {
+      setIsFinished(true);
     });
     socket.emit("connect_to_game", title, (callback) => {
       AsyncStorage.setItem(SESSION_ID, callback.s_id);
@@ -50,7 +55,10 @@ export default function GameScreen({ route }) {
       <View style={gameScreenStyles.container}>
         <View style={gameScreenStyles.contentBox}>
           {isLoading && <LoadingScreen gameName={title} />}
-          {!isLoading && <GameView initial_state={initialState} />}
+          {!isLoading && !isFinished && (
+            <GameView initial_state={initialState} />
+          )}
+          {!isLoading && isFinished && <FinishScreen />}
         </View>
         {/* <Button
           title="toggle"

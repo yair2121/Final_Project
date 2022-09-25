@@ -20,6 +20,7 @@ class CrosswordModel extends BaseGameModel {
       word.position = i;
       i = i + 1;
     }
+    console.log(this.layout.boardWords);
     this.empty_layout = this.layout.boardWords.map(
       ({ answer, ...item }) => item
     );
@@ -160,6 +161,7 @@ class CrosswordModel extends BaseGameModel {
       if (JSON.stringify(this.current_boardstate) == this.final_state_string) {
         this.done = true;
         this.emit("Game ended");
+        console.log("done");
       }
     }
   }
