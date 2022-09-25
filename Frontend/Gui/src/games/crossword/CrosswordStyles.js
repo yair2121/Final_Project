@@ -6,12 +6,14 @@ import { heightResponsive, widthResponsive } from "../../stylingUtils";
 import { isMobilePlatform } from "../../generalUtils/systemUtils";
 
 var boardWidthPercent = 99;
-var boardHeightPercent = 100;
-const { fontScale } = Dimensions.get("window");
+var boardHeightPercent = 99;
+
 if (Platform.OS === "web") {
-  var boardWidthPercent = 40;
-  var boardHeightPercent = 60;
+  var boardWidthPercent = 35;
+  var boardHeightPercent = 35;
 }
+
+const { fontScale } = Dimensions.get("window");
 let cellWordOffset = isMobilePlatform ? -1 : -2;
 let celWordLeftOffset = 0;
 let celWordFontSize = isMobilePlatform ? 7 : 12;
