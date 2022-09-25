@@ -55,7 +55,7 @@ export default class Cell extends Component {
     return "";
   }
 
-  ActiveCellInput = () => {
+  ActiveCellInput() {
     return (
       <Text
         style={cellStyle(this.state.cellInfo.state).cellInput}
@@ -65,15 +65,15 @@ export default class Cell extends Component {
         {this.state.value}
       </Text>
     );
-  };
+  }
 
-  ActiveCellWord = (orientation) => {
+  ActiveCellWord(orientation) {
     let style =
       orientation === ORIENTATION.ACROSS
         ? cellStyle(this.state.cellInfo.state).cellAcrossWord
         : cellStyle(this.state.cellInfo.state).cellDownWord;
     return <Text style={style}>{this.getStartWordPosition(orientation)}</Text>;
-  };
+  }
 
   render() {
     return (

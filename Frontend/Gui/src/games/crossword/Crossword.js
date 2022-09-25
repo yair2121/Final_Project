@@ -1,5 +1,5 @@
 import React, { useContext, Component } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView, TouchableOpacity, View } from "react-native";
 import { SocketContext } from "../../contexts/SocketContext";
 import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
 import { clueStyle, mainViewStyle } from "./CrosswordStyles";
@@ -82,7 +82,7 @@ class Crossword extends Component {
   }
   render() {
     return (
-      <View style={mainViewStyle.container}>
+      <KeyboardAvoidingView style={mainViewStyle.container} behavior="height">
         <TouchableOpacity
           onPress={() => this.changeFontSize()}
           style={clueStyle.clueContainer}
@@ -110,10 +110,10 @@ class Crossword extends Component {
             setClue={(wordPosition, clue) => {
               this.setClue(wordPosition, clue);
             }}
-            clientplayerindex={this.state.clientplayerindex}
+            clientPlayerIndex={this.state.clientplayerindex}
           />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
