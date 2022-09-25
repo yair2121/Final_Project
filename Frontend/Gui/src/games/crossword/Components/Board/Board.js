@@ -61,15 +61,13 @@ export default class Board extends Component {
     });
   }
 
-  applyMove(move_body) {
-    let { letter, position, index, player } = move_body;
-    let cell_position = this.state.boardHandler.getWord(position - 1);
-    cell_position = cell_position.positions[index];
-    let cell = this.state.boardHandler.getCell(cell_position);
+  applyMove(moveBody) {
+    let { letter, position, index, player } = moveBody;
+    let cellPosition = this.state.boardHandler.getWord(position - 1);
+    cellPosition = cellPosition.positions[index];
+    let cell = this.state.boardHandler.getCell(cellPosition);
     this.setCellValue(cell, letter);
   }
-
-  updateBoard(newBoard) {}
 
   /**
    * Used to prevent back button on Android from changing screens.
@@ -266,11 +264,19 @@ export default class Board extends Component {
   keyExtractor(cell) {
     return `${cell.row}-${cell.column}`;
   }
+  getItemLayout(data, index) {
+    return {
+      length: data.length,
+      offset: data.length * index,
+      index,
+    };
+  }
 
   renderCell = (renderObject) => {
     const cell = renderObject.item;
     return (
       <TouchableOpacity
+        key={this.keyExtractor(cell)}
         activeOpacity={cell.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
         style={{ flex: 1 }}
         onPress={() => {
@@ -278,7 +284,6 @@ export default class Board extends Component {
         }}
       >
         <Cell
-          key={this.keyExtractor(cell)}
           cellInfo={cell}
           isFocused={cell.isFocused}
           value={cell.value}
@@ -311,13 +316,19 @@ export default class Board extends Component {
         />
         <View className="Board" style={boardStyle.board}>
           <FlatList
+            // contentContainerStyle={boardStyle.board}
             keyboardShouldPersistTaps="always"
             keyboardDismissMode="on-drag"
             scrollEnabled={false}
             data={this.state.flattedBoard}
             keyExtractor={this.keyExtractor}
             numColumns={this.state.boardHandler.getColumnCount()}
+            initialNumToRender={
+              this.state.boardHandler.getColumnCount() *
+              this.state.boardHandler.getRowCount()
+            }
             renderItem={this.renderCell}
+            getItemLayout={this.getItemLayout}
           />
         </View>
       </View>

@@ -20,7 +20,6 @@ celWordFontSize /= fontScale;
 let celInputFontSize = isMobilePlatform ? 8 : 23;
 celWordFontSize /= fontScale;
 
-let cellWordColor = COLORS.red;
 const mainViewStyle = StyleSheet.create({
   container: {
     flex: 1,
@@ -101,10 +100,8 @@ const clueStyle = StyleSheet.create({
   clueText: {
     width: widthResponsive(boardWidthPercent),
     // height: heightResponsive(10),
-
     textAlign: "center",
     letterSpacing: 0.3,
-    // textTransform: "uppercase",
     fontWeight: "bold",
     color: COLORS.white,
   },

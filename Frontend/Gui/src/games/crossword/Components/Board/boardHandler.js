@@ -11,7 +11,6 @@ import {
   UNDEFINED_POSITION,
   LOCAL_PLAYER,
   UNDEFINED_WORD,
-  DEFAULT_CLUE,
 } from "../../consts/generalConsts";
 
 export class BoardHandler {
