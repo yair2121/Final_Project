@@ -264,13 +264,14 @@ export default class Board extends Component {
   keyExtractor(cell) {
     return `${cell.row}-${cell.column}`;
   }
-  getItemLayout(data, index) {
+  getItemLayout = (data, index) => {
+    let rows = this.state.boardHandler.getRowCount() * 4;
     return {
-      length: data.length,
-      offset: data.length * index,
+      length: rows,
+      offset: rows * index,
       index,
     };
-  }
+  };
 
   renderCell = (renderObject) => {
     const cell = renderObject.item;
@@ -319,7 +320,9 @@ export default class Board extends Component {
             // contentContainerStyle={boardStyle.board}
             keyboardShouldPersistTaps="always"
             keyboardDismissMode="on-drag"
-            scrollEnabled={false}
+            scrollEnabled={true}
+            scrollToOverflowEnabled={true}
+            showsHorizontalScrollIndicator={false}
             data={this.state.flattedBoard}
             keyExtractor={this.keyExtractor}
             numColumns={this.state.boardHandler.getColumnCount()}
