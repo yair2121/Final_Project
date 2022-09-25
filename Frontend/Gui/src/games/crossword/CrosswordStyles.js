@@ -9,8 +9,8 @@ var boardWidthPercent = 99;
 var boardHeightPercent = 99;
 
 if (Platform.OS === "web") {
-  var boardWidthPercent = 40;
-  var boardHeightPercent = 60;
+  var boardWidthPercent = 35;
+  var boardHeightPercent = 35;
 }
 
 const { fontScale } = Dimensions.get("window");
@@ -30,6 +30,7 @@ const mainViewStyle = StyleSheet.create({
   },
   boardFrame: {
     flex: 9,
+    borderColor: COLORS.black,
   },
 
   title: {
