@@ -3,7 +3,7 @@ import LoadingScreen from "../loadingScreen/LoadingScreen";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SESSION_ID, SESSION_STATE } from "../../constants/keys";
-const emptyjson = JSON.stringify({});
+const emptyJSON = JSON.stringify({});
 import { Button } from "react-native-elements";
 import { View } from "react-native";
 
@@ -23,7 +23,7 @@ import { backgroundStyle } from "../../constants/backgroundStyle";
  */
 export default function GameScreen({ route }) {
   const socket = useContext(SocketContext);
-  const [initial_state, setInitialState] = useState(null);
+  const [initialState, setInitialState] = useState(null);
 
   const { GameView, title } = GAMES.find(
     (game) => game.title === route.params.title
@@ -38,7 +38,7 @@ export default function GameScreen({ route }) {
     });
     socket.emit("connect_to_game", title, (callback) => {
       AsyncStorage.setItem(SESSION_ID, callback.s_id);
-      if (JSON.stringify(callback.game_state) != emptyjson) {
+      if (JSON.stringify(callback.game_state) != emptyJSON) {
         setInitialState(callback.game_state);
         setIsLoading(false);
       }
@@ -50,7 +50,7 @@ export default function GameScreen({ route }) {
       <View style={gameScreenStyles.container}>
         <View style={gameScreenStyles.contentBox}>
           {isLoading && <LoadingScreen gameName={title} />}
-          {!isLoading && <GameView initial_state={initial_state} />}
+          {!isLoading && <GameView initial_state={initialState} />}
         </View>
         {/* <Button
           title="toggle"

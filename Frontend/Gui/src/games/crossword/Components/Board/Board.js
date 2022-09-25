@@ -39,11 +39,12 @@ export default class Board extends Component {
         this.updateWordColoring();
       }
     );
-    this.clientplayerindex = props.clientplayerindex;
+    this.clientPlayerIndex = props.clientPlayerIndex;
+    let flattedBoard = boardHandler.board.flat();
     this.state = {
       boardHandler: boardHandler,
       isKeyboardHidden: true,
-      flattedBoard: boardHandler.board.flat(), // For rendering
+      flattedBoard: flattedBoard, // For rendering
     };
   }
 
@@ -89,7 +90,7 @@ export default class Board extends Component {
     });
 
     this.state.boardHandler.setSocket(this.socket);
-    this.state.boardHandler.setPlayerIndex(this.clientplayerindex);
+    this.state.boardHandler.setPlayerIndex(this.clientPlayerIndex);
     this.initSocketListener();
     //this.updateWordColoring(); // Update board rendering to the current server state.
 
@@ -224,7 +225,7 @@ export default class Board extends Component {
           letter: input,
           position: position + 1,
           index: index,
-          player: this.clientplayerindex,
+          player: this.clientPlayerIndex,
         },
       });
     }
@@ -290,8 +291,8 @@ export default class Board extends Component {
   };
 
   render() {
-    this.clientplayerindex = this.props.clientplayerindex;
-    this.state.boardHandler.setPlayerIndex(this.clientplayerindex);
+    this.clientPlayerIndex = this.props.clientPlayerIndex;
+    this.state.boardHandler.setPlayerIndex(this.clientPlayerIndex);
     return (
       <View style={{ flex: 1 }}>
         <TextInput // Invisible textInput to control Android keyboard.

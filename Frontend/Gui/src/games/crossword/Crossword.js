@@ -110,7 +110,7 @@ class Crossword extends Component {
             setClue={(wordPosition, clue) => {
               this.setClue(wordPosition, clue);
             }}
-            clientplayerindex={this.state.clientplayerindex}
+            clientPlayerIndex={this.state.clientplayerindex}
           />
         </View>
       </View>
