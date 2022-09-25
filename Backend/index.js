@@ -32,7 +32,6 @@ function connect_player(player_id, player_name, game_name) {
 
 session_controller.on("Session started", (game_state, s_id) => {
   incomplete_sessions[s_id] = game_state;
-  //console.log("initialised incomplete session");
   io.to(s_id).emit("Session started", game_state, s_id);
 });
 
@@ -41,16 +40,15 @@ session_controller.on("Update session state", (game_state, s_id) => {
 });
 
 session_controller.on("Update session move", (move, s_id) => {
-  //console.log("indexjs update session move");
-  //console.log(move);
   io.to(s_id).emit("Update move", move, s_id);
 });
 
 session_controller.on("Session ended", (s_id) => {
   io.to(s_id).emit("Session ended", s_id);
-  io.sockets.clients(s_id).forEach(function (s) {
-    s.leave(s_id);
-  });
+  io.socketsLeave("s_id");
+  // io.sockets.clients(s_id).forEach(function (s) {
+  //   s.leave(s_id);
+  // });
 });
 
 app.get("/", (req, res) => {

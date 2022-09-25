@@ -6,12 +6,14 @@ const EventEmitter = require("events");
  */
 class GameSessionServer extends EventEmitter {
   #game_session;
+  #database_controller;
   constructor(session_id, game_model, database_controller) {
     super();
     this.session_id = session_id;
     this.players = [];
     this.connected_players = 0;
-    this.#game_session = new GameSession(game_model, database_controller);
+    this.#database_controller = database_controller;
+    this.#game_session = new GameSession(game_model);
     this.#subscribe_game_session();
   }
 
@@ -34,8 +36,8 @@ class GameSessionServer extends EventEmitter {
         this.session_id
       );
     });
-    this.#game_session.on("Session ended", (game_name) => {
-      this.emit("Session ended", game_name, this.session_id);
+    this.#game_session.on("Session ended", (game_name, s_id) => {
+      this.close(game_name, s_id);
     });
     this.#game_session.on("Session full", (game_name) => {
       this.emit("Session full", game_name, this.session_id);
@@ -106,11 +108,15 @@ class GameSessionServer extends EventEmitter {
   }
 
   /**
-   * Upload to the game report to the database.
    * @emits "Session ended"
    */
-  close() {
-    this.#game_session.close();
+  close(game_name) {
+    this.#database_controller
+      .insertOne({
+        id: this.session_id,
+        report: this.#game_session.get_game_report(),
+      })
+      .then(this.emit("Session ended", game_name, this.session_id));
   }
 
   /**
@@ -127,6 +133,13 @@ class GameSessionServer extends EventEmitter {
    */
   get_update() {
     return this.#game_session.get_move();
+  }
+
+  /**
+   * @returns info about the latest executed move.
+   */
+  get_game_report() {
+    return this.#game_session.get_game_report();
   }
 }
 

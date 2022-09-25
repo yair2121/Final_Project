@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
 let creds = require("./MongoDBCredentials.json");
-const uri = `mongodb+srv://roeynehemiapeleg:${creds.password}@cluster0.nuinj.mongodb.net/TestDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://dbReadWriteOnly:${creds.password}@cluster0.sle1ufk.mongodb.net/?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://roeynehemiapeleg:${creds.password}@cluster0.nuinj.mongodb.net/TestDatabase?retryWrites=true&w=majority`;
 const IDatabaseModel = require("./IDatabaseModel").IDatabaseModel;
 
 class ProjectDatabaseModel extends IDatabaseModel {
@@ -34,13 +35,15 @@ class ProjectDatabaseModel extends IDatabaseModel {
         console.error(err.stack);
         process.exit(1);
       })
-      .then(async (client) => {
-        this.collection = await ProjectDatabaseModel.getCollection(
-          client,
-          db_name,
-          collection_name
-        );
-      });
+      .then(
+        await (async (client) => {
+          this.collection = await ProjectDatabaseModel.getCollection(
+            client,
+            db_name,
+            collection_name
+          );
+        })
+      );
   }
 
   insertOne(data) {

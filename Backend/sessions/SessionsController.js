@@ -4,12 +4,19 @@ const {
   GameSessionServer,
 } = require("../sessions/game_session/GameSessionServer");
 const { v1: uuidv1 } = require("uuid");
+const { ProjectDatabaseModel } = require("../Database/ProjectDatabaseModel.js");
+
 /**
  * Manage games sessions and forwards clients to relevant game sessions.
  */
 class SessionsController extends EventEmitter {
   constructor() {
     super();
+
+    // Connect to database:
+    this.db = new ProjectDatabaseModel();
+    this.db.connect("database", "gameHistoryCollection");
+
     this.sessions = {
       unready_sessions: {},
       full_sessions: {},
@@ -25,7 +32,6 @@ class SessionsController extends EventEmitter {
   /**
    * Get Session of given session id.
    * @param {string} session_id.
-   * @returns TODO: return socket io for the client.
    * @throws When session_id does not exist.
    * @throws When game_name does not exist.
    */
@@ -100,6 +106,7 @@ class SessionsController extends EventEmitter {
    * @throws When game_name does not exist.
    */
   connect_player(player_id, player_name, game_name) {
+    console.log("connect_player");
     this.#validate_connect_player(player_id, game_name);
     const relevant_sessions = this.sessions.unready_sessions[game_name];
     for (const session_id in relevant_sessions) {
@@ -111,6 +118,7 @@ class SessionsController extends EventEmitter {
         console.log(error);
       }
     }
+
     const session_id = this.#create_session(game_name); // Create new session because relevant session does not exist
     this.sessions.unready_sessions[game_name][session_id].add_player(
       player_id,
@@ -146,6 +154,7 @@ class SessionsController extends EventEmitter {
     });
 
     game_session.on("Session ended", (game_name, session_id) => {
+      const { container } = this.#get_session(game_name, session_id);
       this.close_session(game_name, session_id);
       this.emit("Session ended", session_id);
     });
@@ -165,13 +174,12 @@ class SessionsController extends EventEmitter {
    * @returns session id of the created game session.
    */
   #create_session(game_name) {
-    const database = null; //TODO: implement this
     const session_id = uuidv1();
     const { model } = games_dict[game_name];
     const game_session = new GameSessionServer(
       session_id,
       new model(),
-      database
+      this.db
     );
     this.#subscribe_game_session(game_session);
     this.sessions.unready_sessions[game_name][session_id] = game_session;

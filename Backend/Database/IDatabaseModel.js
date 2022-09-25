@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 let creds = require("./MongoDBCredentials.json");
-const uri = `mongodb+srv://roeynehemiapeleg:${creds.password}@cluster0.nuinj.mongodb.net/TestDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://dbReadWriteOnly:${creds.password}@cluster0.sle1ufk.mongodb.net/?retryWrites=true&w=majority`;
 
 var interface_default =
   require("../interfaceConfig").resolvePrecept("IDatabaseModel");

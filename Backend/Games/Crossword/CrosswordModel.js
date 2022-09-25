@@ -1,9 +1,10 @@
 const BaseGameModel = require("../BaseGameModel").BaseGameModel;
 const generate_layout = require("./CrosswordGenerator");
-const NUM_OF_CLUES = 5;
+const NUM_OF_CLUES = 3;
 class CrosswordModel extends BaseGameModel {
   constructor(difficulty = 1) {
     super("Crossword", 1, 1);
+    this.done = false;
     this.game_report = [];
     let layout = generate_layout(difficulty, NUM_OF_CLUES);
     this.cols = layout.cols;
@@ -19,10 +20,10 @@ class CrosswordModel extends BaseGameModel {
       word.position = i;
       i = i + 1;
     }
-
     this.empty_layout = this.layout.boardWords.map(
       ({ answer, ...item }) => item
     );
+    this.final_state_string = JSON.stringify(layout.table);
     this.current_boardstate = layout.table;
     // remove letters from the table so we have an empty board to start with. black squares are '-' white squares are ' '
     for (let i = 0; i < this.rows; i++) {
@@ -49,19 +50,21 @@ class CrosswordModel extends BaseGameModel {
   }
   // move_description = {type="claim"/"release"/"move", body=parameters of action}
   make_move(move_description) {
-    let { type, body } = move_description;
-    this.game_report.push({
-      time: Date.now(),
-      type: type,
-      player: body.player,
-      body: body,
-    });
-    if (type == "move") {
-      this.apply_move(move_description);
-    } else if (type == "claim") {
-      this.claim_clue_by_position(body);
-    } else if (type == "release") {
-      this.release_claim(body);
+    if (this.done == false) {
+      let { type, body } = move_description;
+      this.game_report.push({
+        time: Date.now(),
+        type: type,
+        player: body.player,
+        body: body,
+      });
+      if (type == "move") {
+        this.apply_move(move_description);
+      } else if (type == "claim") {
+        this.claim_clue_by_position(body);
+      } else if (type == "release") {
+        this.release_claim(body);
+      }
     }
   }
   // Lock a clue's row/column for a certain player (by position as defined in crosswordgenerator)
@@ -154,6 +157,10 @@ class CrosswordModel extends BaseGameModel {
       // delete move_description.index;
       // move_description.position = coords
       this.emit("Move made", move_description);
+      if (JSON.stringify(this.current_boardstate) == this.final_state_string) {
+        this.done = true;
+        this.emit("Game ended");
+      }
     }
   }
   get_state() {

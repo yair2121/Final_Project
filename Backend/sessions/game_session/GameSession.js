@@ -6,15 +6,12 @@ const EventEmitter = require("events");
  */
 class GameSession extends EventEmitter {
   #game_model;
-  #database_controller;
-
-  constructor(game_model, database_controller) {
+  constructor(game_model) {
     super();
     // Maps socket_id to player index.  players[<player_socket_id>] = <player_index>
     this.players = {};
     this.connected_players = 0;
     this.#game_model = game_model;
-    this.#database_controller = database_controller;
     this.#subscribe_game_model();
   }
 
@@ -24,8 +21,8 @@ class GameSession extends EventEmitter {
    */
   #subscribe_game_model() {
     this.#game_model.on("Game ended", () => {
-      // TODO: maybe update here the Database with game report.
-      this.emit("Game ended");
+      //this.emit("Game ended");
+      this.close();
     });
     this.#game_model.on("Game state updated", () => {
       // console.log("gamesession emitted");
@@ -106,12 +103,10 @@ class GameSession extends EventEmitter {
   }
 
   /**
-   * Upload to the game report to the database.
    * @emits "Session ended"
    */
   close() {
-    //TODO: implement this and database implementation
-    this.emit("Session ended", this.#game_model.game_name, this.session_id);
+    this.emit("Session ended", this.#game_model.game_name);
   }
 
   /**
@@ -121,6 +116,9 @@ class GameSession extends EventEmitter {
     return this.#game_model.get_state();
   }
 
+  get_game_report() {
+    return this.#game_model.get_game_report();
+  }
   /**
    * @returns info about the latest executed move.
    */
