@@ -72,7 +72,11 @@ export default class Cell extends Component {
       orientation === ORIENTATION.ACROSS
         ? cellStyle(this.state.cellInfo.state).cellAcrossWord
         : cellStyle(this.state.cellInfo.state).cellDownWord;
-    return <Text style={style}>{this.getStartWordPosition(orientation)}</Text>;
+    return (
+      <Text adjustsFontSizeToFit={true} style={style}>
+        {this.getStartWordPosition(orientation)}
+      </Text>
+    );
   }
 
   render() {

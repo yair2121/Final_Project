@@ -80,30 +80,36 @@ class Crossword extends Component {
       this.setState({ currentClue: wordPosition + ": " + clue });
     }
   }
+
+  ClueView = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => this.changeFontSize()}
+        style={clueStyle.clueContainer}
+        activeOpacity={0.7}
+      >
+        <Text
+          adjustsFontSizeToFit={true}
+          numberOfLines={3}
+          style={[
+            clueStyle.clueText,
+            {
+              fontSize: isMobilePlatform
+                ? this.state.clueFont[this.state.fontIndex]
+                : 20,
+            },
+          ]}
+        >
+          {this.state.currentClue}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     return (
       <KeyboardAvoidingView style={mainViewStyle.container} behavior="height">
-        <TouchableOpacity
-          onPress={() => this.changeFontSize()}
-          style={clueStyle.clueContainer}
-          activeOpacity={0.7}
-        >
-          <Text
-            adjustsFontSizeToFit={true}
-            numberOfLines={3}
-            style={[
-              clueStyle.clueText,
-              {
-                fontSize: isMobilePlatform
-                  ? this.state.clueFont[this.state.fontIndex]
-                  : 20,
-              },
-            ]}
-          >
-            {this.state.currentClue}
-          </Text>
-        </TouchableOpacity>
-
+        <this.ClueView />
         <View style={mainViewStyle.boardFrame}>
           <Board
             boardDescription={this.state.boardDescription}

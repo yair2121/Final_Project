@@ -296,44 +296,54 @@ export default class Board extends Component {
     );
   };
 
+  /**
+   * Workaround to listen and control the keyboard- creating an invisible TextInput and using
+   * it's onChangeText event.
+   * @returns
+   */
+  InvisibleKeyboard = () => {
+    return (
+      <TextInput // Invisible textInput to control Android keyboard.
+        blurOnSubmit={false}
+        autoFocus={true} // Get keyboard to show automatically on start(for Android).
+        style={{ height: 0, width: 0, flex: 0 }} // Invisible.
+        onChangeText={(text) => {
+          this.onKeyboardInput(text);
+        }}
+        ref={(ref) => {
+          this.textInput = ref;
+        }}
+        autoCapitalize="none"
+        autoCorrect={false}
+        maxLength={1} // One letter per cell.
+      />
+    );
+  };
+
   render() {
     this.clientPlayerIndex = this.props.clientPlayerIndex;
     this.state.boardHandler.setPlayerIndex(this.clientPlayerIndex);
     return (
       <View style={{ flex: 1 }}>
-        <TextInput // Invisible textInput to control Android keyboard.
-          blurOnSubmit={false}
-          autoFocus={true} // Get keyboard to show automatically on start(for Android).
-          style={{ height: 0, width: 0, flex: 0 }} // Invisible.
-          onChangeText={(text) => {
-            this.onKeyboardInput(text);
-          }}
-          ref={(ref) => {
-            this.textInput = ref;
-          }}
-          autoCapitalize="none"
-          autoCorrect={false}
-          maxLength={1} // One letter per cell.
+        <this.InvisibleKeyboard />
+        <FlatList
+          className="Board"
+          style={boardStyle.board}
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode="on-drag"
+          scrollEnabled={true}
+          scrollToOverflowEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          data={this.state.flattedBoard}
+          keyExtractor={this.keyExtractor}
+          numColumns={this.state.boardHandler.getColumnCount()}
+          initialNumToRender={
+            this.state.boardHandler.getColumnCount() *
+            this.state.boardHandler.getRowCount()
+          }
+          renderItem={this.renderCell}
+          getItemLayout={this.getItemLayout}
         />
-        <View className="Board" style={boardStyle.board}>
-          <FlatList
-            // contentContainerStyle={boardStyle.board}
-            keyboardShouldPersistTaps="always"
-            keyboardDismissMode="on-drag"
-            scrollEnabled={true}
-            scrollToOverflowEnabled={true}
-            showsHorizontalScrollIndicator={false}
-            data={this.state.flattedBoard}
-            keyExtractor={this.keyExtractor}
-            numColumns={this.state.boardHandler.getColumnCount()}
-            initialNumToRender={
-              this.state.boardHandler.getColumnCount() *
-              this.state.boardHandler.getRowCount()
-            }
-            renderItem={this.renderCell}
-            getItemLayout={this.getItemLayout}
-          />
-        </View>
       </View>
     );
   }
