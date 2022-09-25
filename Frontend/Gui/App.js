@@ -3,17 +3,13 @@ import { SocketContext, socket } from "./src/contexts/SocketContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import {
-  LoginScreen,
-  MainMenu,
-  Setting,
-  AppHeader,
-  GameScreen,
-} from "./src/screens";
-
+import { LoginScreen, MainMenu, AppHeader, GameScreen } from "./src/screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TITLES } from "./src/constants/titles";
 import { HEADER_TYPES } from "./src/components/AppHeader/HeaderTypes";
+import { LinearGradient } from "expo-linear-gradient";
+import { COLORS } from "./src/constants/colors";
+import { backgroundStyle } from "./src/constants/backgroundStyle";
 
 const Stack = createNativeStackNavigator();
 const StackScreen = function () {
@@ -48,14 +44,16 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SocketContext.Provider value={socket}>
-        <NavigationContainer
-          documentTitle={{
-            formatter: () => TITLES.appName,
-          }}
-        >
-          <StatusBar hidden={false} />
-          <StackScreen />
-        </NavigationContainer>
+        <LinearGradient colors={COLORS.background} style={backgroundStyle}>
+          <NavigationContainer
+            documentTitle={{
+              formatter: () => TITLES.appName,
+            }}
+          >
+            <StatusBar hidden={false} />
+            <StackScreen />
+          </NavigationContainer>
+        </LinearGradient>
       </SocketContext.Provider>
     </SafeAreaProvider>
   );
