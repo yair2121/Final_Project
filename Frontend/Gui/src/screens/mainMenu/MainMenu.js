@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import GameSelection from "../../games/gameSelection/GamesSelection";
 import { LinearGradient } from "expo-linear-gradient";
 import { backgroundStyle } from "../../constants/backgroundStyle";
+import { Text } from "react-native-elements";
 
 // import GameSelection from "../../games/GamesSelection";
 // AsyncStorage.getItem(USER_KEY).then((item) => {
@@ -22,6 +23,15 @@ export default function MainMenu({ navigation }) {
   return (
     <LinearGradient colors={COLORS.background} style={backgroundStyle}>
       <SafeAreaView style={styles.container}>
+        <Text
+          selectable={false}
+          h1
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}
+          style={{ fontWeight: "bold" }}
+        >
+          Choose a game 🎮
+        </Text>
         <GameSelection navigation={navigation} style={styles.inputView} />
       </SafeAreaView>
     </LinearGradient>
