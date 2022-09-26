@@ -100,18 +100,21 @@ export default class Cell extends Component {
 
   render() {
     return (
-      <AspectView
-        key={`$this.cellInfo.row}-{$this.cellInfo.column}`}
-        className={`Cell-{$this.cellInfo.row}-{$this.cellInfo.column}`}
-        style={
-          cellStyle(this.cellInfo.state, this.state.color, this.state.isFocused)
-            .cell
-        }
+      <TouchableOpacity
+        onPress={this.onPress}
+        style={{ flex: 1 }}
+        activeOpacity={this.cellInfo.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
       >
-        <TouchableOpacity
-          onPress={this.onPress}
-          style={{ flex: 1 }}
-          activeOpacity={this.cellInfo.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
+        <AspectView
+          key={`$this.cellInfo.row}-{$this.cellInfo.column}`}
+          className={`Cell-{$this.cellInfo.row}-{$this.cellInfo.column}`}
+          style={
+            cellStyle(
+              this.cellInfo.state,
+              this.state.color,
+              this.state.isFocused
+            ).cell
+          }
         >
           {this.cellInfo.isAcrossWordStart &&
             this.ActiveCellWord(ORIENTATION.ACROSS)}
@@ -120,8 +123,8 @@ export default class Cell extends Component {
           {this.cellInfo.state === CellState.ACTIVE &&
             // Render cell current value.
             this.ActiveCellInput()}
-        </TouchableOpacity>
-      </AspectView>
+        </AspectView>
+      </TouchableOpacity>
     );
   }
 }

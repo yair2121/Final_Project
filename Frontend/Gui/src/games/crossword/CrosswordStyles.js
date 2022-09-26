@@ -16,11 +16,11 @@ if (Platform.OS === "web") {
 const { fontScale } = Dimensions.get("window");
 let cellWordOffset = isMobilePlatform ? -1 : -2;
 let celWordLeftOffset = 0;
-let celWordFontSize = isMobilePlatform ? 7 : 12;
+let celWordFontSize = isMobilePlatform ? 6 : 9;
 celWordFontSize /= fontScale;
 
 let celInputFontSize = isMobilePlatform ? 8 : 23;
-celWordFontSize /= fontScale;
+celInputFontSize /= fontScale;
 
 const mainViewStyle = StyleSheet.create({
   container: {
