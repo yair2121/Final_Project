@@ -1,12 +1,13 @@
 const io = require("socket.io-client");
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3000/");
 socket.prependAny((eventName, ...args) => {
   console.log("Event: " + eventName);
   console.log(args);
 });
+
 socket.emit("connect_as_api", "ayo", (arg) => {
-  // console.log(arg);
+  console.log(arg);
   // socket.emit("get_unready_sessions", "Crossword", (unready_sessions) => {
   //   unready_sessions.forEach((s_id) => {
   //     console.log(s_id);
@@ -15,9 +16,11 @@ socket.emit("connect_as_api", "ayo", (arg) => {
   // });
   // set_crossword_difficulty(10);
   // set_crossword_num_of_clues(3);
-  get_game_report("Crossword", "82aa1bd0-3dd8-11ed-b082-ebf44bdfc7ff");
-  join_notifications();
-  leave_notifications();
+  // set_crossword_max_players(1);
+  start_autojoin();
+  socket.on("Autojoined session", (...args) => {
+    end_autojoin();
+  });
 });
 
 function connect_to_session(player_name, session_id) {
@@ -60,10 +63,22 @@ function set_crossword_num_of_clues(n) {
   socket.emit("set_crossword_num_of_clues", n, console.log);
 }
 
-function join_notifications() {
-  socket.emit("join_notifications");
+function set_crossword_max_players(n) {
+  socket.emit("set_crossword_max_players", n, console.log);
 }
 
-function leave_notifications() {
-  socket.emit("leave_notifications");
+function start_notifications() {
+  socket.emit("start_notifications");
+}
+
+function end_notifications() {
+  socket.emit("end_notifications");
+}
+
+function start_autojoin() {
+  socket.emit("start_autojoin");
+}
+
+function end_autojoin() {
+  socket.emit("end_autojoin");
 }

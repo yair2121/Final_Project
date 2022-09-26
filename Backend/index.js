@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
-const { connect_socket_api, API_NOTIFICATION_ROOM } = require("../Backend/api");
+const {
+  connect_socket_api,
+  API_NOTIFICATION_ROOM,
+  API_AUTOJOIN_ROOM,
+} = require("../Backend/api");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -29,8 +33,23 @@ function connect_player(player_id, player_name, game_name) {
   return session_controller.connect_player(player_id, player_name, game_name);
 }
 
-session_controller.on("Session created", (game_name, s_id) => {
+session_controller.on("Session created", async (game_name, s_id) => {
   io.to(API_NOTIFICATION_ROOM).emit("Session created", game_name, s_id);
+
+  sockets = await io.in(API_AUTOJOIN_ROOM).fetchSockets();
+  for (const socket of sockets) {
+    ret = session_controller.connect_to_session(
+      socket.id,
+      socket.player_name,
+      game_name,
+      s_id
+    );
+    socket.emit("Autojoined session", game_name, s_id);
+    //If ret is -1 the session is full (or there is some other error preventing sockets from joining).
+    if (ret === -1) {
+      break;
+    }
+  }
 });
 
 session_controller.on("Session closed", (game_name, s_id) => {
