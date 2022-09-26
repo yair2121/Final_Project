@@ -18,7 +18,13 @@ const GameButton = ({ item, navigation }) => (
     }}
     style={gameSelectionStyles.button}
   >
-    <Text style={gameSelectionStyles.gameTitle}>{item.title}</Text>
+    <Text
+      adjustsFontSizeToFit={true}
+      numberOfLines={1}
+      style={gameSelectionStyles.gameTitle}
+    >
+      {item.title}
+    </Text>
   </TouchableOpacity>
 );
 

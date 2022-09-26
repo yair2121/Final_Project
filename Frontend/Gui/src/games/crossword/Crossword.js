@@ -43,6 +43,11 @@ class Crossword extends Component {
     }
     console.log("Updated client player index:" + this.state.clientplayerindex);
   }
+
+  componentWillUnmount() {
+    this.socket.off("Update state");
+  }
+
   componentDidMount() {
     this.socket = this.context;
     AsyncStorage.getItem(USER_KEY).then((item) => {
