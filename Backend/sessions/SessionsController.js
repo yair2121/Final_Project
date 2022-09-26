@@ -98,6 +98,7 @@ class SessionsController extends EventEmitter {
    * @throws When game_name does not exist.
    */
   close_session(game_name, session_id) {
+    this.emit("Session closed", game_name, session_id);
     const { container } = this.#get_session(game_name, session_id);
     delete container[game_name][session_id];
   }
@@ -118,7 +119,7 @@ class SessionsController extends EventEmitter {
    * Add given player id to available game, will create a new session if necessary.
    * @param {string} player_id- id of player.
    * @param {string} game_name- name of the game to connect the player.
-   * @returns Socket io for the player to connect to. //TODO: return socket io
+   * @returns Socket io for the player to connect to.
    * @throws When game_name does not exist.
    */
   connect_player(player_id, player_name, game_name) {
@@ -211,6 +212,7 @@ class SessionsController extends EventEmitter {
     );
     this.#subscribe_game_session(game_session);
     this.sessions.unready_sessions[game_name][session_id] = game_session;
+    this.emit("Session created", game_name, session_id);
     return session_id;
   }
 }

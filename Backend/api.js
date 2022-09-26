@@ -1,4 +1,10 @@
 const { CrosswordModel } = require("./Games/Crossword");
+const API_NOTIFICATION_ROOM = "api notification room";
+const API_AUTOJOIN_ROOM = "api autojoin room";
+
+function isFunction(x) {
+  return typeof x === typeof isFunction;
+}
 
 function connect_socket_api(
   password,
@@ -20,7 +26,9 @@ function connect_socket_api(
         if (s_id !== -1) {
           socket.join(s_id);
         }
-        return_callback(s_id);
+        if (isFunction(return_callback)) {
+          return_callback(s_id);
+        }
       }
     );
     socket.on("update_move", (game_name, s_id, move) => {
@@ -34,33 +42,40 @@ function connect_socket_api(
         socket.emit("Error", "not in session " + s_id);
       }
     });
+
     socket.on("get_game_state", (game_name, s_id, return_callback) => {
-      if (socket.rooms.has(s_id)) {
-        try {
-          let session = session_controller.get_session(game_name, s_id);
-          return_callback(session.get_state());
-        } catch (error) {
-          return_callback("Error", error);
+      if (isFunction(return_callback)) {
+        if (socket.rooms.has(s_id)) {
+          try {
+            let session = session_controller.get_session(game_name, s_id);
+            return_callback(session.get_state());
+          } catch (error) {
+            return_callback("Error", error);
+          }
+        } else {
+          return_callback("Error", "not in session " + s_id);
         }
-      } else {
-        console.log(socket.rooms);
-        return_callback("Error", "not in session " + s_id);
       }
     });
+
     socket.on("get_unready_sessions", (game_name, return_callback) => {
-      return_callback(
-        Object.keys(
-          session_controller.get_sessions()["unready_sessions"][game_name]
-        )
-      );
+      if (isFunction(return_callback)) {
+        return_callback(
+          Object.keys(
+            session_controller.get_sessions()["unready_sessions"][game_name]
+          )
+        );
+      }
     });
 
     socket.on("get_game_report", (game_name, s_id, return_callback) => {
-      try {
-        let session = session_controller.get_session(game_name, s_id);
-        return_callback(session.get_game_report());
-      } catch (error) {
-        return_callback("Error", error);
+      if (isFunction(return_callback)) {
+        try {
+          let session = session_controller.get_session(game_name, s_id);
+          return_callback(session.get_game_report());
+        } catch (error) {
+          return_callback("Error", error);
+        }
       }
     });
 
@@ -71,7 +86,7 @@ function connect_socket_api(
       } else {
         succeeded = false;
       }
-      if (typeof return_callback === "function") {
+      if (isFunction(return_callback)) {
         return_callback(succeeded);
       }
       console.log(CrosswordModel.DIFFICULTY);
@@ -88,10 +103,39 @@ function connect_socket_api(
       } else {
         succeeded = false;
       }
-      if (typeof return_callback === "function") {
+      if (isFunction(return_callback)) {
         return_callback(succeeded);
       }
       console.log(CrosswordModel.NUM_OF_CLUES);
+    });
+
+    socket.on("set_crossword_max_players", (max_players, return_callback) => {
+      if (Number.isInteger(max_players) && max_players > 0) {
+        CrosswordModel.MAX_PLAYERS = max_players;
+        succeeded = true;
+      } else {
+        succeeded = false;
+      }
+      if (isFunction(return_callback)) {
+        return_callback(succeeded);
+      }
+      console.log(CrosswordModel.MAX_PLAYERS);
+    });
+
+    socket.on("start_notifications", () => {
+      socket.join(API_NOTIFICATION_ROOM);
+    });
+
+    socket.on("end_notifications", () => {
+      socket.leave(API_NOTIFICATION_ROOM);
+    });
+
+    socket.on("start_autojoin", () => {
+      socket.join(API_AUTOJOIN_ROOM);
+    });
+
+    socket.on("end_autojoin", () => {
+      socket.leave(API_AUTOJOIN_ROOM);
     });
   } else {
     connection_callback(-1); //Connection failed
@@ -103,4 +147,8 @@ function validate_password(password) {
   return true;
 }
 
-module.exports = { connect_socket_api };
+module.exports = {
+  connect_socket_api,
+  API_NOTIFICATION_ROOM,
+  API_AUTOJOIN_ROOM,
+};
