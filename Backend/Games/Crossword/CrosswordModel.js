@@ -1,12 +1,16 @@
 const BaseGameModel = require("../BaseGameModel").BaseGameModel;
 const generate_layout = require("./CrosswordGenerator");
-const NUM_OF_CLUES = 3;
 class CrosswordModel extends BaseGameModel {
-  constructor(difficulty = 1) {
-    super("Crossword", 1, 2);
+  static NUM_OF_CLUES = 30;
+  static DIFFICULTY = 1;
+  constructor() {
+    super("Crossword", 1, 1);
     this.done = false;
     this.game_report = [];
-    let layout = generate_layout(difficulty, NUM_OF_CLUES);
+    let layout = generate_layout(
+      CrosswordModel.DIFFICULTY,
+      CrosswordModel.NUM_OF_CLUES
+    );
     this.cols = layout.cols;
     this.rows = layout.rows;
     this.layout = {
