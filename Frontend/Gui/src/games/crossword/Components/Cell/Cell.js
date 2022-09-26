@@ -5,6 +5,7 @@ import { CellState } from "./cellStates";
 import AspectView from "../../../../components/AspectView";
 import { COLORS } from "../../../../constants/colors";
 import { ORIENTATION } from "../../consts/orientation";
+import { TouchableOpacity } from "react-native";
 
 /**
  * This class component handle the cell rendering for Crossword game.
@@ -12,6 +13,7 @@ import { ORIENTATION } from "../../consts/orientation";
 export default class Cell extends Component {
   constructor(props) {
     super(props);
+    this.onPress = props.onPress;
     let initialCellColor =
       props.cellInfo.state === CellState.ACTIVE ? COLORS.white : COLORS.black;
     this.state = {
@@ -33,6 +35,10 @@ export default class Cell extends Component {
   setCellColor(color) {
     this.state.color = color;
     this.setState({ color: color });
+  }
+
+  keyExtractor(cell) {
+    return `${cell.row}-${cell.column}`;
   }
 
   setCellValue(newValue) {
@@ -62,7 +68,7 @@ export default class Cell extends Component {
         maxLength={1} // One letter per cell.
         adjustsFontSizeToFit={true}
       >
-        {this.state.value}
+        {this.state.cellInfo.value}
       </Text>
     );
   }
@@ -92,13 +98,19 @@ export default class Cell extends Component {
           ).cell
         }
       >
-        {this.state.cellInfo.isAcrossWordStart &&
-          this.ActiveCellWord(ORIENTATION.ACROSS)}
-        {this.state.cellInfo.isDownWordStart &&
-          this.ActiveCellWord(ORIENTATION.DOWN)}
-        {this.state.cellInfo.state === CellState.ACTIVE &&
-          // Render cell current value.
-          this.ActiveCellInput()}
+        <TouchableOpacity
+          onPress={this.onPress}
+          style={{ flex: 1 }}
+          activeOpacity={this.state.cellInfo.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
+        >
+          {this.state.cellInfo.isAcrossWordStart &&
+            this.ActiveCellWord(ORIENTATION.ACROSS)}
+          {this.state.cellInfo.isDownWordStart &&
+            this.ActiveCellWord(ORIENTATION.DOWN)}
+          {this.state.cellInfo.state === CellState.ACTIVE &&
+            // Render cell current value.
+            this.ActiveCellInput()}
+        </TouchableOpacity>
       </AspectView>
     );
   }
