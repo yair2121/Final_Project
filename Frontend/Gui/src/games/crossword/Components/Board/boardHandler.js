@@ -59,8 +59,8 @@ export class BoardHandler {
     this.socket.on("Update move", (move_description, s_id) => {
       let { type, body } = move_description;
       if (type === "claim") {
-        let { position, player } = body;
-        if (position === this.requestedWordIndex + 1) {
+        let { position: wordPosition, player } = body;
+        if (wordPosition === this.requestedWordIndex + 1) {
           if (player === this.clientPlayerIndex) {
             this.setClue(
               this.words[this.requestedWordIndex].position,
@@ -71,7 +71,7 @@ export class BoardHandler {
           this.requestedCell = undefined;
           this.requestedWordIndex = undefined;
         }
-        this.occupyWord(position - 1, player);
+        this.occupyWord(wordPosition - 1, player);
       } else if (type === "release") {
         let { position, player } = body;
         this.freeWord(position - 1);

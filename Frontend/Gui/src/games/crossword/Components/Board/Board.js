@@ -120,7 +120,6 @@ export default class Board extends Component {
   }
 
   setCellValue = (cell, value) => {
-    cell.ref.setCellValue(value);
     cell.value = value;
   };
 
@@ -132,17 +131,21 @@ export default class Board extends Component {
   paintCell(cell, color) {
     // No need to repaint if cell is already in the given color.
     // delete the condition later
-    if (cell.ref != undefined) {
-      if (color !== cell.ref.state.color) {
-        cell.ref.setCellColor(color);
-      }
-    } else {
-      console.warn("should have broken");
+    // if (cell.ref !== undefined && cell.ref !== null) {
+    if (color !== cell.ref.state.color) {
+      cell.ref.setCellColor(color);
     }
+    // } else {
+    //   console.warn("should have broken");
+    // }
   }
 
   setCellFocusState(cell, isFocus) {
     cell.ref.setCellFocus(isFocus);
+  }
+
+  ComponentDidUpdate() {
+    this.updateWordColoring();
   }
 
   // shouldRepaint(prevCellPosition, prevWord) {
@@ -185,8 +188,6 @@ export default class Board extends Component {
       let newCell = this.state.boardHandler.getFocusedCell();
       this.setCellFocusState(newCell, true);
     }
-
-    this.updateWordColoring();
   }
 
   handleActiveCellPress(cell) {
@@ -276,23 +277,15 @@ export default class Board extends Component {
   renderCell = (renderObject) => {
     const cell = renderObject.item;
     return (
-      <TouchableOpacity
-        key={this.keyExtractor(cell)}
-        activeOpacity={cell.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
-        style={{ flex: 1 }}
-        onPress={() => {
-          this.cellPressed([cell.row, cell.column]);
+      <Cell
+        cellInfo={cell}
+        isFocused={cell.isFocused}
+        value={cell.value}
+        ref={(ref) => {
+          cell["ref"] = ref;
         }}
-      >
-        <Cell
-          cellInfo={cell}
-          isFocused={cell.isFocused}
-          value={cell.value}
-          ref={(ref) => {
-            cell["ref"] = ref;
-          }}
-        />
-      </TouchableOpacity>
+        onPress={() => this.cellPressed([cell.row, cell.column])}
+      />
     );
   };
 
