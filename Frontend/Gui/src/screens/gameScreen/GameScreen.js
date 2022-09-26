@@ -33,12 +33,12 @@ export default function GameScreen({ route }) {
   const [isFinished, setIsFinished] = useState(false);
   // Connects to game. When game starts stop loading.
   useEffect(() => {
-    socket.on("Session started", (game_state, s_id) => {
+    socket.once("Session started", (game_state, s_id) => {
       AsyncStorage.setItem(SESSION_ID, s_id);
       setInitialState(game_state);
       setIsLoading(false);
     });
-    socket.on("Session ended", (game_state, s_id) => {
+    socket.once("Session ended", (game_state, s_id) => {
       setIsFinished(true);
     });
     socket.emit("connect_to_game", title, (callback) => {
@@ -48,6 +48,11 @@ export default function GameScreen({ route }) {
         setIsLoading(false);
       }
     });
+
+    return () => {
+      socket.off("Session started");
+      socket.off("Session ended");
+    };
   }, []);
 
   return (
