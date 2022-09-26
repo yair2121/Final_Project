@@ -34,7 +34,6 @@ function connect_to_session(player_name, session_id) {
     (arg) => {
       console.log(arg);
       get_game_state("Crossword", arg);
-      //disconnect("Crossword", session_id);
     }
   );
 }

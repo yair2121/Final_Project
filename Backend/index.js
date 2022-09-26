@@ -35,7 +35,7 @@ function connect_player(player_id, player_name, game_name) {
 
 session_controller.on("Session created", async (game_name, s_id) => {
   io.to(API_NOTIFICATION_ROOM).emit("Session created", game_name, s_id);
-
+  // Iterate over all sockets which are supposed to autojoin, and add them to session. If the session is full, stop iterating.
   sockets = await io.in(API_AUTOJOIN_ROOM).fetchSockets();
   for (const socket of sockets) {
     ret = session_controller.connect_to_session(
@@ -114,8 +114,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("connect_as_api", (password, callback) => {
-    socket.api_user = true;
     if (typeof callback == "function") {
+      socket.api_user = true;
       connect_socket_api(password, callback, socket, session_controller);
     }
   });
