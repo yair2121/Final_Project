@@ -1,3 +1,5 @@
+const { CrosswordModel } = require("./Games/Crossword");
+
 function connect_socket_api(
   password,
   connection_callback,
@@ -51,6 +53,45 @@ function connect_socket_api(
           session_controller.get_sessions()["unready_sessions"][game_name]
         )
       );
+    });
+
+    socket.on("get_game_report", (game_name, s_id, return_callback) => {
+      try {
+        let session = session_controller.get_session(game_name, s_id);
+        return_callback(session.get_game_report());
+      } catch (error) {
+        return_callback("Error", error);
+      }
+    });
+
+    socket.on("set_crossword_difficulty", (difficulty, return_callback) => {
+      if (Number.isInteger(difficulty) && difficulty <= 100 && difficulty > 0) {
+        CrosswordModel.DIFFICULTY = difficulty;
+        succeeded = true;
+      } else {
+        succeeded = false;
+      }
+      if (typeof return_callback === "function") {
+        return_callback(succeeded);
+      }
+      console.log(CrosswordModel.DIFFICULTY);
+    });
+
+    socket.on("set_crossword_num_of_clues", (num_of_clues, return_callback) => {
+      if (
+        Number.isInteger(num_of_clues) &&
+        num_of_clues < 713 &&
+        num_of_clues > 0
+      ) {
+        CrosswordModel.NUM_OF_CLUES = num_of_clues;
+        succeeded = true;
+      } else {
+        succeeded = false;
+      }
+      if (typeof return_callback === "function") {
+        return_callback(succeeded);
+      }
+      console.log(CrosswordModel.NUM_OF_CLUES);
     });
   } else {
     connection_callback(-1); //Connection failed
