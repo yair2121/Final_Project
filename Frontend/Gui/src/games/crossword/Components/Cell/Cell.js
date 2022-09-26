@@ -16,19 +16,38 @@ export default class Cell extends Component {
     this.onPress = props.onPress;
     let initialCellColor =
       props.cellInfo.state === CellState.ACTIVE ? COLORS.white : COLORS.black;
+    this.cellInfo = props.cellInfo;
     this.state = {
-      cellInfo: props.cellInfo,
       color: initialCellColor,
       isFocused: props.isFocused,
       value: props.value,
     };
   }
 
+  componentWillUnmount() {
+    this.cellInfo.resetCell();
+  }
+
+  componentDidMount() {
+    this.cellInfo.setCellColor = (color) => {
+      this.setCellColor(color);
+    };
+
+    this.cellInfo.setCellValue = (value) => {
+      this.setCellValue(value);
+    };
+
+    this.cellInfo.setCellFocus = (newFocus) => {
+      this.setCellFocus(newFocus);
+    };
+  }
+
   shouldComponentUpdate() {
-    return this.state.cellInfo.state === CellState.ACTIVE; // Rerender only Active cells.
+    return this.cellInfo.state === CellState.ACTIVE; // Rerender only Active cells.
   }
 
   setCellFocus(newFocus) {
+    this.isFocused = newFocus;
     this.setState({ isFocused: newFocus });
   }
 
@@ -46,17 +65,11 @@ export default class Cell extends Component {
   }
 
   getStartWordPosition(orientation) {
-    if (
-      orientation === ORIENTATION.ACROSS &&
-      this.state.cellInfo.isAcrossWordStart
-    ) {
-      return this.state.cellInfo.getWordPosition(orientation);
+    if (orientation === ORIENTATION.ACROSS && this.cellInfo.isAcrossWordStart) {
+      return this.cellInfo.getWordPosition(orientation);
     }
-    if (
-      orientation === ORIENTATION.DOWN &&
-      this.state.cellInfo.isDownWordStart
-    ) {
-      return this.state.cellInfo.getWordPosition(orientation);
+    if (orientation === ORIENTATION.DOWN && this.cellInfo.isDownWordStart) {
+      return this.cellInfo.getWordPosition(orientation);
     }
     return "";
   }
@@ -64,11 +77,11 @@ export default class Cell extends Component {
   ActiveCellInput() {
     return (
       <Text
-        style={cellStyle(this.state.cellInfo.state).cellInput}
+        style={cellStyle(this.cellInfo.state).cellInput}
         maxLength={1} // One letter per cell.
         adjustsFontSizeToFit={true}
       >
-        {this.state.cellInfo.value}
+        {this.state.value}
       </Text>
     );
   }
@@ -76,8 +89,8 @@ export default class Cell extends Component {
   ActiveCellWord(orientation) {
     let style =
       orientation === ORIENTATION.ACROSS
-        ? cellStyle(this.state.cellInfo.state).cellAcrossWord
-        : cellStyle(this.state.cellInfo.state).cellDownWord;
+        ? cellStyle(this.cellInfo.state).cellAcrossWord
+        : cellStyle(this.cellInfo.state).cellDownWord;
     return (
       <Text adjustsFontSizeToFit={true} style={style}>
         {this.getStartWordPosition(orientation)}
@@ -88,26 +101,23 @@ export default class Cell extends Component {
   render() {
     return (
       <AspectView
-        key={`$this.state.cellInfo.row}-{$this.state.cellInfo.column}`}
-        className={`Cell-{$this.state.cellInfo.row}-{$this.state.cellInfo.column}`}
+        key={`$this.cellInfo.row}-{$this.cellInfo.column}`}
+        className={`Cell-{$this.cellInfo.row}-{$this.cellInfo.column}`}
         style={
-          cellStyle(
-            this.state.cellInfo.state,
-            this.state.color,
-            this.state.cellInfo.isFocused
-          ).cell
+          cellStyle(this.cellInfo.state, this.state.color, this.state.isFocused)
+            .cell
         }
       >
         <TouchableOpacity
           onPress={this.onPress}
           style={{ flex: 1 }}
-          activeOpacity={this.state.cellInfo.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
+          activeOpacity={this.cellInfo.state ? 0.4 : 1} // Black cell should not have graphics for responding to touches.
         >
-          {this.state.cellInfo.isAcrossWordStart &&
+          {this.cellInfo.isAcrossWordStart &&
             this.ActiveCellWord(ORIENTATION.ACROSS)}
-          {this.state.cellInfo.isDownWordStart &&
+          {this.cellInfo.isDownWordStart &&
             this.ActiveCellWord(ORIENTATION.DOWN)}
-          {this.state.cellInfo.state === CellState.ACTIVE &&
+          {this.cellInfo.state === CellState.ACTIVE &&
             // Render cell current value.
             this.ActiveCellInput()}
         </TouchableOpacity>

@@ -99,7 +99,7 @@ export class BoardHandler {
 
     positions.forEach((position) => {
       let cell = this.getCell(position);
-      cell.state = CellState.ACTIVE;
+      cell.activateCell();
       cell.words[orientation] = this.getWordIndex(wordDescription);
     });
 
@@ -214,8 +214,7 @@ export class BoardHandler {
   freeFocusedCell() {
     if (this.isCellFocused()) {
       let focusedCell = this.getCell(this.focusedCellPosition);
-      focusedCell.isFocused = false;
-      focusedCell.ref.setCellFocus(false); // Remove focus rendering from previous cell.
+      focusedCell.setCellFocus(false);
       this.focusedCellPosition = UNDEFINED_POSITION;
     }
   }
@@ -223,7 +222,7 @@ export class BoardHandler {
   setFocusedCell(cell) {
     this.freeFocusedCell(); // free current focus.
     this.focusedCellPosition = [cell.row, cell.column];
-    cell.isFocused = true;
+    cell.setCellFocus(true);
   }
 
   setFocusedWord(wordIndex) {

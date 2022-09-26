@@ -1,11 +1,4 @@
-import {
-  View,
-  FlatList,
-  Keyboard,
-  BackHandler,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { View, FlatList, Keyboard, BackHandler, TextInput } from "react-native";
 
 import React, { Component } from "react";
 import { boardStyle } from "../../CrosswordStyles";
@@ -113,6 +106,8 @@ export default class Board extends Component {
     BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton); // Remove keyboard
     this.keyboardDidShowSubscription.remove();
     this.keyboardDidHideSubscription.remove();
+
+    this.socket.off("Update move");
   }
 
   getCell(position) {
@@ -120,7 +115,7 @@ export default class Board extends Component {
   }
 
   setCellValue = (cell, value) => {
-    cell.value = value;
+    cell.setCellValue(value);
   };
 
   /**
@@ -130,18 +125,13 @@ export default class Board extends Component {
    */
   paintCell(cell, color) {
     // No need to repaint if cell is already in the given color.
-    // delete the condition later
-    // if (cell.ref !== undefined && cell.ref !== null) {
-    if (color !== cell.ref.state.color) {
-      cell.ref.setCellColor(color);
+    if (color !== cell.color) {
+      cell.setColor(color);
     }
-    // } else {
-    //   console.warn("should have broken");
-    // }
   }
 
   setCellFocusState(cell, isFocus) {
-    cell.ref.setCellFocus(isFocus);
+    cell.setCellFocus(isFocus);
   }
 
   ComponentDidUpdate() {
@@ -281,9 +271,6 @@ export default class Board extends Component {
         cellInfo={cell}
         isFocused={cell.isFocused}
         value={cell.value}
-        ref={(ref) => {
-          cell["ref"] = ref;
-        }}
         onPress={() => this.cellPressed([cell.row, cell.column])}
       />
     );

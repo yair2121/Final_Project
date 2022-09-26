@@ -1,5 +1,7 @@
+import { COLORS } from "../../../../constants/colors";
 import { INVALID_WORD_POSITION } from "../../consts/generalConsts";
 import { ORIENTATION } from "../../consts/orientation";
+import { CellState } from "./cellStates";
 
 /**
  * Utils for handling the cells logic and information.
@@ -12,10 +14,21 @@ export class CellUtils {
     this.letter = letter;
     this.words = words; // Words which this cell is part of.s
     this.isFocused = false;
+    this.color = COLORS.black;
+    this.setCellColor = () => {};
+    this.setCellValue = () => {};
+    this.setCellFocus = () => {};
+    // this.setFocus = () => {};
 
     // This flags determines whether this cell position is a start of a word
     this.isAcrossWordStart = false;
     this.isDownWordStart = false;
+  }
+
+  resetCell() {
+    this.setCellColor = () => {};
+    this.setCellValue = () => {};
+    this.setCellFocus = () => {};
   }
 
   isStartOfWord() {
@@ -28,6 +41,22 @@ export class CellUtils {
     } else {
       this.isDownWordStart = true;
     }
+  }
+
+  activateCell() {
+    this.state = CellState.ACTIVE;
+  }
+
+  setColor(color) {
+    this.color = color;
+    this.setCellColor(color);
+  }
+  setValue(value) {
+    this.setCellValue(value);
+  }
+  setFocus(newFocus) {
+    this.isFocused = newFocus;
+    this.setCellFocus(newFocus);
   }
 
   /**
