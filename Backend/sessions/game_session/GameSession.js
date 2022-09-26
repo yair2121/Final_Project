@@ -37,8 +37,6 @@ class GameSession extends EventEmitter {
   /**
    * Start the game.
    *
-   * @throws When too many players joined the game.
-   * @throws When not enough players joined the game.
    * @emits "Session started"
    */
   start_session() {
@@ -97,6 +95,9 @@ class GameSession extends EventEmitter {
     if (id in this.players) {
       delete this.players[id];
       this.connected_players--;
+      if (this.connected_players <= 0) {
+        this.close();
+      }
     } else {
       throw "Id not found in the game";
     }

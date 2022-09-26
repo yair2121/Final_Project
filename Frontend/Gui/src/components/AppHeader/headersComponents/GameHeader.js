@@ -1,9 +1,12 @@
 import React, { Component } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SESSION_ID, GAME_NAME } from "../../../constants/keys";
 import { Alert } from "react-native";
 import { Header, Icon } from "react-native-elements";
 import { COLORS } from "../../../constants/colors";
 import { isMobilePlatform } from "../../../generalUtils/systemUtils";
 import { DefaultHeaderStyles } from "../HeaderStyles";
+import { SocketContext } from "../../../contexts/SocketContext";
 export default class GameHeader extends Component {
   constructor(props) {
     super(props);
@@ -14,6 +17,9 @@ export default class GameHeader extends Component {
     };
   }
 
+  componentDidMount() {
+    this.socket = this.context;
+  }
   exitPopup = () => {
     Alert.alert("Exit game?", "", [
       {
@@ -26,8 +32,14 @@ export default class GameHeader extends Component {
   };
 
   exitGame = () => {
-    // TODO: insert game exit logic or alert the game to exit.
-    this.state.navigation.navigate("MainMenu", {});
+    AsyncStorage.getItem(SESSION_ID).then((s_id) => {
+      AsyncStorage.getItem(GAME_NAME).then((game_name) => {
+        if (s_id !== null && game_name !== null) {
+          this.socket.emit("leave_game", game_name, s_id);
+        }
+        this.state.navigation.navigate("MainMenu", {});
+      });
+    });
   };
 
   ExitButton = () => {
@@ -51,3 +63,5 @@ export default class GameHeader extends Component {
     );
   }
 }
+
+GameHeader.contextType = SocketContext;

@@ -3,7 +3,7 @@ import LoadingScreen from "../loadingScreen/LoadingScreen";
 import FinishScreen from "../finishScreen/FinishScreen";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SESSION_ID, SESSION_STATE } from "../../constants/keys";
+import { SESSION_ID, GAME_NAME } from "../../constants/keys";
 const emptyJSON = JSON.stringify({});
 import { Button } from "react-native-elements";
 import { View } from "react-native";
@@ -35,11 +35,15 @@ export default function GameScreen({ route }) {
   useEffect(() => {
     socket.once("Session started", (game_state, s_id) => {
       AsyncStorage.setItem(SESSION_ID, s_id);
+      AsyncStorage.setItem(GAME_NAME, title);
       setInitialState(game_state);
       setIsLoading(false);
     });
+
     socket.once("Session ended", (game_state, s_id) => {
       setIsFinished(true);
+      AsyncStorage.setItem(SESSION_ID, null);
+      AsyncStorage.setItem(GAME_NAME, null);
     });
     socket.emit("connect_to_game", title, (callback) => {
       AsyncStorage.setItem(SESSION_ID, callback.s_id);
