@@ -1,5 +1,5 @@
 const { CrosswordModel } = require("./Games/Crossword");
-
+const API_NOTIFICATION_ROOM = "api notification room";
 function connect_socket_api(
   password,
   connection_callback,
@@ -93,6 +93,14 @@ function connect_socket_api(
       }
       console.log(CrosswordModel.NUM_OF_CLUES);
     });
+
+    socket.on("join_notifications", () => {
+      socket.join(API_NOTIFICATION_ROOM);
+    });
+
+    socket.on("leave_notifications", () => {
+      socket.leave(API_NOTIFICATION_ROOM);
+    });
   } else {
     connection_callback(-1); //Connection failed
   }
@@ -103,4 +111,4 @@ function validate_password(password) {
   return true;
 }
 
-module.exports = { connect_socket_api };
+module.exports = { connect_socket_api, API_NOTIFICATION_ROOM };

@@ -1,7 +1,6 @@
 const express = require("express");
-
 const app = express();
-const { connect_socket_api } = require("../Backend/api");
+const { connect_socket_api, API_NOTIFICATION_ROOM } = require("../Backend/api");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -29,6 +28,14 @@ app.use(express.static(public_path));
 function connect_player(player_id, player_name, game_name) {
   return session_controller.connect_player(player_id, player_name, game_name);
 }
+
+session_controller.on("Session created", (game_name, s_id) => {
+  io.to(API_NOTIFICATION_ROOM).emit("Session created", game_name, s_id);
+});
+
+session_controller.on("Session closed", (game_name, s_id) => {
+  io.to(API_NOTIFICATION_ROOM).emit("Session closed", game_name, s_id);
+});
 
 session_controller.on("Session started", (game_state, s_id) => {
   incomplete_sessions[s_id] = game_state;

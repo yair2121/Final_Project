@@ -16,6 +16,8 @@ socket.emit("connect_as_api", "ayo", (arg) => {
   // set_crossword_difficulty(10);
   // set_crossword_num_of_clues(3);
   get_game_report("Crossword", "82aa1bd0-3dd8-11ed-b082-ebf44bdfc7ff");
+  join_notifications();
+  leave_notifications();
 });
 
 function connect_to_session(player_name, session_id) {
@@ -56,4 +58,12 @@ function set_crossword_difficulty(d) {
 
 function set_crossword_num_of_clues(n) {
   socket.emit("set_crossword_num_of_clues", n, console.log);
+}
+
+function join_notifications() {
+  socket.emit("join_notifications");
+}
+
+function leave_notifications() {
+  socket.emit("leave_notifications");
 }
