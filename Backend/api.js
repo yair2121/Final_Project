@@ -94,6 +94,19 @@ function connect_socket_api(
       console.log(CrosswordModel.NUM_OF_CLUES);
     });
 
+    socket.on("set_crossword_max_players", (max_players, return_callback) => {
+      if (Number.isInteger(max_players) && max_players > 0) {
+        CrosswordModel.MAX_PLAYERS = max_players;
+        succeeded = true;
+      } else {
+        succeeded = false;
+      }
+      if (typeof return_callback === "function") {
+        return_callback(succeeded);
+      }
+      console.log(CrosswordModel.MAX_PLAYERS);
+    });
+
     socket.on("join_notifications", () => {
       socket.join(API_NOTIFICATION_ROOM);
     });
