@@ -1,7 +1,7 @@
 const express = require("express");
 
 const app = express();
-
+const { connect_socket_api } = require("../Backend/api");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -45,10 +45,7 @@ session_controller.on("Update session move", (move, s_id) => {
 
 session_controller.on("Session ended", (s_id) => {
   io.to(s_id).emit("Session ended", s_id);
-  io.socketsLeave("s_id");
-  // io.sockets.clients(s_id).forEach(function (s) {
-  //   s.leave(s_id);
-  // });
+  io.socketsLeave(s_id);
 });
 
 app.get("/", (req, res) => {
@@ -65,6 +62,7 @@ io.on("connection", (socket) => {
   socket.on("connect_to_game", (game_name, callback) => {
     let s_id = connect_player(socket.id, socket.data.name, game_name);
     socket.join(s_id);
+    socket.game = game_name;
     if (s_id in incomplete_sessions) {
       console.log("started send new client");
       callback({ s_id: s_id, game_state: incomplete_sessions[s_id] });
@@ -78,33 +76,33 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("leave_game", (game_name, s_id) => {
+    socket.to(s_id).emit("left_game", game_name, socket.id);
+    socket.leave(s_id);
+    session_controller.disconnect_player(socket.id, game_name, s_id);
+  });
+
   socket.once("login", (username, callback) => {
     socket.data.name = username;
     callback(socket.id);
   });
 
-  socket.on("connect_as_api", (password) => {
-    //TODO: replace log with authentication
-    console.log(password);
-    socket.on(
-      "connect_to_session",
-      (player_id, player_name, session_id, callback) => {
-        let s_id = session_controller.connect_to_session(
-          player_id,
-          player_name,
-          session_id
-        );
-        callback(s_id);
-      }
-    );
-    socket.on("update_move", (game_name, s_id, move) => {
-      session_controller.make_move(game_name, s_id, move);
-    });
+  socket.on("connect_as_api", (password, callback) => {
+    socket.api_user = true;
+    if (typeof callback == "function") {
+      connect_socket_api(password, callback, socket, session_controller);
+    }
   });
 
-  socket.on("echo", (body) => console.log(body));
-  socket.once("disconnect", () => {
-    // console.log("user disconnected");
+  socket.once("disconnecting", () => {
+    if (!socket.api_user) {
+      socket.rooms.forEach((room) => {
+        if (room !== socket.id) {
+          socket.to(room).emit("left_game", socket.game, socket.id);
+          session_controller.disconnect_player(socket.id, socket.game, room);
+        }
+      });
+    }
   });
 });
 
