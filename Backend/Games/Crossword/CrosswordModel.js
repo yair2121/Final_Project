@@ -3,7 +3,7 @@ const generate_layout = require("./CrosswordGenerator");
 class CrosswordModel extends BaseGameModel {
   static NUM_OF_CLUES = 30;
   static DIFFICULTY = 1;
-  static MAX_PLAYERS = 1;
+  static MAX_PLAYERS = 2;
   constructor() {
     super("Crossword", 1, CrosswordModel.MAX_PLAYERS);
     this.done = false;

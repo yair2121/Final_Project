@@ -26,9 +26,9 @@ class BaseGameModel extends EventEmitter {
     if (number_of_players > this.max_player_count) {
       throw "Too many players";
     }
-    if (number_of_players < this.min_player_count) {
-      throw "Not enough players";
-    }
+    // if (number_of_players < this.min_player_count) {
+    //   throw "Not enough players";
+    // }
     this.isRunning = true;
     this.start_date = new Date();
     this.moves.push({ Time: this.start_date });
