@@ -39,6 +39,4 @@ function generate_testlayout() {
   return layout;
 }
 
-//TODO:
-function check_overlaps(layout) {}
 module.exports = generate_layout;

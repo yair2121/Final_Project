@@ -15,8 +15,6 @@ export default class DefaultHeader extends Component {
   }
 
   logOut = () => {
-    //TODO: disconnect client from server here.
-    console.log("TODO: implement logging out");
     this.state.navigation.navigate("LoginScreen", {});
   };
 

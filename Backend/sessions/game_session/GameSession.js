@@ -81,7 +81,6 @@ class GameSession extends EventEmitter {
    * @param {JSON} move_description- Describe the current move.
    */
   make_move(move_description) {
-    //TODO: checks if this throw
     this.#game_model.make_move(move_description);
   }
 
