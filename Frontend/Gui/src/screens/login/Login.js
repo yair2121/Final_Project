@@ -53,7 +53,12 @@ export default function LoginScreen({ navigation }) {
           onLogin(socket);
         }}
       >
-        <Text type="solid" style={LoginStyles.loginText}>
+        <Text
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}
+          type="solid"
+          style={LoginStyles.loginText}
+        >
           LOGIN
         </Text>
       </TouchableOpacity>
