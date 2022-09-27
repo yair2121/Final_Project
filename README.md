@@ -13,6 +13,16 @@ Installation:
 To start the server- write: `npm run startServer`.
 To enter as a client- navigate to the url defined in the file: "/changeme.js".
 
+To change the word pool of the Crossword game, replace the file /Backend/Games/Crossword/CrosswordCluePool. The new file must have the same format, i.e JSON with the fields 1-100 that each contain an array of words of that difficulty.
+Each word should follow this format:
+```
+{
+"answer": <the word>
+"clues": [array of possible definitions]
+}
+```
+In case there is a different amount of difficulties we suggest changing /Backend/api.js:set_crossword_difficulty accordingly.
+
 Writers
 Roey Peleg
 Yair Yardeni
