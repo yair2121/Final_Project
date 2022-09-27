@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "(cd Backend && npm install && cd ..) && (cd Frontend && npm install && cd Gui && npm install && cd .. && cd ..)",
+    "installmac": "(npm install) ; (cd Backend && npm install && cd ..) ; (cd Frontend && npm install && cd Gui && npm install && cd .. && cd ..)"
   },
   "repository": {
     "type": "git",
