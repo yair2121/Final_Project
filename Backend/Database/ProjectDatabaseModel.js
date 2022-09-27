@@ -35,7 +35,6 @@ class ProjectDatabaseModel extends IDatabaseModel {
         process.exit(1);
       })
       .then((x) => {
-        console.log("k");
         return ProjectDatabaseModel.getCollection(
           this.client,
           db_name,

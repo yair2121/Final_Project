@@ -98,11 +98,13 @@ io.on("connection", (socket) => {
     }
 
     socket.on("update_move", (game_name, s_id, move) => {
+      console.log(move);
       session_controller.make_move(game_name, s_id, move);
     });
   });
 
   socket.on("leave_game", (game_name, s_id) => {
+    socket.removeAllListeners("update_move");
     socket.to(s_id).emit("left_game", game_name, socket.id);
     socket.leave(s_id);
     session_controller.disconnect_player(socket.id, game_name, s_id);

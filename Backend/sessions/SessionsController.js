@@ -78,6 +78,7 @@ class SessionsController extends EventEmitter {
   get_sessions() {
     return this.sessions;
   }
+
   /**
    * Make move in specific session.
    * @param {string} game_name
@@ -169,6 +170,7 @@ class SessionsController extends EventEmitter {
     return -1;
   }
 
+  //TODO: add unsubscribe
   #subscribe_game_session(game_session) {
     game_session.on("Session started", (game_state, game_name, session_id) => {
       const { container, session } = this.#get_session(game_name, session_id);
