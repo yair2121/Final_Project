@@ -3,7 +3,6 @@ import { COLORS } from "../../constants/colors";
 
 export const DefaultHeaderStyles = StyleSheet.create({
   container: {
-    // flex: 1,
     borderBottomWidth: 0.25,
     borderBottomColor: COLORS.black,
   },

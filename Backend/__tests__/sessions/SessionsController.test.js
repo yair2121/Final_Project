@@ -44,13 +44,6 @@ describe("Test SessionController class", () => {
     ).toBeTruthy();
   });
 
-  // test("connect_player will add a player to existing session when given non exists player_id and valid game_name", () => {
-  //   const session_id = sessions_controller.connect_player(2, game_name);
-  //   const game_session =
-  //     sessions_controller.sessions.unready_sessions[game_name][session_id];
-  //   expect(2 in game_session.players).toBeTruthy();
-  // });
-
   test("connect_player will throw when given game_name that does not exists", () => {
     expect(() => {
       sessions_controller.connect_player(3, "3", "bad name");
@@ -80,10 +73,6 @@ describe("Test SessionController class", () => {
         session_id1
       ].add_player(player_id + 3, "playerid + 3");
     }
-    // Session behaviour has changed; full sessions are immediately made active
-    // sessions_controller.sessions.full_sessions[game_name][
-    //   session_id1
-    // ].start_session();
     let start_condition = did_session_moved(
       session_id1,
       sessions_controller.sessions.full_sessions[game_name],
@@ -96,26 +85,6 @@ describe("Test SessionController class", () => {
     );
     expect(!start_condition && end_condition).toBeTruthy();
   });
-
-  // Test is redundant now that sessions start when full.
-  // test("Will move unready session to full_session when receive on 'Session full'", () => {
-  //   for (let player_id = 0; player_id < 3; player_id++) {
-  //     sessions_controller.sessions.unready_sessions[game_name][
-  //       session_id1
-  //     ].add_player(player_id + 3);
-  //   }
-  //   const start_condition = did_session_moved(
-  //     session_id1,
-  //     sessions_controller.sessions.unready_sessions[game_name],
-  //     sessions_controller.sessions.full_sessions[game_name]
-  //   );
-  //   const end_condition = did_session_moved(
-  //     session_id1,
-  //     sessions_controller.sessions.full_sessions[game_name],
-  //     sessions_controller.sessions.unready_sessions[game_name]
-  //   );
-  //   expect(!start_condition && end_condition).toBeTruthy();
-  // });
 
   test("Will delete a session when receive 'Session ended'", () => {
     sessions_controller.sessions.unready_sessions[game_name][

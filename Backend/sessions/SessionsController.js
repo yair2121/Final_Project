@@ -145,12 +145,7 @@ class SessionsController extends EventEmitter {
   }
 
   disconnect_player(player_id, game_name, session_id) {
-    // try {
     this.get_session(game_name, session_id).remove_player(player_id);
-    // } catch (error) {
-    //   console.log(error);
-    //   throw error;
-    // }
   }
 
   connect_to_session(player_id, player_name, game_name, session_id) {

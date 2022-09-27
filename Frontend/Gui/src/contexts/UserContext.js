@@ -7,9 +7,6 @@ export const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [text, setText] = useState();
-  // useMemo(async () => {
-  //   const userData = await AsyncStorage.getItem(USER_KEY);
-  // }, []);
 
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 };

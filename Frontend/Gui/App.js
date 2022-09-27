@@ -17,8 +17,6 @@ const StackScreen = function () {
     <Stack.Navigator
       screenOptions={{
         animation: "fade",
-        // contentStyle: { flex: 10 },
-        // headerStyle: { flex: 1 },
         header: ({ navigation, route }) => {
           return <AppHeader navigation={navigation} route={route} />;
         },

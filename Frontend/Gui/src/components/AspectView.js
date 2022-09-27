@@ -30,9 +30,3 @@ export default function AspectView(props) {
     />
   );
 }
-
-// function AspectView(props) {}
-
-// ...
-
-// return <AspectView style={{ width: 48, aspectRatio: 0.75 }} />;

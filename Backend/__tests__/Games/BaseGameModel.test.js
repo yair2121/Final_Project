@@ -1,5 +1,3 @@
-// jest.mock("../../Games/BaseGameModel");
-
 const { BaseGameModel } = require("../../Games/BaseGameModel");
 
 let base_game = null;
