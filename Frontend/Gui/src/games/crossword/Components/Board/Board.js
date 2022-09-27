@@ -45,11 +45,7 @@ export default class Board extends Component {
     this.socket.on("Update move", async (move_description, s_id) => {
       let { type, body } = move_description;
       if (type === "move") {
-        //apply move (body)
         this.applyMove(body);
-      } else {
-        // await new Promise((resolve) => setTimeout(resolve, 1000));
-        // this.updateWordColoring();
       }
     });
   }
@@ -83,7 +79,6 @@ export default class Board extends Component {
     this.state.boardHandler.setSocket(this.socket);
     this.state.boardHandler.setPlayerIndex(this.clientPlayerIndex);
     this.initSocketListener();
-    //this.updateWordColoring(); // Update board rendering to the current server state.
 
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
 
@@ -137,22 +132,6 @@ export default class Board extends Component {
   ComponentDidUpdate() {
     this.updateWordColoring();
   }
-
-  // shouldRepaint(prevCellPosition, prevWord) {
-  //   // Not used- might delete.
-  //   let didWordChanged = prevWord !== this.state.boardHandler.focusedWordIndex;
-  //   let didPositionChanged = !this.state.boardHandler.isSamePosition(
-  //     prevCellPosition,
-  //     this.state.boardHandler.focusedCellPosition
-  //   );
-  //   if (
-  //     prevCellPosition[0] !== -1 &&
-  //     this.state.boardHandler.focusedCellPosition[0] !== -1
-  //   ) {
-  //     return didWordChanged || didPositionChanged;
-  //   }
-  //   return false;
-  // }
 
   /*
      Handle user press on a cell.
