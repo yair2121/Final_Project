@@ -6,7 +6,6 @@ import { CellUtils } from "../Cell/cellUtils";
 import {
   UNOCCUPIED,
   UNDEFINED_POSITION,
-  LOCAL_PLAYER,
   UNDEFINED_WORD,
 } from "../../consts/generalConsts";
 
@@ -339,7 +338,6 @@ export class BoardHandler {
    */
   handleFocusedWordFreeing() {
     if (this.focusedWordIndex !== UNDEFINED_WORD) {
-      //this.localPlayerFreeWord(this.focusedWordIndex);
       this.freeWord(this.focusedWordIndex);
       this.freeFocusedCell();
       this.setClue();

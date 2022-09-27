@@ -101,7 +101,6 @@ const clueStyle = StyleSheet.create({
   },
   clueText: {
     width: widthResponsive(boardWidthPercent),
-    // height: heightResponsive(10),
     textAlign: "center",
     letterSpacing: 0.3,
     fontWeight: "bold",

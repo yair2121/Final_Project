@@ -31,9 +31,7 @@ class Crossword extends Component {
   }
 
   updateClientPlayerIndex() {
-    console.log(this.state.player.id);
     for (var index = 0; index < this.state.players.length; index++) {
-      console.log(this.state.players[index]);
       if (this.state.players[index].id == this.state.player.id) {
         if (this.state.clientplayerindex != index) {
           this.setState({ clientplayerindex: index });

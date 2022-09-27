@@ -78,10 +78,6 @@ app.get("/", (req, res) => {
   res.sendFile(public_path + "/index.html");
 });
 
-// app.get("/play", (req, res) => {
-//   res.sendFile(public_path + "/mock_secondary.html");
-// });
-
 io.on("connection", (socket) => {
   console.log("connect");
   // Connects a player to a game and uses callback function to respond with the session id and game state.
