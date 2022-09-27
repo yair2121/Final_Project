@@ -162,3 +162,7 @@ Tells the server to automatically put you into a session whenever it is created 
 #### socket.emit("leave_autojoin")
 
 Tells the server to stop automatically putting you into a session whenever it is created.
+
+## Diagrams:
+
+[For the Backend UML, Frontend chart and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
