@@ -30,8 +30,8 @@ class BaseGameModel extends EventEmitter {
     //   throw "Not enough players";
     // }
     this.isRunning = true;
-    this.start_date = new Date();
-    this.moves.push({ Time: this.start_date });
+    this.start_date = Date.now();
+    // this.moves.push({ Time: this.start_date });
   }
 
   /**
@@ -59,11 +59,11 @@ class BaseGameModel extends EventEmitter {
   }
 
   /**
-   * Will log the given move
-   * @param {dictionary} move_description
+   * Logs entry to future game_report
+   * @param {dictionary} entry
    */
-  log_move(move_description) {
-    this.moves.push(Object.assign({}, { Time: new Date() }, move_description));
+  log(entry) {
+    this.moves.push(Object.assign({}, { Time: new Date() }, entry));
   }
 
   /**
@@ -90,13 +90,6 @@ class BaseGameModel extends EventEmitter {
    */
   get_state() {
     return { is_running: this.isRunning };
-  }
-
-  /**
-   * @returns Latest played move.
-   */
-  get_move() {
-    return this.moves.slice(-1)[0];
   }
 
   /**

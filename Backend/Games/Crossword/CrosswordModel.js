@@ -44,7 +44,7 @@ class CrosswordModel extends BaseGameModel {
     this.num_of_clues = this.layout.boardWords.length;
     this.claims_by_player = [];
 
-    this.game_report.push({
+    this.log({
       time: Date.now(),
       layout: this.layout,
     });
@@ -58,7 +58,7 @@ class CrosswordModel extends BaseGameModel {
   make_move(move_description) {
     if (this.done == false) {
       let { type, body } = move_description;
-      this.game_report.push({
+      this.log({
         time: Date.now(),
         type: type,
         player: body.player,
@@ -178,6 +178,7 @@ class CrosswordModel extends BaseGameModel {
     });
   }
 
+  //replace with super
   get_game_report() {
     return this.game_report;
   }

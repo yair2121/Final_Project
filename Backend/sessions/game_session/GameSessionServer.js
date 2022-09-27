@@ -131,13 +131,6 @@ class GameSessionServer extends EventEmitter {
   /**
    * @returns info about the latest executed move.
    */
-  get_update() {
-    return this.#game_session.get_move();
-  }
-
-  /**
-   * @returns info about the latest executed move.
-   */
   get_game_report() {
     return this.#game_session.get_game_report();
   }

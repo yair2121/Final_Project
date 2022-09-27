@@ -116,12 +116,6 @@ class GameSession extends EventEmitter {
   get_game_report() {
     return this.#game_model.get_game_report();
   }
-  /**
-   * @returns info about the latest executed move.
-   */
-  get_update() {
-    return this.#game_model.get_move();
-  }
 }
 
 module.exports = { GameSession };
