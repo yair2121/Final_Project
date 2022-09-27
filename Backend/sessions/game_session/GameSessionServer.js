@@ -47,7 +47,6 @@ class GameSessionServer extends EventEmitter {
       this.emit("Update session state", this.get_state(), this.session_id);
     });
     this.#game_session.on("Update move", (move_description) => {
-      // console.log("gamesesssionserver move");
       this.emit("Update session move", move_description, this.session_id);
     });
   }
@@ -71,12 +70,10 @@ class GameSessionServer extends EventEmitter {
    * @throws When game_model past it's max player_count.
    */
   add_player(player_id, player_name) {
-    console.log("entered");
     try {
       this.players.push({ id: player_id, name: player_name });
       this.#game_session.add_player(player_id);
       this.connected_players++;
-      console.log("done");
       console.log(this.connected_players + " players");
     } catch (error) {
       this.players.pop();

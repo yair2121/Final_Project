@@ -41,7 +41,6 @@ class Crossword extends Component {
         break;
       }
     }
-    console.log("Updated client player index:" + this.state.clientplayerindex);
   }
 
   componentWillUnmount() {

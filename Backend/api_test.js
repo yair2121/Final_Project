@@ -17,10 +17,10 @@ socket.emit("connect_as_api", "ayo", (arg) => {
   // set_crossword_difficulty(10);
   // set_crossword_num_of_clues(3);
   // set_crossword_max_players(1);
-  start_autojoin();
-  socket.on("Autojoined session", (...args) => {
-    end_autojoin();
-  });
+  start_notifications();
+  // socket.on("Autojoined session", (...args) => {
+  //   end_autojoin();
+  // });
 });
 
 function connect_to_session(player_name, session_id) {

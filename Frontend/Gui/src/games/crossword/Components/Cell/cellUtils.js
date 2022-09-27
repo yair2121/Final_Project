@@ -18,7 +18,6 @@ export class CellUtils {
     this.setCellColor = () => {};
     this.setCellValue = () => {};
     this.setCellFocus = () => {};
-    // this.setFocus = () => {};
 
     // This flags determines whether this cell position is a start of a word
     this.isAcrossWordStart = false;
