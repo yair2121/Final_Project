@@ -1,4 +1,5 @@
 const express = require("express");
+const { PORT } = require("../changeme");
 const app = express();
 const {
   connect_socket_api,
@@ -21,7 +22,6 @@ var path = require("path");
 // Path to web build files
 public_path = path.dirname(__dirname) + "/Frontend/Gui/web-build";
 const session_controller = new SessionsController();
-port = 3000;
 // List of sessions which have started and have not yet updated last player
 // (Session starts before player is added to room)
 incomplete_sessions = {};
@@ -130,4 +130,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(port, () => {});
+server.listen(PORT, () => {});
