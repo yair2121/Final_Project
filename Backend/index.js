@@ -93,12 +93,13 @@ io.on("connection", (socket) => {
       callback({ s_id: s_id, game_state: {} });
     }
 
+    //Forwards update_move to Session_Controller
     socket.on("update_move", (game_name, s_id, move) => {
-      console.log(move);
       session_controller.make_move(game_name, s_id, move);
     });
   });
 
+  //Removes socket from session room and removes from session with session_controller
   socket.on("leave_game", (game_name, s_id) => {
     socket.removeAllListeners("update_move");
     socket.to(s_id).emit("left_game", game_name, socket.id);
@@ -118,6 +119,8 @@ io.on("connection", (socket) => {
     }
   });
 
+  //Removes socket from every session it is in. Does not support API users
+  // due to API users being able to connect to sessions with different game_names.
   socket.once("disconnecting", () => {
     if (!socket.api_user) {
       socket.rooms.forEach((room) => {

@@ -1,6 +1,6 @@
 const io = require("socket.io-client");
-
 const socket = io("http://localhost:3000/");
+
 socket.prependAny((eventName, ...args) => {
   console.log("Event: " + eventName);
   console.log(args);
@@ -40,7 +40,7 @@ function connect_to_session(player_name, session_id) {
 
 function get_game_state(game_name, s_id) {
   socket.emit("get_game_state", game_name, s_id, (...args) => {
-    console.log(args[0].boardDescription.boardWords);
+    console.log(args[0]);
   });
 }
 

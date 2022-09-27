@@ -60,11 +60,15 @@ function connect_socket_api(
 
     socket.on("get_unready_sessions", (game_name, return_callback) => {
       if (isFunction(return_callback)) {
-        return_callback(
-          Object.keys(
-            session_controller.get_sessions()["unready_sessions"][game_name]
-          )
-        );
+        try {
+          return_callback(
+            Object.keys(
+              session_controller.get_sessions()["unready_sessions"][game_name]
+            )
+          );
+        } catch (error) {
+          return_callback(error);
+        }
       }
     });
 
@@ -89,14 +93,13 @@ function connect_socket_api(
       if (isFunction(return_callback)) {
         return_callback(succeeded);
       }
-      console.log(CrosswordModel.DIFFICULTY);
     });
 
     socket.on("set_crossword_num_of_clues", (num_of_clues, return_callback) => {
       if (
         Number.isInteger(num_of_clues) &&
         num_of_clues < 713 &&
-        num_of_clues > 0
+        num_of_clues > 3
       ) {
         CrosswordModel.NUM_OF_CLUES = num_of_clues;
         succeeded = true;
@@ -106,7 +109,6 @@ function connect_socket_api(
       if (isFunction(return_callback)) {
         return_callback(succeeded);
       }
-      console.log(CrosswordModel.NUM_OF_CLUES);
     });
 
     socket.on("set_crossword_max_players", (max_players, return_callback) => {
@@ -119,7 +121,6 @@ function connect_socket_api(
       if (isFunction(return_callback)) {
         return_callback(succeeded);
       }
-      console.log(CrosswordModel.MAX_PLAYERS);
     });
 
     socket.on("start_notifications", () => {
