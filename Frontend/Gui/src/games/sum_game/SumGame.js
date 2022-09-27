@@ -6,8 +6,6 @@ import { USER_KEY, SESSION_ID, SESSION_STATE } from "../../constants/keys";
 import { COLORS } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-//// TODO split gamestate into many state variables ):
-//const PlayersNames = [];
 export default function SumGame({ initial_state }) {
   const socket = useContext(SocketContext);
   const [stateplayers, setPlayers] = useState(initial_state.players);
