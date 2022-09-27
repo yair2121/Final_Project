@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { USER_KEY } from "../../constants/keys";
 import { LoginStyles } from "./LoginStyles.js";
 import LoginLogo from "./LoginLogo";
-import { View } from "react-native";
+import { KeyboardAvoidingView, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { backgroundStyle } from "../../constants/backgroundStyle";
 import { SocketContext } from "../../contexts/SocketContext";
@@ -55,7 +55,7 @@ export default function LoginScreen({ navigation }) {
       >
         <Text
           adjustsFontSizeToFit={true}
-          numberOfLines={1}
+          numberOfLine={1}
           type="solid"
           style={LoginStyles.loginText}
         >
@@ -66,22 +66,28 @@ export default function LoginScreen({ navigation }) {
   };
   return (
     <LinearGradient colors={COLORS.background} style={backgroundStyle}>
-      <SafeAreaView style={LoginStyles.safeContainer}>
-        <View style={LoginStyles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+        <SafeAreaView style={LoginStyles.safeContainer}>
+          {/* <View style={LoginStyles.container}> */}
           <LoginLogo />
+          {/* <View style={LoginStyles.inputView}> */}
           <Input
             value={playerName}
-            containerStyle={LoginStyles.inputView}
-            inputStyle={LoginStyles.TextInput}
+            inputContainerStyle={LoginStyles.inputView}
+            // containerStyle={}
+            style={LoginStyles.TextInput}
             placeholder="Enter your name"
             onChangeText={(name) => {
-              setPlayerName(name); // TODO: check if it's an issue that the name can includes non english letters.
+              setPlayerName(name);
             }}
+            allowFontScaling={true}
           ></Input>
-          <View style={LoginStyles.space} />
+          {/* </View> */}
+          {/* <View style={LoginStyles.space} /> */}
           <LoginButton onLogin={login} />
-        </View>
-      </SafeAreaView>
+          {/* </View> */}
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
