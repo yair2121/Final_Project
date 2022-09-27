@@ -22,11 +22,9 @@ export default function AspectView(props) {
     }
   }
 
-  return (
-    <View
-      {...props}
-      style={style}
-      onLayout={({ nativeEvent: { layout } }) => setLayout(layout)}
-    />
-  );
+  function onLayout({ nativeEvent: { layout } }) {
+    setLayout(layout);
+  }
+
+  return <View {...props} style={style} onLayout={onLayout} />;
 }
