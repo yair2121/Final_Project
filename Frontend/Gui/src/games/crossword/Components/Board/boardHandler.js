@@ -1,6 +1,3 @@
-//TODO: add release emit when freeing a word by clicking on inactive cell.
-// (Currently done by passing updateWordColoring to boardhandler via constructor)
-//TODO: add release emit in CrosswordModel when a player that has one claim claims another (this covers freeing word by clicking on active cell)
 import { map, range } from "ramda";
 import { ORIENTATION } from "../../consts/orientation";
 import { CellState } from "../Cell/cellStates";
