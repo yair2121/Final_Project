@@ -4,6 +4,7 @@ const samplesize = require("lodash.samplesize");
 const sample = require("lodash.sample");
 const deepcopy = require("lodash.clonedeep");
 
+//Samples num_of_words words from clue_pool[difficulty]
 function create_input_array(difficulty, num_of_words) {
   words = samplesize(clue_pool[difficulty], num_of_words);
   // Copying words before changing them so original JSON does not change.
@@ -19,22 +20,10 @@ function create_input_array(difficulty, num_of_words) {
 }
 
 function generate_layout(difficulty = 1, num_of_words = 50) {
-  if (difficulty == "test") {
-    return generate_testlayout();
-  }
   oldlog = console.log;
   //the clg module logs for some reason, disabling logs and reenabling them after function
   console.log = () => {};
   var layout = clg.generateLayout(create_input_array(difficulty, num_of_words));
-  console.log = oldlog;
-  return layout;
-}
-
-function generate_testlayout() {
-  oldlog = console.log;
-  console.log = () => {};
-  test_word_bank = clue_pool[1].slice(0, 7);
-  var layout = clg.generateLayout(test_word_bank);
   console.log = oldlog;
   return layout;
 }

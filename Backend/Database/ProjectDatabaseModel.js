@@ -2,6 +2,8 @@ const { MongoClient } = require("mongodb");
 let creds = require("./MongoDBCredentials.json");
 const uri = `mongodb+srv://dbReadWriteOnly:${creds.password}@cluster0.sle1ufk.mongodb.net/?retryWrites=true&w=majority`;
 
+//Database class. Change uri if needed.
+// The only functions used are getCollection and insertOne.
 class ProjectDatabaseModel {
   constructor() {
     this.uri = uri;

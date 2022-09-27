@@ -1,3 +1,4 @@
+//To add games add an entry to the dictionary.
 const { HundredSumModel } = require("./SumGame/index");
 const { CrosswordModel } = require("./Crossword/index");
 const games_dict = {};

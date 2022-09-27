@@ -51,14 +51,6 @@ class BaseGameModel extends EventEmitter {
   }
 
   /**
-   * Will process the given move to fit current game.
-   * @param {dictionary} move_description
-   */
-  process_move(move_description) {
-    interface_default();
-  }
-
-  /**
    * Logs entry to future game_report
    * @param {dictionary} entry
    */
@@ -75,16 +67,6 @@ class BaseGameModel extends EventEmitter {
     this.emit("Game ended");
   }
 
-  /**
-   * Will apply given move to the game.
-   * @param {dictionary} move_description- Dictionary that hold description of current move,
-   */
-  make_move(move_description) {
-    this.process_move(move_description);
-    this.validate_move(move_description);
-    this.apply_move(move_description);
-    this.log_move(move_description);
-  }
   /**
    * @returns Dictionary that hold current state of the game.
    */
