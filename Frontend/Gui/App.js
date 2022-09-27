@@ -36,7 +36,6 @@ const StackScreen = function () {
         component={GameScreen}
         initialParams={{ header: HEADER_TYPES.GAME }}
       />
-      {/* <Stack.Screen name="Setting" component={Setting} initialParams={{}} /> */}
     </Stack.Navigator>
   );
 };
