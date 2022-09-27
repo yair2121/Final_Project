@@ -1,11 +1,9 @@
 const { MongoClient } = require("mongodb");
 let creds = require("./MongoDBCredentials.json");
 const uri = `mongodb+srv://dbReadWriteOnly:${creds.password}@cluster0.sle1ufk.mongodb.net/?retryWrites=true&w=majority`;
-const IDatabaseModel = require("./IDatabaseModel").IDatabaseModel;
 
-class ProjectDatabaseModel extends IDatabaseModel {
+class ProjectDatabaseModel {
   constructor() {
-    super();
     this.uri = uri;
     this.collection = null;
   }
