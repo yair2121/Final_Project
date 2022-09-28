@@ -13,9 +13,16 @@ Installation:
 To start the server- write: `npm run startServer`.
 To enter as a client- navigate to the url defined in the file: "/changeme.js".
 
-Writers
-Roey Peleg
-Yair Yardeni
+To change the word pool of the Crossword game, replace the file /Backend/Games/Crossword/CrosswordCluePool. The new file must have the same format, i.e JSON with the fields 1-100 that each contain an array of words of that difficulty.
+Each word should follow this format:
+```
+{
+"answer": <the word>
+"clues": [array of possible definitions]
+}
+```
+In case there is a different amount of difficulties we suggest changing /Backend/api.js:set_crossword_difficulty accordingly.
+
 
 ## API Documentation:
 
@@ -28,14 +35,14 @@ const io = require("socket.io-client");
 const socket = io("http://localhost:3000/"); //Replace this with the address specified in /changeme.js
 ```
 
-###### socket.emit("connect_as_api",password,callback)
+#### socket.emit("connect_as_api",password,callback)
 
 **password** is meant to be used as authenticaion in case the API is not meant for everyone.
 The function validating passwords `validate_password(password)` is located in /Backend/api.js and is meant to be changed according to your uses.
 
 **callback** is a required function that accepts one argument, which is your socket id in case of a successful login, or -1 in the case of a wrong password.
 
-###### socket.emit("connect_to_session", player_name, game_name, session_id, return_callback)
+#### socket.emit("connect_to_session", player_name, game_name, session_id, return_callback)
 
 Attempts to connect you to the specified session_id.
 Upon connecting successfully, you will be able recieve all relevant emits (e.g other players making moves, session ending etc.) For more information refer to the Events diagram.
@@ -44,7 +51,7 @@ Upon connecting successfully, you will be able recieve all relevant emits (e.g o
 **session_id** is the id of the requested session.
 **return_callback** is an optional callback function which recieves **session_id** on successful connection and -1 on unsuccessful connection.
 
-###### socket.emit("update_move", game_name, session_id, move)
+#### socket.emit("update_move", game_name, session_id, move)
 
 Emits update_move as if you were a normal client. Only works if you have succesfully connected to the session using "connect_to_session".
 **game_name** is the name of the game played in the session (i.e Crossword)
@@ -91,7 +98,7 @@ Release syntax is as follows:
 You do not need to release a claim to claim another word, this is done automatically.
 You must claim a word to put letters in that clue.
 
-###### socket.emit("get_game_state", game_name, session_id, return_callback)
+#### socket.emit("get_game_state", game_name, session_id, return_callback)
 
 Returns the game_state of the requested session. You must be connected to the session to get the state.
 
@@ -99,14 +106,14 @@ Returns the game_state of the requested session. You must be connected to the se
 **session_id** is the id of the session. You must be connected to the session already!
 **return_callback** is a required function which recieves the game_state as an argument upon success or the error in case of an error.
 
-###### socket.emit("get_unready_sessions", game_name, return_callback)
+#### socket.emit("get_unready_sessions", game_name, return_callback)
 
 Returns an array of all sessions that are playing the specified game that are not full and have not started yet.
 
 **game_name** is the name of the game the sessions are waiting to play.
 **return_callback** is a required function which recieves the return value - either the array or the error in case of one.
 
-###### socket.emit("get_game_report", game_name, session_id, return_callback)
+#### socket.emit("get_game_report", game_name, session_id, return_callback)
 
 Returns the game report of specified ongoing session.
 
@@ -114,14 +121,14 @@ Returns the game report of specified ongoing session.
 **session_id** is the id of the session.
 **return_callback** is a required function which recieves the return value - either the game report (JSON) or the error in case of one.
 
-###### socket.emit("set_crossword_difficulty", difficulty, return_callback)
+#### socket.emit("set_crossword_difficulty", difficulty, return_callback)
 
 Sets the difficuly of Crossword (1-100). This change is server-wide and does not affect sessions that have already been created.
 
 **difficulty** The new difficulty of Crossword.
 **return_callback** is an optional function that recieves the return value - either the new difficulty or -1 if difficulty is not an integer between 1 and 100.
 
-###### socket.emit("set_crossword_num_of_clues", num_of_clues, return_callback)
+#### socket.emit("set_crossword_num_of_clues", num_of_clues, return_callback)
 
 Sets the max amount of clues in Crossword (3-712). This change is server-wide and does not affect sessions that have already been created.
 Numbers higher than 100 will greatly affect server-side performance.
@@ -130,25 +137,33 @@ The more clues, the larger the crossword, the slower the application becomes on 
 **num_of_clues** The new max amount of clues in Crossword.
 **return_callback** is an optional function that recieves the return value - either the new difficulty or -1 if difficulty is not an integer between 3 and 712.
 
-###### socket.emit("set_crossword_max_players", max_players, return_callback)
+#### socket.emit("set_crossword_max_players", max_players, return_callback)
 
 Sets the max amount of players in one game.
 
 **num_of_clues** The new max amount of players in a Crossword game. Must be an integer larger than 0.
 **return_callback** is an optional function that recieves the return value - either the new max amount of players or -1 if difficulty is not an integer larger than 0.
 
-###### socket.emit("start_notifications")
+#### socket.emit("start_notifications")
 
 Tells the server to notify you whenever a session is created or closed. For more information refer to the Events diagram.
 
-###### socket.emit("end_notifications")
+#### socket.emit("end_notifications")
 
 Tells the server to stop notifying you whenever a session is created or closed.
 
-###### socket.emit("start_autojoin")
+#### socket.emit("start_autojoin")
 
 Tells the server to automatically put you into a session whenever it is created (if it is not full.) For more information refer to the Events diagram.
 
-###### socket.emit("leave_autojoin")
+#### socket.emit("leave_autojoin")
 
 Tells the server to stop automatically putting you into a session whenever it is created.
+
+## Diagrams:
+
+[For the Backend UML, Frontend chart and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
+
+Writers
+Roey Peleg
+Yair Yardeni
