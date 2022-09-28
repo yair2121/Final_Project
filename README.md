@@ -23,9 +23,6 @@ Each word should follow this format:
 ```
 In case there is a different amount of difficulties we suggest changing /Backend/api.js:set_crossword_difficulty accordingly.
 
-Writers
-Roey Peleg
-Yair Yardeni
 
 ## API Documentation:
 
@@ -166,3 +163,7 @@ Tells the server to stop automatically putting you into a session whenever it is
 ## Diagrams:
 
 [For the Backend UML, Frontend chart and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
+
+Writers
+Roey Peleg
+Yair Yardeni
