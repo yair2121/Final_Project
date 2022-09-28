@@ -6,12 +6,13 @@ JavaScript- Node JS (developed on version 14.7.6).
 Installation:
 
 1. Clone the project.
-2. Change the constants defined in "/changeme.js" according to your needs.
-3. In the terminal: `npm install` (for Mac users: `npm run installMac`).
-4. In the terminal: `npm run build-web`.
+2. Change the port (default is 3000) defined in "/Backend/index.js" according to your needs.
+3. Change the address and port defined in "/Frontend/Gui/src/contexts/SocketContext" accordingly.
+4. In the terminal: `npm install` (for Mac users: `npm run installMac`).
+5. In the terminal: `npm run build-web`.
 
 To start the server- write: `npm run startServer`.
-To enter as a client- navigate to the url defined in the file: "/changeme.js".
+To enter as a client- navigate to the url defined in the file: "/Frontend/Gui/src/contexts/SocketContext".
 
 To change the word pool of the Crossword game, replace the file /Backend/Games/Crossword/CrosswordCluePool. The new file must have the same format, i.e JSON with the fields 1-100 that each contain an array of words of that difficulty.
 Each word should follow this format:
@@ -32,7 +33,7 @@ To connect to the server you must include the following lines:
 
 ```
 const io = require("socket.io-client");
-const socket = io("http://localhost:3000/"); //Replace this with the address specified in /changeme.js
+const socket = io("http://localhost:3000/"); //Replace this with the correct address 
 ```
 
 #### socket.emit("connect_as_api",password,callback)
