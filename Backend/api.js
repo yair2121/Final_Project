@@ -53,6 +53,7 @@ function connect_socket_api(
             return_callback("Error", error);
           }
         } else {
+          console.log(socket.rooms);
           return_callback("Error", "not in session " + s_id);
         }
       }
@@ -131,8 +132,9 @@ function connect_socket_api(
       socket.leave(API_NOTIFICATION_ROOM);
     });
 
-    socket.on("start_autojoin", () => {
+    socket.on("start_autojoin", (player_name) => {
       socket.join(API_AUTOJOIN_ROOM);
+      socket.player_name = player_name;
     });
 
     socket.on("end_autojoin", () => {

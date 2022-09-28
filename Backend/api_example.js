@@ -16,12 +16,11 @@ socket.emit("connect_as_api", "ayo", (arg) => {
   // });
   set_crossword_difficulty(99);
   set_crossword_num_of_clues(4);
-  start_autojoin();
+  start_autojoin("a");
   set_crossword_max_players(2);
   //start_notifications();
   socket.on("Autojoined session", (...args) => {
     console.log(args[1]);
-    connect_to_session;
     get_game_state("Crossword", args[1]);
     end_autojoin();
   });
@@ -78,8 +77,8 @@ function end_notifications() {
   socket.emit("end_notifications");
 }
 
-function start_autojoin() {
-  socket.emit("start_autojoin");
+function start_autojoin(player_name) {
+  socket.emit("start_autojoin", player_name);
 }
 
 function end_autojoin() {

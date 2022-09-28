@@ -44,10 +44,13 @@ session_controller.on("Session created", async (game_name, s_id) => {
       game_name,
       s_id
     );
-    socket.emit("Autojoined session", game_name, s_id);
+
     //If ret is -1 the session is full (or there is some other error preventing sockets from joining).
     if (ret === -1) {
       break;
+    } else {
+      socket.join(s_id);
+      socket.emit("Autojoined session", game_name, s_id);
     }
   }
 });
