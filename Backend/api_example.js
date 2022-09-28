@@ -14,13 +14,17 @@ socket.emit("connect_as_api", "ayo", (arg) => {
   //     connect_to_session("admin", s_id);
   //   });
   // });
-  // set_crossword_difficulty(10);
-  // set_crossword_num_of_clues(3);
-  // set_crossword_max_players(1);
-  start_notifications();
-  // socket.on("Autojoined session", (...args) => {
-  //   end_autojoin();
-  // });
+  set_crossword_difficulty(99);
+  set_crossword_num_of_clues(4);
+  start_autojoin();
+  set_crossword_max_players(2);
+  //start_notifications();
+  socket.on("Autojoined session", (...args) => {
+    console.log(args[1]);
+    connect_to_session;
+    get_game_state("Crossword", args[1]);
+    end_autojoin();
+  });
 });
 
 function connect_to_session(player_name, session_id) {
@@ -40,7 +44,7 @@ function connect_to_session(player_name, session_id) {
 
 function get_game_state(game_name, s_id) {
   socket.emit("get_game_state", game_name, s_id, (...args) => {
-    console.log(args[0]);
+    console.log(args);
   });
 }
 

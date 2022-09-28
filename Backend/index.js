@@ -1,5 +1,5 @@
 const express = require("express");
-const { PORT } = require("../changeme");
+const PORT = 3000;
 const app = express();
 const {
   connect_socket_api,
@@ -28,7 +28,7 @@ incomplete_sessions = {};
 
 // This enables client to fetch anything in public folder
 app.use(express.static(public_path));
-
+app.use(express.static(path.dirname(__dirname) + "../publc"));
 function connect_player(player_id, player_name, game_name) {
   return session_controller.connect_player(player_id, player_name, game_name);
 }
