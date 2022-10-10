@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
     session_controller.disconnect_player(socket.id, game_name, s_id);
   });
 
-  socket.once("login", (username, callback) => {
+  socket.on("login", (username, callback) => {
     socket.data.name = username;
     callback(socket.id);
   });
