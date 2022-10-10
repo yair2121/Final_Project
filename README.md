@@ -4,38 +4,36 @@ Prerequisites:
 JavaScript- Node JS (developed on version 14.7.6).
 
 Installation:
-(todo links)
 1. Clone the project.
-2. Change the port (default is 3000) defined in "/Backend/index.js" according to your needs.
-3. Change the address and port defined in "/Frontend/Gui/src/contexts/SocketContext" accordingly.
+2. Change the port (default is 3000) defined in ["/Backend/index.js"](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Backend/index.js#L2) according to your needs.
+3. Change the address and port defined in ["/Frontend/Gui/src/contexts/SocketContext"](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Frontend/Gui/src/contexts/SocketContext.js#L3-L4) accordingly.
 4. In the terminal: `npm install` (for Mac users: `npm run installMac`).
 5. In the terminal: `npm run build-web`.
 
 To start the server- write: `npm run startServer`.
-To enter as a client- navigate to the url defined in the file: "/Frontend/Gui/src/contexts/SocketContext".
+To enter as a client- navigate to the url defined in the file: ["/Frontend/Gui/src/contexts/SocketContext"](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Frontend/Gui/src/contexts/SocketContext.js#L4).
 
 ## Documentation:
 
 #### index.js
 After running `npm run startServer`, index.js is now running. index.js main job is to forward events between clients and the SessionsController. 
-It initializes an instance of SessionsController (todo link to sessionscontroller part in document) and starts listening for connections from clients.
+It initializes an instance of [SessionsController](#sessionscontroller) and starts listening for connections from clients.
 Additionally we use a dictionary, incomplete_sessions, that tracks sessions that have started but have not sent the initial game state to all particpants, since the session begins as soon as enough participants are added.
 
 Upon client connection we initialize listeners for the following events: 
 (todo links) Client logs in (chooses username,) client requests to connect to a game, client leaves a game, client attempts to login using api ([API documentation here](#api-documentation)) and client disconnects.
 
-(todo links)
 Upon client login the clients chosen username is saved.
 Upon client request to join game we forward the request to SessionsController and recieve the ID of the session the client has joined.
 If the session ID appears in incomplete_sessions we send the game state of the session to the client. Otherwise we simply send back the session ID.
 Now that the client has joined a game we start listening for client requests to make a move.
 Upon client request to make a move we forward the request to SessionsController.
 When a client leaves a game or disconnects we notify the SessionsController and the other players in the game.
+[Link to the aforementioned in the code](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Backend/index.js#L87-L136)
 
 #### SessionsController
-(todo links)
-SessionsController is responsible for managing all game session instances (GameSessionServers) and forwarding events from the game sessions to the clients via index.js
-Creating the session and deciding which session a client will be connected to happens here.
+SessionsController is responsible for managing all game session instances ([GameSessionServers](#gamesessionserver)) and forwarding events from the game sessions to the clients via index.js
+Creating the session and deciding which session a client will be connected to happens in [connect_player.](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Backend/sessions/SessionsController.js#L126-L145).
 SessionsController stores sessions in three categories: Unready sessions, meaning not enough players are in the session, full sessions (which have not started yet) and active sessions (meaning they are running). Each session is defined by the game of the session (i.e Crossword) and a unique session id.
 
 Whenever a client requests to connect to a game SessionsController checks if there is a session of that game that hasn't started yet and which has space for another player in it. If so, the client is added to the session. If the session is full it starts. If there are no avilable sessions, SessionsController creates a new session and adds the player to the session.
@@ -47,22 +45,19 @@ Session started, session became full, session ended, a move is made in the sessi
 All of these events are forwarded to the clients via index.js.
 
 #### GameSession
-(todo links)
-GameSession is a wrapper class of a BaseGameModel (for example, CrosswordGameModel).
+GameSession is a wrapper class of a BaseGameModel (for example, [CrosswordGameModel](#crosswordgamemodel)).
 It contains a BaseGameModel and a dictionary of the players in the GameSession.
 When a session is full it is started - the GameSession tells the BaseGameModel to begin the game with the amount of players in the session.
 When the game changes in any way (either a move is made, the game state is changed or the game ends) the GameSession forwards the event to the encapsulating GameSessionServer which in turn notifies the SessionsController.
 If a player leaves the game the GameSession updates the player dictionary accordingly. Once there are 0 players in the session it will end.
 
 #### GameSessionServer
-(todo links)
 GameSessionServer is a wrapper class of a GameSession.
 It contains a GameSession as well as a database connection and an array of connected players. Each GameSessionServer has a unique session ID.
 All events that GameSession emits are forwarded to SessionsController.
 When a session is ended (either by the game ending naturally or by the GameSession being empty) the game report, a dictionary of all the moves made in the game, is uploaded to the database.
 
 #### CrosswordCluePool
-(todo links)
 Due to copyright law we could only use clues and words from 1965 and before. These were taken from here: [https://xd.saul.pw/data/](https://xd.saul.pw/data/)
 The words were sorted by popularity (which we got from Google's Ngrams) and split into 100 difficulties (The more popular a word, the lower it's difficulty)
 To change the word pool of the Crossword game, replace the file /Backend/Games/Crossword/CrosswordCluePool. The new file must have the same format, i.e JSON with the fields 1-100 that each contain an array of words of that difficulty.
@@ -81,7 +76,6 @@ Using `generate_layout(d, x)` a layout of a crossword consisting of (up to) x ra
 It is important to note that the answers are selected uniformly, and if the answer has multiple potential clues a clue is selected uniformly as well.
 
 ### CrosswordModel
-(todo links)
 The crossword game works as such: A player can input one letter in a cell at a time. Each player can claim one answer at a time - any answer that is claimed by a player cannot be changed by any other player, barring cells intersecting with other answers. When all answers are correctly filled, the game is over.
 
 Whenever a client requests to join a Crossword session, but no such sessions are available, a CrosswordModel is created.
