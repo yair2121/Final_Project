@@ -21,7 +21,7 @@ It initializes an instance of [SessionsController](#sessionscontroller) and star
 Additionally we use a dictionary, incomplete_sessions, that tracks sessions that have started but have not sent the initial game state to all particpants, since the session begins as soon as enough participants are added.
 
 Upon client connection we initialize listeners for the following events: 
-(todo links) Client logs in (chooses username,) client requests to connect to a game, client leaves a game, client attempts to login using api ([API documentation here](#api-documentation)) and client disconnects.
+Client logs in (chooses username,) client requests to connect to a game, client leaves a game, client attempts to login using api ([API documentation here](#api-documentation)) and client disconnects.
 
 Upon client login the clients chosen username is saved.
 Upon client request to join game we forward the request to SessionsController and recieve the ID of the session the client has joined.
@@ -79,7 +79,7 @@ It is important to note that the answers are selected uniformly, and if the answ
 The crossword game works as such: A player can input one letter in a cell at a time. Each player can claim one answer at a time - any answer that is claimed by a player cannot be changed by any other player, barring cells intersecting with other answers. When all answers are correctly filled, the game is over.
 
 Whenever a client requests to join a Crossword session, but no such sessions are available, a CrosswordModel is created.
-CrosswordModel has a few static properties which can be changed using the api [(see below)](todo link): NUM_OF_CLUES, DIFFICULTY and MAX_PLAYERS. The former two define the properties of the generated crossword.
+CrosswordModel has a few static properties which can be changed using the [API (see below)](#api-documentation): NUM_OF_CLUES, DIFFICULTY and MAX_PLAYERS. The former two define the properties of the generated crossword.
 
 When a CrosswordModel is created a crossword is generated using the aforementioned properties. CrosswordModel.layout is an object containing the dimensions of the generated crossword and an array of the selected answers and their clues.
 
@@ -88,7 +88,7 @@ They are defined as such:
 claims_by_position[X] = Y <--> claims_by_player[Y] = X <--> The answer with index X is claimed by the player with index Y
 The game starts with no players having any claims.
 
-_**Moves:**_
+##### Moves:
 There are three types of moves: move, claim and release. 
 Move description format of a Move is as follows:
 
@@ -176,7 +176,7 @@ Upon connecting successfully, you will be able recieve all relevant emits (e.g o
 Emits update_move as if you were a normal client. Only works if you have succesfully connected to the session using "connect_to_session".
 **game_name** is the name of the game played in the session (i.e Crossword)
 **session_id** is the id of the session. You must be connected to the session already!
-**move** is a JSON representing the move made. [See format here.](todo link)
+**move** is a JSON representing the move made. [See format here.](#moves)
 
 You do not need to release a claim to claim another word, this is done automatically.
 You must claim a word to put letters in that clue.
