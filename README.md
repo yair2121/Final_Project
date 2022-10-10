@@ -4,7 +4,7 @@ Prerequisites:
 JavaScript- Node JS (developed on version 14.7.6).
 
 Installation:
-
+(todo links)
 1. Clone the project.
 2. Change the port (default is 3000) defined in "/Backend/index.js" according to your needs.
 3. Change the address and port defined in "/Frontend/Gui/src/contexts/SocketContext" accordingly.
@@ -13,16 +13,6 @@ Installation:
 
 To start the server- write: `npm run startServer`.
 To enter as a client- navigate to the url defined in the file: "/Frontend/Gui/src/contexts/SocketContext".
-
-To change the word pool of the Crossword game, replace the file /Backend/Games/Crossword/CrosswordCluePool. The new file must have the same format, i.e JSON with the fields 1-100 that each contain an array of words of that difficulty.
-Each word should follow this format:
-```
-{
-"answer": <the word>
-"clues": [array of possible definitions]
-}
-```
-In case there is a different amount of difficulties we suggest changing /Backend/api.js:set_crossword_difficulty accordingly.
 
 ## Documentation:
 
@@ -56,6 +46,110 @@ For every game session created SessionsController listens for the following even
 Session started, session became full, session ended, a move is made in the session or the sessions game state was changed.
 All of these events are forwarded to the clients via index.js.
 
+#### GameSession
+(todo links)
+GameSession is a wrapper class of a BaseGameModel (for example, CrosswordGameModel).
+It contains a BaseGameModel and a dictionary of the players in the GameSession.
+When a session is full it is started - the GameSession tells the BaseGameModel to begin the game with the amount of players in the session.
+When the game changes in any way (either a move is made, the game state is changed or the game ends) the GameSession forwards the event to the encapsulating GameSessionServer which in turn notifies the SessionsController.
+If a player leaves the game the GameSession updates the player dictionary accordingly. Once there are 0 players in the session it will end.
+
+#### GameSessionServer
+(todo links)
+GameSessionServer is a wrapper class of a GameSession.
+It contains a GameSession as well as a database connection and an array of connected players. Each GameSessionServer has a unique session ID.
+All events that GameSession emits are forwarded to SessionsController.
+When a session is ended (either by the game ending naturally or by the GameSession being empty) the game report, a dictionary of all the moves made in the game, is uploaded to the database.
+
+#### CrosswordCluePool
+(todo links)
+Due to copyright law we could only use clues and words from 1965 and before. These were taken from here: [https://xd.saul.pw/data/](https://xd.saul.pw/data/)
+The words were sorted by popularity (which we got from Google's Ngrams) and split into 100 difficulties (The more popular a word, the lower it's difficulty)
+To change the word pool of the Crossword game, replace the file /Backend/Games/Crossword/CrosswordCluePool. The new file must have the same format, i.e JSON with the fields 1-100 that each contain an array of words of that difficulty.
+Each word should follow this format:
+```
+{
+"answer": <the word>
+"clues": [array of possible definitions]
+}
+```
+In case there is a different amount of difficulties we suggest changing /Backend/api.js:set_crossword_difficulty accordingly.
+
+#### CrosswordGenerator
+The crossword is generated using [this library.](https://github.com/MichaelWehar/Crossword-Layout-Generator)
+Using `generate_layout(d, x)` a layout of a crossword consisting of (up to) x randomly selected answers of difficulty d is returned.
+It is important to note that the answers are selected uniformly, and if the answer has multiple potential clues a clue is selected uniformly as well.
+
+### CrosswordModel
+(todo links)
+The crossword game works as such: A player can input one letter in a cell at a time. Each player can claim one answer at a time - any answer that is claimed by a player cannot be changed by any other player, barring cells intersecting with other answers. When all answers are correctly filled, the game is over.
+
+Whenever a client requests to join a Crossword session, but no such sessions are available, a CrosswordModel is created.
+CrosswordModel has a few static properties which can be changed using the api [(see below)](todo link): NUM_OF_CLUES, DIFFICULTY and MAX_PLAYERS. The former two define the properties of the generated crossword.
+
+When a CrosswordModel is created a crossword is generated using the aforementioned properties. CrosswordModel.layout is an object containing the dimensions of the generated crossword and an array of the selected answers and their clues.
+
+CrosswordModel tracks which answers are claimed by which players using two arrays: `claims_by_position` and `claims_by_player`. 
+They are defined as such:
+claims_by_position[X] = Y <--> claims_by_player[Y] = X <--> The answer with index X is claimed by the player with index Y
+The game starts with no players having any claims.
+
+_**Moves:**_
+There are three types of moves: move, claim and release. 
+Move description format of a Move is as follows:
+
+```
+{
+    type: "move",
+    body: {
+        letter: <alphanumeric character>
+        position: number of clue
+        index: index in answer (e.g 0 for first letter, 1 for second letter etc.)
+        player: index of player - your index can be found using the game_state.
+    }
+}
+```
+
+Move description format of a Claim is as follows:
+
+```
+{
+    type: "claim",
+    body: {
+        position: number of clue you wish to claim.
+        player: index of player - your index can be found using the game_state.
+    }
+}
+```
+
+Move description format of a Release is as follows:
+
+```
+{
+    type: "release",
+    body: {
+        position: number of clue you wish to release.
+        player: index of player - your index can be found using the game_state.
+    }
+}
+```
+
+###### CrosswordModel.make_move(move_description):
+Given a move description, checks what the type of the move is (Move/Claim/Release) and calls the relevant method.
+
+###### CrosswordModel.apply_move(move_description):
+This is called when a player inputs a letter into a cell. CrosswordModel checks if the player has claimed the answer that contains the cell. If the player does, the current board of CrosswordModel is changed and the encapsulating GameSession is notified of the change. If after the player's input the current board layout is equal to the final board layout, that is, all clues have been correctly answered, the game ends and GameSession is notified.
+
+###### CrosswordModel.claim_clue_by_position(move_description):
+This is called when a player clicks on an answer. If the answer isn't claimed by anyone else, the player succesfully claims the answer and the encapsulating GameSession is notified of the change. If the player had a claim previously, it is released and is free to be claimed by anyone else.
+
+###### CrosswordModel.release_claim(move_description):
+This is called when a player clicks on a black cell in the game, or claims an answer while having a claim previously. If the answer was claimed by the player it is no longer claimed by anyone and is free to be claimed by anyone else.
+
+#### ProjectDatabaseModel
+This class is used to connect to MongoDB and upload game reports. Change `uri` and `creds` as needed.
+
+
 ## API Documentation:
 
 Usage examples can be found in "/Backend/api_example.js".
@@ -88,44 +182,7 @@ Upon connecting successfully, you will be able recieve all relevant emits (e.g o
 Emits update_move as if you were a normal client. Only works if you have succesfully connected to the session using "connect_to_session".
 **game_name** is the name of the game played in the session (i.e Crossword)
 **session_id** is the id of the session. You must be connected to the session already!
-**move** is a JSON representing the move made. There are three types of moves (in Crossword game.) Move, claim and release.
-Move syntax is as follows:
-
-```
-{
-    type: "move",
-    body: {
-        letter: <alphanumeric character>
-        position: number of clue
-        index: index in answer (e.g 0 for first letter, 1 for second letter etc.)
-        player: index of player - your index can be found using the game_state.
-    }
-}
-```
-
-Claim syntax is as follows:
-
-```
-{
-    type: "claim",
-    body: {
-        position: number of clue you wish to claim.
-        player: index of player - your index can be found using the game_state.
-    }
-}
-```
-
-Release syntax is as follows:
-
-```
-{
-    type: "release",
-    body: {
-        position: number of clue you wish to release.
-        player: index of player - your index can be found using the game_state.
-    }
-}
-```
+**move** is a JSON representing the move made. [See format here.](todo link)
 
 You do not need to release a claim to claim another word, this is done automatically.
 You must claim a word to put letters in that clue.
@@ -193,9 +250,10 @@ Tells the server to automatically put you into a session whenever it is created 
 Tells the server to stop automatically putting you into a session whenever it is created.
 
 ## Diagrams:
+[For the Backend UML, Frontend chart and flow example and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
 
-[For the Backend UML, Frontend chart and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
-
+### Frontend documentation:
+[For additional documentation regarding the frontend side of things, click here](https://docs.google.com/document/d/1RSzaMs4PxQPRjfhZR1P4NKHWyCAO8q81/edit?usp=sharing&ouid=100889227141894762892&rtpof=true&sd=true)
 Writers
 Roey Peleg
 Yair Yardeni
