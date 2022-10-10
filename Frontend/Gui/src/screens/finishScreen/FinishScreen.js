@@ -5,8 +5,6 @@
 import { View } from "react-native";
 import React from "react";
 
-import { ActivityIndicator } from "react-native";
-
 import { Text } from "react-native-elements";
 
 import { loadingStyles } from "./finishStyle";
