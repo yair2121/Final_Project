@@ -24,6 +24,37 @@ Each word should follow this format:
 ```
 In case there is a different amount of difficulties we suggest changing /Backend/api.js:set_crossword_difficulty accordingly.
 
+## Documentation:
+
+#### index.js
+After running `npm run startServer`, index.js is now running. index.js main job is to forward events between clients and the SessionsController. 
+It initializes an instance of SessionsController (todo link to sessionscontroller part in document) and starts listening for connections from clients.
+Additionally we use a dictionary, incomplete_sessions, that tracks sessions that have started but have not sent the initial game state to all particpants, since the session begins as soon as enough participants are added.
+
+Upon client connection we initialize listeners for the following events: 
+(todo links) Client logs in (chooses username,) client requests to connect to a game, client leaves a game, client attempts to login using api ([API documentation here](#api-documentation)) and client disconnects.
+
+(todo links)
+Upon client login the clients chosen username is saved.
+Upon client request to join game we forward the request to SessionsController and recieve the ID of the session the client has joined.
+If the session ID appears in incomplete_sessions we send the game state of the session to the client. Otherwise we simply send back the session ID.
+Now that the client has joined a game we start listening for client requests to make a move.
+Upon client request to make a move we forward the request to SessionsController.
+When a client leaves a game or disconnects we notify the SessionsController and the other players in the game.
+
+#### SessionsController
+(todo links)
+SessionsController is responsible for managing all game session instances (GameSessionServers) and forwarding events from the game sessions to the clients via index.js
+Creating the session and deciding which session a client will be connected to happens here.
+SessionsController stores sessions in three categories: Unready sessions, meaning not enough players are in the session, full sessions (which have not started yet) and active sessions (meaning they are running). Each session is defined by the game of the session (i.e Crossword) and a unique session id.
+
+Whenever a client requests to connect to a game SessionsController checks if there is a session of that game that hasn't started yet and which has space for another player in it. If so, the client is added to the session. If the session is full it starts. If there are no avilable sessions, SessionsController creates a new session and adds the player to the session.
+
+Whenever a client plays a move, index.js forwards the move to SessionsController, which then calls the actual move logic in the relevant session.
+
+For every game session created SessionsController listens for the following events:
+Session started, session became full, session ended, a move is made in the session or the sessions game state was changed.
+All of these events are forwarded to the clients via index.js.
 
 ## API Documentation:
 
