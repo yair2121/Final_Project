@@ -7,8 +7,9 @@ Installation:
 1. Clone the project.
 2. Change the port (default is 3000) defined in ["/Backend/index.js"](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Backend/index.js#L2) according to your needs.
 3. Change the address and port defined in ["/Frontend/Gui/src/contexts/SocketContext"](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Frontend/Gui/src/contexts/SocketContext.js#L3-L4) accordingly.
-4. In the terminal: `npm install` (for Mac users: `npm run installMac`).
-5. In the terminal: `npm run build-web`.
+4. Change the uri and password to the database in ["Backend/Database/MongoDBCredentials"](https://github.com/yair2121/Final_Project/blob/848d0352dad109f5e062a4255e0cee3bb74306a8/Backend/Database/MongoDBCredentials.json#L1) and ["Backend/Database/ProjectDatabaseModel"](https://github.com/yair2121/Final_Project/blob/848d0352dad109f5e062a4255e0cee3bb74306a8/Backend/Database/ProjectDatabaseModel.js#L3)
+5. In the terminal: `npm install` (for Mac users: `npm run installMac`).
+6. In the terminal: `npm run build-web`.
 
 To start the server- write: `npm run startServer`.
 To enter as a client- navigate to the url defined in the file: ["/Frontend/Gui/src/contexts/SocketContext"](https://github.com/yair2121/Final_Project/blob/d7f7f5edfb9adceb2dd216e1626c1dc1a9b34cce/Frontend/Gui/src/contexts/SocketContext.js#L4).
