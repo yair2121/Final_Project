@@ -42,10 +42,19 @@ Now that the client has joined a game we start listening for client requests to 
 Upon client request to make a move we forward the request to SessionsController.
 When a client leaves a game or disconnects we notify the SessionsController and the other players in the game.
 
+#### SessionsController
+(todo links)
+SessionsController is responsible for managing all game session instances (GameSessionServers) and forwarding events from the game sessions to the clients via index.js
+Creating the session and deciding which session a client will be connected to happens here.
+SessionsController stores sessions in three categories: Unready sessions, meaning not enough players are in the session, full sessions (which have not started yet) and active sessions (meaning they are running). Each session is defined by the game of the session (i.e Crossword) and a unique session id.
 
+Whenever a client requests to connect to a game SessionsController checks if there is a session of that game that hasn't started yet and which has space for another player in it. If so, the client is added to the session. If the session is full it starts. If there are no avilable sessions, SessionsController creates a new session and adds the player to the session.
 
+Whenever a client plays a move, index.js forwards the move to SessionsController, which then calls the actual move logic in the relevant session.
 
-
+For every game session created SessionsController listens for the following events:
+Session started, session became full, session ended, a move is made in the session or the sessions game state was changed.
+All of these events are forwarded to the clients via index.js.
 
 ## API Documentation:
 
