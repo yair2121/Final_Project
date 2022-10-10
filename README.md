@@ -254,6 +254,8 @@ Tells the server to stop automatically putting you into a session whenever it is
 
 ### Frontend documentation:
 [For additional documentation regarding the frontend side of things, click here](https://docs.google.com/document/d/1RSzaMs4PxQPRjfhZR1P4NKHWyCAO8q81/edit?usp=sharing&ouid=100889227141894762892&rtpof=true&sd=true)
+
+
 Writers
 Roey Peleg
 Yair Yardeni
