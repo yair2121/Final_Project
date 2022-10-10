@@ -45,7 +45,7 @@ Session started, session became full, session ended, a move is made in the sessi
 All of these events are forwarded to the clients via index.js.
 
 #### GameSession
-GameSession is a wrapper class of a BaseGameModel (for example, [CrosswordGameModel](#crosswordgamemodel)).
+GameSession is a wrapper class of a BaseGameModel (for example, [CrosswordModel](#crosswordmodel)).
 It contains a BaseGameModel and a dictionary of the players in the GameSession.
 When a session is full it is started - the GameSession tells the BaseGameModel to begin the game with the amount of players in the session.
 When the game changes in any way (either a move is made, the game state is changed or the game ends) the GameSession forwards the event to the encapsulating GameSessionServer which in turn notifies the SessionsController.
