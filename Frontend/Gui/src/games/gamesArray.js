@@ -1,4 +1,4 @@
-import { SumGame, Crossword } from ".";
+import { Crossword } from ".";
 import uuid from "react-native-uuid";
 
 const GAMES = [
