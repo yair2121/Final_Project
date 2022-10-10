@@ -116,10 +116,6 @@ export default class Cell extends Component {
             ).cell
           }
         >
-          {this.cellInfo.isAcrossWordStart &&
-            this.ActiveCellWord(ORIENTATION.ACROSS)}
-          {this.cellInfo.isDownWordStart &&
-            this.ActiveCellWord(ORIENTATION.DOWN)}
           {this.cellInfo.state === CellState.ACTIVE &&
             // Render cell current value.
             this.ActiveCellInput()}
