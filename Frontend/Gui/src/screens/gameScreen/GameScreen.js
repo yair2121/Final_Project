@@ -69,12 +69,6 @@ export default function GameScreen({ route }) {
           )}
           {!isLoading && isFinished && <FinishScreen />}
         </View>
-        {/* <Button
-          title="toggle"
-          onPress={() => {
-            setIsLoading(!isLoading);
-          }}
-        /> */}
       </View>
     </LinearGradient>
   );
