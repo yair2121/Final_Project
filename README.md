@@ -245,10 +245,10 @@ Tells the server to automatically put you into a session whenever it is created 
 Tells the server to stop automatically putting you into a session whenever it is created.
 
 ## Diagrams:
-[For the Backend UML, Frontend chart and flow example and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
+[For the Backend UML, Frontend chart, app flow example and Events diagram click here](https://drive.google.com/drive/folders/1Ho0x0XXKMLhDKMAr7vXPNeF1AMOPyvM4?usp=sharing)
 
 ### Frontend documentation:
-[For additional documentation regarding the frontend side of things, click here](https://docs.google.com/document/d/1RSzaMs4PxQPRjfhZR1P4NKHWyCAO8q81/edit?usp=sharing&ouid=100889227141894762892&rtpof=true&sd=true)
+[For additional documentation regarding the frontend side, click here](https://docs.google.com/document/d/1RSzaMs4PxQPRjfhZR1P4NKHWyCAO8q81/edit?usp=sharing&ouid=100889227141894762892&rtpof=true&sd=true)
 
 
 Writers
